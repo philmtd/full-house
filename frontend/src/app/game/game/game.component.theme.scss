@@ -1,0 +1,47 @@
+@use '@angular/material' as mat;
+@import "../../../styles/mixins";
+
+@mixin game-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+  $isDark: map-get($theme, is-dark);
+
+  .table {
+    @if($isDark) {
+      background: desaturate(darken(mat.get-color-from-palette($primary, 50), 70%), 75%);
+    } @else {
+      background: mat.get-color-from-palette($primary, 50);
+    }
+  }
+
+  .bottom-menu {
+    background: mat.get-color-from-palette($background, app-bar);
+
+    .card {
+      $bgColor: map-get($background, app-bar);
+      background: $bgColor;
+      $color: mat.get-color-from-palette($primary, 400);
+      color: $color;
+      border: 2px solid $color;
+
+      &:hover {
+        @if ($isDark) {
+          background: darken($color, 60%);
+        } @else {
+          background: mat.get-color-from-palette($primary, 50);
+        }
+      }
+      &.selected {
+        color: $bgColor;
+        border-color: mat.get-color-from-palette($primary, 400);
+        background: mat.get-color-from-palette($primary, 400);
+      }
+    }
+
+    .gray {
+      color: map-get($foreground, disabled-text);
+    }
+  }
+
+}

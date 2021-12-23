@@ -1,0 +1,14 @@
+@use '@angular/material' as mat;
+@import "mixins";
+@import "component-themes";
+
+$primary: mat.define-palette($pp-yellow);
+$accent: mat.define-palette($pp-green);
+$warn: mat.define-palette($pp-red);
+
+$dark-theme: mat.define-dark-theme($primary, $accent, $warn);
+
+.dark-theme {
+  @include mat.all-component-themes($dark-theme);
+  @include component-themes($dark-theme);
+}

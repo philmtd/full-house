@@ -1,0 +1,12 @@
+<div class="create-user-dialog" fxLayout="column" fxLayoutGap="2em">
+  <h2 mat-dialog-title>{{ 'components.createUserDialog.title' | translate }}</h2>
+  <div mat-dialog-content>
+    <form #userForm="ngForm" (submit)="save()" fxLayout="column" fxLayoutGap="2em">
+      <mat-form-field>
+        <mat-label>{{ 'components.createUserDialog.nameLabel' | translate }}</mat-label>
+        <input matInput required pattern="^\S.*" name="participantName" [(ngModel)]="participant.name" />
+      </mat-form-field>
+      <button [disabled]="userForm.invalid" mat-flat-button color="primary" type="submit">{{ 'components.createUserDialog.submitButton' | translate }}</button>
+    </form>
+  </div>
+</div>

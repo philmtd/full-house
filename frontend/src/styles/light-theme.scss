@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+@import "mixins";
+@import "component-themes";
+
+$primary: mat.define-palette($pp-green);
+$accent: mat.define-palette($pp-yellow);
+$warn: mat.define-palette($pp-red);
+
+$light-theme: mat.define-light-theme($primary, $accent, $warn);
+
+$background: map-get($light-theme, background);
+$light-theme: map-merge($light-theme, (
+  background: map-merge($background, (
+    app-bar: white
+  ))
+));
+
+@include mat.all-component-themes($light-theme);
+@include component-themes($light-theme);

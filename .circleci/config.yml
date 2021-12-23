@@ -1,0 +1,127 @@
+version: 2.1
+jobs:
+  backend:
+    docker:
+      - image: registry.hub.docker.com/philmtd/golang-builder:0.1.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - full-house-go-mod-{{ checksum "go.sum" }}
+      - run:
+          name: Install dependencies
+          command: go mod download
+      - save_cache:
+          key: full-house-go-mod-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - run:
+          name: Run tests
+          command: make go-test-ci
+      - store_test_results:
+          path: ./test_results.xml
+      - run:
+          name: Lint
+          command: make go-lint-ci
+      - store_test_results:
+          path: ./linter_results.xml
+      - run:
+          name: Build the application
+          command: make go-build-for-docker
+      - run: mkdir ./circle-artifacts && cp ./full-house ./circle-artifacts/
+      - save_cache:
+          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ./circle-artifacts/
+
+  frontend:
+    docker:
+      - image: node:14.17
+    steps:
+      - checkout
+      - restore_cache:
+          key: full-house-npm-dependencies-{{ checksum "frontend/package-lock.json" }}
+      - run:
+          name: Installing dependencies
+          working_directory: ./frontend
+          command: npm ci
+      - save_cache:
+          key: full-house-npm-dependencies-{{ checksum "frontend/package-lock.json" }}
+          paths:
+            - ./frontend/node_modules
+      - run:
+          name: Building the frontend
+          working_directory: ./frontend
+          command: npm run build
+      - save_cache:
+          key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ./frontend/dist/
+
+  dockerize_dev:
+    docker:
+      - image: docker:19
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
+      - run: cp ./circle-artifacts/full-house .
+      - run: docker build -t philmtd/full-house:latest-dev .
+      - run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - run: docker push philmtd/full-house:latest-dev
+
+  release:
+    docker:
+      - image: docker:19
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
+      - run: cp ./circle-artifacts/full-house .
+      - run: docker build -t philmtd/full-house:latest .
+      - run: docker tag philmtd/full-house:latest philmtd/full-house:$CIRCLE_TAG
+      - run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - run: docker push philmtd/full-house:latest
+      - run: docker push philmtd/full-house:$CIRCLE_TAG
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - backend:
+          filters:
+            tags:
+              only: /.*/
+      - frontend:
+          filters:
+            tags:
+              only: /.*/
+      - dockerize_dev:
+          requires:
+            - backend
+            - frontend
+          context:
+            - dockerhub
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /.*/
+      - release:
+          requires:
+            - backend
+            - frontend
+          context:
+            - dockerhub
+          filters:
+            branches:
+              ignore: /.*/
+            # only act on version tag
+            tags:
+              only: /^[0-9]+(\.[0-9]+)*$/

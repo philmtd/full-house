@@ -1,0 +1,17 @@
+@use "@angular/material" as mat;
+@import "../../../styles/mixins";
+
+.participant {
+  margin: 0 1em;
+
+  .participant-card {
+    border-radius: 4px;
+    width: 36px;
+    height: 52px;
+
+    span {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  }
+}

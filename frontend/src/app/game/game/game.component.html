@@ -1,0 +1,86 @@
+<navigation [navTitle]="game?.name">
+  <button mat-flat-button color="primary" (click)="openInviteDialog()">
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px">
+      <mat-icon svgIcon="group-add"></mat-icon>
+      <span>{{ 'game.inviteOthers' | translate }}</span>
+    </div>
+  </button>
+  <button mat-icon-button color="primary" (click)="openUserDialog()">
+    <mat-icon svgIcon="account-circle"></mat-icon>
+  </button>
+  <pp-theme-switcher></pp-theme-switcher>
+</navigation>
+<div fxLayout="column" class="game-container">
+  <div>
+    <div class="game-view" *ngIf="game" fxLayout="column" fxLayoutAlign="start center">
+      <div class="row top-row" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2em">
+        <div *ngIf="game.otherParticipants?.length == 0" class="invite-hint" fxLayout="column" fxLayoutAlign="center center">
+          <p>{{ 'game.inviteOthersShorttext' | translate }}</p>
+          <button mat-button color="primary" (click)="openInviteDialog()">
+            <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px">
+              <mat-icon svgIcon="group-add"></mat-icon>
+              <span>{{ 'game.inviteOthers' | translate }}</span>
+            </div>
+          </button>
+        </div>
+        <participant *ngFor="let p of game.otherParticipants | participantRow: 'top'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+      </div>
+      <div class="row middle-row" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="2em">
+        <participant *ngFor="let p of game.otherParticipants | participantRow: 'left'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+
+        <div class="table" fxLayout="column" fxLayoutAlign="center center">
+          <div *ngIf="game.phase == 'VOTING' && game.voteCount == 0">
+            <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px">
+              <mat-icon color="primary" svgIcon="sports-score"></mat-icon>
+              <span>{{ 'game.tableNoVotesText' | translate }}</span>
+            </div>
+          </div>
+          <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button color="primary" (click)="nextPhase()" *ngIf="game.phase == 'VOTING' && game.voteCount > 0">
+            <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px">
+              <mat-icon svgIcon="visibility"></mat-icon>
+              <span>{{ 'game.revealButton' | translate }}</span>
+            </div>
+          </button>
+          <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button (click)="nextPhase()" color="primary" *ngIf="game.phase == 'REVEALED'">
+            <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px">
+              <mat-icon svgIcon="loop"></mat-icon>
+              <span>{{ 'game.newVotingButton' | translate }}</span>
+            </div>
+          </button>
+        </div>
+
+        <participant *ngFor="let p of game.otherParticipants | participantRow: 'right'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+      </div>
+      <div class="row bottom-row" fxLayout="row"  fxLayoutAlign="center center" fxLayoutGap="2em">
+        <participant *ngFor="let p of game.otherParticipants | participantRow: 'bottom_left'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+        <participant *ngIf="game.self" [participant]="game.self" [vote]="game.self.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+        <participant *ngFor="let p of game.otherParticipants | participantRow: 'bottom_right'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+      </div>
+    </div>
+    <div *ngIf="isError" fxLayout="column" fxLayoutAlign="center center">
+      <span>{{ 'game.gameNotFoundText' | translate }}</span>
+      <a mat-button color="primary" [routerLink]="'/'">{{ 'game.createNewGameButton' | translate }}</a>
+    </div>
+  </div>
+</div>
+<div *ngIf="game" class="bottom-menu" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="1em">
+  <div *ngIf="game.phase == 'VOTING'" class="bottom-menu-container">
+    <div *ngFor="let option of game.votingScheme" class="card" (click)="selectOption(option)" [class.selected]="this.game?.self?.vote?.vote == option">
+      <span>{{ option | fraction }}</span>
+    </div>
+  </div>
+  <div class="bottom-menu-container" *ngIf="game.phase == 'REVEALED'" fxLayout="row" fxLayoutAlign="center start" fxLayoutGap="4em">
+    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
+      <span class="gray">{{ 'game.average' | translate }}</span>
+      <strong class="large">{{ game.voteAverage | fraction }}</strong>
+    </div>
+    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
+      <span class="gray">{{ 'game.votes' | translate }}</span>
+      <strong class="large">{{ game.voteCount }}</strong>
+    </div>
+    <div class="agreement" *ngIf="game.agreement != null" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
+      <span class="gray">{{ 'game.agreement' | translate }}</span>
+      <strong class="large">{{ game.agreementEmoji }}</strong>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<navigation>
+  <pp-theme-switcher></pp-theme-switcher>
+</navigation>
+<div class="container" fxLayout="column" fxLayoutAlign="center center">
+  <div fxLayout="column" fxLayoutAlign="center center">
+    <h2>{{ 'newGame.createNewGame' | translate }}</h2>
+    <p>{{ 'newGame.chooseNameText' | translate }}</p>
+    <form #form="ngForm" (submit)="createGame()">
+      <mat-form-field>
+        <mat-label>{{ 'newGame.tableNameLabel' | translate }}</mat-label>
+        <input id="game_name_input" name="gameName" [(ngModel)]="gameName" required matInput type="text"/>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{ 'newGame.votingSystemLabel' | translate }}</mat-label>
+        <mat-select [(value)]="selectedScheme">
+          <mat-option [value]="scheme.id" *ngFor="let scheme of votingSchemes">{{ scheme.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button [disabled]="form.form.invalid" mat-flat-button color="primary" type="submit">{{ 'newGame.createGame' | translate }}</button>
+    </form>
+  </div>
+</div>

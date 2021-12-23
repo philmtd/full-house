@@ -1,0 +1,44 @@
+@use "sass:list";
+
+@use "@angular/material" as mat;
+@import "../../../styles/mixins";
+
+@mixin participant-component-theme($theme) {
+  $primary: map-get($theme, primary);
+  $background: map-get($theme, background);
+  $isDark: map-get($theme, is-dark);
+
+  .participant {
+
+    .participant-card {
+
+      background: map-get($background, selected-button);
+      @include mat.elevation(0);
+
+
+      &.voted {
+        $color1: mat.get-color-from-palette($primary, 900);
+        $color2: mat.get-color-from-palette($primary, 300);
+        $color3: mat.get-color-from-palette($primary, 100);
+
+        $patternSize: 12px;
+
+        background: linear-gradient(135deg, $color1 25%, transparent 25%) -#{$patternSize*0.5} list.slash(0, $patternSize) #{$patternSize},
+        linear-gradient(225deg, $color2 25%, transparent 25%) -#{$patternSize*0.5} list.slash(0, $patternSize) #{$patternSize},
+        linear-gradient(315deg, $color1 25%, transparent 25%) 0px list.slash(0, $patternSize) #{$patternSize},
+        linear-gradient(45deg, $color2 25%, $color3 25%) 0px list.slash(0, $patternSize) #{$patternSize};
+        @include mat.elevation(2);
+      }
+
+      &.revealed {
+        $color1: mat.get-color-from-palette($primary, 500);
+        border: 2px solid $color1;
+        background: map-get($background, app-bar);
+        color: $color1;
+        @include mat.elevation(2);
+      }
+    }
+  }
+}
+
+

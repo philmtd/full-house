@@ -1,0 +1,9 @@
+@import "src/app/components/theme-switcher/theme-switcher.component.theme";
+@import "src/app/game/game/game.component.theme";
+@import "src/app/game/participant/participant.component.theme";
+
+@mixin component-themes($theme) {
+  @include theme-switcher-component-theme($theme);
+  @include game-component-theme($theme);
+  @include participant-component-theme($theme);
+}
