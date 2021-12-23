@@ -1,0 +1,6 @@
+<div class="participant" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px">
+  <div class="participant-card" [class.voted]="vote?.voted && !revealed" [class.revealed]="vote?.voted && revealed" fxLayout="row" fxLayoutAlign="center center">
+    <span *ngIf="vote && vote.voted && revealed">{{ vote?.vote | fraction }}</span>
+  </div>
+  <strong>{{ participant?.name }}</strong>
+</div>

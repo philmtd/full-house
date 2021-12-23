@@ -1,0 +1,10 @@
+<div fxLayout="row" class="nav-container">
+  <nav fxFlex fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+    <a routerLink="/" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1em">
+      <img src="/assets/pplogo.svg" alt="Full House Logo" />
+      <h1>{{ navTitle ? navTitle : "Full House" }}</h1>
+    </a>
+    <div fxFlex=""></div>
+    <ng-content></ng-content>
+  </nav>
+</div>

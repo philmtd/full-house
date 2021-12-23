@@ -1,0 +1,16 @@
+.nav-container {
+  width: 100%;
+  nav {
+    margin: 1em;
+    a {
+      white-space: nowrap;
+      img {
+        height: 40px;
+      }
+      h1 {
+        font-weight: bold;
+        margin: 0;
+      }
+    }
+  }
+}

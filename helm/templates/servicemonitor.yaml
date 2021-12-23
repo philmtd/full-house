@@ -1,0 +1,15 @@
+{{- if .Values.serviceMonitor.enabled -}}
+{{- $fullName := include "full-house.fullname" . -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: {{ $fullName }}
+    labels: {{- include "full-house.labels" . | nindent 8 }}
+spec:
+    selector:
+        matchLabels: {{- include "full-house.selectorLabels" . | nindent 12 }}
+    endpoints:
+        - interval: {{ .Values.serviceMonitor.interval }}
+          port: http
+          path: /metrics
+{{- end }}

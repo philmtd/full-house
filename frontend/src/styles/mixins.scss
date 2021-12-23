@@ -1,0 +1,15 @@
+@import "variables";
+
+$mat-radius: 4px;
+
+@mixin mat-icon-size($size: 24px) {
+  width: $size;
+  height: $size;
+}
+
+@mixin user-select($value) {
+  -webkit-user-select: $value;
+  -moz-user-select: $value;
+  -ms-user-select: $value;
+  user-select: $value;
+}

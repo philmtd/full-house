@@ -1,0 +1,38 @@
+{
+  "components": {
+    "createUserDialog": {
+      "title": "Choose your display name",
+      "nameLabel": "Your display name",
+      "submitButton": "Continue to game"
+    },
+    "invitePlayersDialog": {
+      "title": "Invite players",
+      "urlLabel": "URL",
+      "copyButton": "Copy game link"
+    },
+    "themeSwitcher": {
+      "auto": "Auto",
+      "dark": "Dark",
+      "light": "Light"
+    }
+  },
+  "game": {
+    "inviteOthers": "Invite others",
+    "inviteOthersShorttext": "It's more fun together. ☀️",
+    "tableNoVotesText": "Ready, steady, go!",
+    "revealButton": "Reveal cards",
+    "newVotingButton": "Start new voting",
+    "gameNotFoundText": "This game does not exist.",
+    "createNewGameButton": "Create new game",
+    "average": "Average",
+    "votes": "Votes",
+    "agreement": "Agreement"
+  },
+  "newGame": {
+    "createNewGame": "Create a new game",
+    "chooseNameText": "Choose a name for your poker table.",
+    "tableNameLabel": "Poker Table Name",
+    "votingSystemLabel": "Voting System",
+    "createGame": "Create game"
+  }
+}
