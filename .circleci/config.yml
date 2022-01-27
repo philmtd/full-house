@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   backend:
     docker:
-      - image: registry.hub.docker.com/philmtd/golang-builder:0.1.0
+      - image: registry.hub.docker.com/philmtd/golang-builder:0.2.0
     steps:
       - checkout
       - restore_cache:
