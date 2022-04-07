@@ -32,7 +32,7 @@ jobs:
           command: make go-build-for-docker
       - run: mkdir ./circle-artifacts && cp ./full-house ./circle-artifacts/
       - save_cache:
-          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.TAG }}
+          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-${TAG}
           paths:
             - ./circle-artifacts/
 
@@ -69,7 +69,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - restore_cache:
-          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.TAG }}
+          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-${TAG}
       - restore_cache:
           key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
       - run: cp ./circle-artifacts/full-house .
@@ -86,7 +86,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - restore_cache:
-          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-{{ .Environment.TAG }}
+          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-${TAG}
       - restore_cache:
           key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
       - run: cp ./circle-artifacts/full-house .
