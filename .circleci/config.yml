@@ -3,8 +3,6 @@ jobs:
   backend:
     docker:
       - image: registry.hub.docker.com/philmtd/golang-builder:0.2.0
-    environment:
-      TAG: ${CIRCLE_TAG:-dev}
     steps:
       - checkout
       - restore_cache:
@@ -32,7 +30,7 @@ jobs:
           command: make go-build-for-docker
       - run: mkdir ./circle-artifacts && cp ./full-house ./circle-artifacts/
       - save_cache:
-          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-${TAG}
+          key: full-house-backend-{{ or .Environment.CIRCLE_TAG .Environment.CIRCLE_SHA1 }}
           paths:
             - ./circle-artifacts/
 
@@ -69,7 +67,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - restore_cache:
-          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-${TAG}
+          key: full-house-backend-{{ or .Environment.CIRCLE_TAG .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
       - run: cp ./circle-artifacts/full-house .
@@ -86,7 +84,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - restore_cache:
-          key: full-house-backend-{{ .Environment.CIRCLE_SHA1 }}-${TAG}
+          key: full-house-backend-{{ or .Environment.CIRCLE_TAG .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
       - run: cp ./circle-artifacts/full-house .
