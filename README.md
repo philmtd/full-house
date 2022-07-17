@@ -15,6 +15,13 @@ Full House can be easily run with Docker:
 docker run -p 8080:8080 philmtd/full-house
 ```
 
+## Install in Kubernetes with Helm
+
+The [Full House Helm chart](https://artifacthub.io/packages/helm/philmtd/full-house) is available in the following chart repo:
+```bash
+helm repo add philmtd https://philmtd.github.io/helm-charts
+```
+
 ## Configuration
 
 No configuration is required to run Full House.
