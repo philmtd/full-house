@@ -16,7 +16,7 @@
 .idea
 *.iml
 
-fullhouse
+full-house
 !*/fullhouse/
 
 linter_results.xml

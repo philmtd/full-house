@@ -1,9 +1,0 @@
-{{ .AnsiColor.BrightBlue }}   _______
-  |A ___  |
-  | | _ \ |
-  | |  _/ |
-  | |_|   |
-  |______V|
-{{ .AnsiColor.Default}}Full House
-
-GoVersion: {{ .GoVersion }}

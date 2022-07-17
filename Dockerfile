@@ -8,7 +8,6 @@ FROM scratch
 # Import from builder.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-ADD /assets /app/assets/
 ADD /config/fullhouse-default.yaml /app/config/
 ADD /full-house /app/
 ADD /frontend/dist /app/frontend
