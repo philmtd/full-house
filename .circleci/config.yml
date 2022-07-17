@@ -36,7 +36,7 @@ jobs:
 
   frontend:
     docker:
-      - image: node:14.17
+      - image: node:16.16
     steps:
       - checkout
       - restore_cache:

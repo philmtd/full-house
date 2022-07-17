@@ -45,3 +45,6 @@ build:
 build-for-docker:
 	CGO_ENABLED=0 GOOS=linux $(GO) build -o $(CMD) -a $(BUILDFLAGS) $(LDFLAGS) $(CMD_SRC)
 	upx $(CMD) # reduce binary size
+
+mod-outdated: # needs https://github.com/psampaz/go-mod-outdated
+	$(GO) list -u -m -json all | go-mod-outdated -update -direct

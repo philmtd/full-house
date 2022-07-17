@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"fullhouse/pkg/fullhouse/banner"
 	"fullhouse/pkg/fullhouse/logger"
 	"github.com/spf13/cobra"
 	"os"
@@ -18,10 +17,6 @@ var commandVersion string
 
 func init() {
 	longDescription := ""
-	bannerAsString, err := banner.GetBannerAsString()
-	if err != nil {
-		longDescription += bannerAsString + "\n"
-	}
 	longDescription += "Full House is a planning poker tool to help teams estimate the time required to get tasks done."
 
 	if len(GitTag) == 0 && len(GitCommit) == 0 {
