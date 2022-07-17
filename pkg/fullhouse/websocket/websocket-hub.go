@@ -88,9 +88,13 @@ func (h *WebsocketHub) BroadcastToClients(message interface{}, clientIds []strin
 func (h *WebsocketHub) unregisterClient(client *WebsocketClient) {
 	h.log.Debugw("unregistering client", "sessionId", client.sessionId)
 	lock.Lock()
-	defer lock.Unlock()
+	var doUnregister = false
 	if _, ok := h.clients[client]; ok {
 		delete(h.clients, client)
+		doUnregister = true
+	}
+	lock.Unlock()
+	if doUnregister {
 		close(client.send)
 		for _, listener := range h.unregisterListeners {
 			listener <- client.sessionId
