@@ -71,6 +71,7 @@ jobs:
       - restore_cache:
           key: full-house-frontend-{{ .Environment.CIRCLE_SHA1 }}
       - run: cp ./circle-artifacts/full-house .
+      - run: mv /home/circleci/project/frontend/dist ./frontend
       - run: docker build -t philmtd/full-house:latest-dev .
       - run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
       - run: docker push philmtd/full-house:latest-dev
