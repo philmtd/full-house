@@ -97,8 +97,8 @@ func (g *GameManager) CreateGame(game *models.GameDTO) *models.GameDTO {
 
 	createdGame := models.NewGame(game.Name, slug, game.VotingScheme)
 	gamesLock.Lock()
+	defer gamesLock.Unlock()
 	g.games = append(g.games, createdGame)
-	gamesLock.Unlock()
 	g.log.Infow("created new game", "name", createdGame.Name, "slug", createdGame.Slug)
 	totalCreatedGamesCounter.Inc()
 	return models.ToGameDto(createdGame)
@@ -129,6 +129,7 @@ func (g *GameManager) JoinGame(slug string, dto *models.ParticipantDTO, sessionI
 	exists := false
 
 	game.Lock.Lock()
+	defer game.Lock.Unlock()
 	for _, p := range game.Participants {
 		if p.Id == dto.Id {
 			exists = true
@@ -140,7 +141,6 @@ func (g *GameManager) JoinGame(slug string, dto *models.ParticipantDTO, sessionI
 		game.Participants = append(game.Participants, participant)
 		g.log.Infow("player joined game", "slug", slug, "sessionId", sessionId, "playerName", participant.Name)
 	}
-	game.Lock.Unlock()
 	g.updateInteractionTimestamp(slug)
 	return models.ToGameDto(game), nil
 }
@@ -157,12 +157,12 @@ func (g *GameManager) Vote(slug string, vote *models.VoteDTO, participantId stri
 	}
 
 	gameBySlug.Lock.Lock()
+	defer gameBySlug.Lock.Unlock()
 	if vote.Vote != nil {
 		gameBySlug.GameState.VotesByParticipantId[participantId] = *vote.Vote
 	} else {
 		delete(gameBySlug.GameState.VotesByParticipantId, participantId)
 	}
-	gameBySlug.Lock.Unlock()
 	g.broadcastGameState(slug)
 	g.updateInteractionTimestamp(slug)
 	return nil
@@ -204,10 +204,10 @@ func (g *GameManager) broadcastGameState(slug string) {
 	var clientIds []string
 
 	currentGame.Lock.RLock()
+	defer currentGame.Lock.RUnlock()
 	for _, participant := range currentGame.Participants {
 		clientIds = append(clientIds, participant.SessionId)
 	}
-	currentGame.Lock.RUnlock()
 	g.websocketHub.BroadcastToClients(gameDto, clientIds)
 }
 
@@ -239,8 +239,8 @@ func (g *GameManager) cleanOldGamesPeriodically() {
 		toRemove := []int{}
 		for idx, game := range g.games {
 			game.Lock.RLock()
+			defer game.Lock.RUnlock()
 			participantCount := len(game.Participants)
-			game.Lock.RUnlock()
 			if participantCount > 0 {
 				continue
 			}
