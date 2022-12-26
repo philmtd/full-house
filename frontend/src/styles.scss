@@ -1,4 +1,8 @@
+@use "css-fx-layout/src/lib/mixins" as fx;
+@import "css-fx-layout";
 @import "styles/typography";
+
+@include fx.fxLayoutGap(1, 10, px em);
 
 html, body {
   height: 100%;
