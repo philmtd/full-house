@@ -1,14 +1,23 @@
 @use '@angular/material' as mat;
+@import "typography";
 @import "mixins";
 @import "component-themes";
 
-$primary: mat.define-palette($pp-yellow);
+$primary: mat.define-palette($pp-blue);
 $accent: mat.define-palette($pp-green);
 $warn: mat.define-palette($pp-red);
 
-$dark-theme: mat.define-dark-theme($primary, $accent, $warn);
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn),
+  typography: $custom-typography,
+  density: 0,
+));
 
 .dark-theme {
+  @include mat.core-theme($dark-theme);
   @include mat.all-component-themes($dark-theme);
   @include component-themes($dark-theme);
 }

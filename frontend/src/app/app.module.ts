@@ -6,7 +6,6 @@ import {AppComponent} from './app.component';
 import {GameComponent} from "./game/game/game.component";
 import {NewGameComponent} from "./game/new-game/new-game.component";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {FlexLayoutModule} from "@angular/flex-layout";
 import {MatInputModule} from "@angular/material/input";
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
@@ -62,7 +61,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
     MatDialogModule,
     MatInputModule,
     MatSelectModule,
