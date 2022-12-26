@@ -27,7 +27,7 @@
 
       &:hover {
         @if ($isDark) {
-          background: darken($color, 60%);
+          background: desaturate(darken($color, 30%), 50%);
         } @else {
           background: mat.get-color-from-palette($primary, 50);
         }

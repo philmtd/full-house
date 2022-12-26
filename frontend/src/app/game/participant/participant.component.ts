@@ -9,5 +9,5 @@ import {Participant, Vote} from "../model";
 export class ParticipantComponent {
   @Input() participant?: Participant;
   @Input() revealed = false;
-  @Input() vote?: Vote;
+  @Input() vote?: Vote | undefined;
 }

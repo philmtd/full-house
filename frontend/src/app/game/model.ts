@@ -35,5 +35,5 @@ export interface GameState {
 
 export interface Vote {
   voted: boolean;
-  vote?: number;
+  vote?: number | undefined;
 }

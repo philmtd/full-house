@@ -17,7 +17,7 @@ export interface GameModel {
   slug: string;
   phase: GamePhase;
   otherParticipants: Array<ParticipantModel>;
-  self: ParticipantModel;
+  self?: ParticipantModel;
   voteCount: number;
   voteAverage: number;
   agreement: number | null;
@@ -161,7 +161,7 @@ export class GameComponent {
   }
 
   public selectOption(option: number) {
-    if (this.game?.self.vote.vote == option) {
+    if (this.game?.self?.vote.vote == option) {
       this.api.vote(this.game!.slug, undefined).subscribe()
     } else {
       this.api.vote(this.game!.slug, option).subscribe()

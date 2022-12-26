@@ -1,16 +1,16 @@
 <navigation>
   <pp-theme-switcher></pp-theme-switcher>
 </navigation>
-<div class="container" fxLayout="column" fxLayoutAlign="center center">
-  <div fxLayout="column" fxLayoutAlign="center center">
+<div class="container fx-layout-column fx-align--center-x fx-align--x-center">
+  <div class="fx-layout-column fx-align--center-x fx-align--x-center">
     <h2>{{ 'newGame.createNewGame' | translate }}</h2>
     <p>{{ 'newGame.chooseNameText' | translate }}</p>
     <form #form="ngForm" (submit)="createGame()">
-      <mat-form-field>
+      <mat-form-field appearance="fill">
         <mat-label>{{ 'newGame.tableNameLabel' | translate }}</mat-label>
         <input id="game_name_input" name="gameName" [(ngModel)]="gameName" required matInput type="text"/>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field appearance="fill">
         <mat-label>{{ 'newGame.votingSystemLabel' | translate }}</mat-label>
         <mat-select [(value)]="selectedScheme">
           <mat-option [value]="scheme.id" *ngFor="let scheme of votingSchemes">{{ scheme.label }}</mat-option>

@@ -1,7 +1,7 @@
-<div class="invite-players-dialog" fxLayout="column" fxLayoutGap="2em">
+<div class="invite-players-dialog fx-layout-column fx-gap--2em">
   <h2 mat-dialog-title>{{ 'components.invitePlayersDialog.title' | translate }}</h2>
   <div mat-dialog-content>
-    <mat-form-field>
+    <mat-form-field appearance="fill">
       <mat-label>{{ 'components.invitePlayersDialog.urlLabel' | translate }}</mat-label>
       <input matInput #input autofocus readonly name="gameurl" [value]="gameUrl" />
     </mat-form-field>
