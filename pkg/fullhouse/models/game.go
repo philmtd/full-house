@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fullhouse/pkg/fullhouse/config"
 	"strings"
 	"sync"
 	"time"
@@ -15,8 +16,22 @@ type Game struct {
 	Participants    []*Participant
 	LastInteraction time.Time
 	GameState       GameState
-	VotingScheme    []float32
+	VotingScheme    VotingScheme
 	Lock            sync.RWMutex
+}
+
+type VotingScheme struct {
+	Name                 string    `json:"name"`
+	Scheme               []float32 `json:"scheme"`
+	IncludesQuestionmark bool      `json:"includesQuestionmark"`
+}
+
+func VotingSchemeFromConfig(scheme config.VotingScheme) VotingScheme {
+	return VotingScheme{
+		Name:                 scheme.Name,
+		Scheme:               scheme.Scheme,
+		IncludesQuestionmark: scheme.IncludesQuestionmark,
+	}
 }
 
 type GameDTO struct {
@@ -24,10 +39,10 @@ type GameDTO struct {
 	Slug         string            `json:"slug"`
 	Participants []*ParticipantDTO `json:"participants"`
 	GameState    GameStateDTO      `json:"gameState"`
-	VotingScheme []float32         `json:"votingScheme"`
+	VotingScheme VotingScheme      `json:"votingScheme"`
 }
 
-func NewGame(name, slug string, votingScheme []float32) *Game {
+func NewGame(name, slug string, votingScheme VotingScheme) *Game {
 	return &Game{
 		Name:            name,
 		Slug:            slug,
@@ -35,7 +50,7 @@ func NewGame(name, slug string, votingScheme []float32) *Game {
 		LastInteraction: time.Now(),
 		GameState: GameState{
 			Phase:                VOTING,
-			VotesByParticipantId: make(map[string]float32),
+			VotesByParticipantId: make(map[string]any),
 		},
 		VotingScheme: votingScheme,
 		Lock:         sync.RWMutex{},

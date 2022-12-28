@@ -3,6 +3,7 @@ module fullhouse
 go 1.19
 
 require (
+	github.com/go-playground/validator/v10 v10.11.1
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-contrib/zap v0.1.0
 	github.com/gin-gonic/gin v1.8.2

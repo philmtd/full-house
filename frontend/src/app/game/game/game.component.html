@@ -65,8 +65,11 @@
 </div>
 <div *ngIf="game" class="bottom-menu fx-layout-row fx-align--center-x fx-align--x-center fx-gap--1em">
   <div *ngIf="game.phase == 'VOTING'" class="bottom-menu-container">
-    <div *ngFor="let option of game.votingScheme" class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option">
+    <div *ngFor="let option of game.votingScheme.scheme" class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option">
       <span>{{ option | fraction }}</span>
+    </div>
+    <div *ngIf="game.votingScheme.includesQuestionmark" class="card" (click)="selectOption('?')" [class.selected]="this.game.self?.vote?.vote == '?'">
+      <span>{{ '?' }}</span>
     </div>
   </div>
   <div class="bottom-menu-container fx-layout-row fx-align--center-x fx-align--x-start fx-gap--4em" *ngIf="game.phase == 'REVEALED'">

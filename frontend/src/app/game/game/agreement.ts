@@ -7,7 +7,7 @@ interface VotedValue {
 }
 
 export function calculateAgreement(votes: Array<Vote>): number | null {
-  const totalVotes = votes.filter(vote => vote.voted && vote.vote != undefined && vote.vote >= 0).length;
+  const totalVotes = votes.filter(vote => vote.voted && isVoteNumerical(vote)).length;
   const votedValues = countVotedValues(votes);
   if (votedValues.size === 0) {
     return null;
@@ -21,14 +21,19 @@ export function calculateAgreement(votes: Array<Vote>): number | null {
   return Math.round(Math.min(voteRationsStandardDeviation, 0.6) / (1 - 0.6) * 100);
 }
 
+export function isVoteNumerical(v: Vote): boolean {
+  return v.vote != undefined && typeof v.vote == "number" && v.vote >= 0;
+}
+
 function countVotedValues(votes: Array<Vote>): Map<number, number> {
   const countedVotedValues = new Map<number, number>();
   votes.forEach(v => {
-    if (v.voted && v.vote !== undefined && v.vote >= 0) {
-      if (!countedVotedValues.has(v.vote)) {
-        countedVotedValues.set(v.vote, 0);
+    if (v.voted && isVoteNumerical(v)) {
+      const numericalVote = v.vote as number;
+      if (!countedVotedValues.has(numericalVote)) {
+        countedVotedValues.set(numericalVote, 0);
       }
-      countedVotedValues.set(v.vote, countedVotedValues.get(v.vote)! + 1);
+      countedVotedValues.set(numericalVote, countedVotedValues.get(numericalVote)! + 1);
     }
   });
   return countedVotedValues;

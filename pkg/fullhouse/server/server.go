@@ -69,13 +69,16 @@ func (s *Server) Start(c config.Config) {
 	r.GET("/up", s.upHandler)
 
 	api := r.Group("/api")
-	api.POST("/game/new", s.newGame)
-	api.POST("/game/:slug/join", s.joinGame)
-	api.POST("/game/:slug/vote", s.vote)
-	api.POST("/game/:slug/progress", s.progressToNextPhase)
-	api.GET("/game/:slug", s.getGame)
 	api.POST("/participant/new", s.newParticipant)
 	api.Any("/ws", s.wsHandler)
+
+	gameApi := api.Group("/game")
+	gameApi.GET("/votingSchemes", s.votingSchemes)
+	gameApi.POST("/new", s.newGame)
+	gameApi.POST("/:slug/join", s.joinGame)
+	gameApi.POST("/:slug/vote", s.vote)
+	gameApi.POST("/:slug/progress", s.progressToNextPhase)
+	gameApi.GET("/:slug", s.getGame)
 
 	address := fmt.Sprintf(":%d", c.FullHouse.Server.Port)
 	srv := &http.Server{
@@ -102,6 +105,15 @@ func (s *Server) Start(c config.Config) {
 
 func (s *Server) upHandler(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
+}
+
+func (s *Server) votingSchemes(ctx *gin.Context) {
+	votingSchemes := config.Configuration.FullHouse.VotingSchemes
+	result := []models.VotingScheme{}
+	for _, scheme := range votingSchemes {
+		result = append(result, models.VotingSchemeFromConfig(scheme))
+	}
+	ctx.JSON(http.StatusOK, result)
 }
 
 func (s *Server) getGame(ctx *gin.Context) {
