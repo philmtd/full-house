@@ -7,9 +7,6 @@ import (
 	"time"
 )
 
-var FibonacciVoteSchema = []float32{0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, -1}
-var ExtendedFibonacciSchema = []float32{0, 0.25, 0.5, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, -1}
-
 type Game struct {
 	Name            string
 	Slug            string
