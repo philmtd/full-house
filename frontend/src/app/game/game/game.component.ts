@@ -1,7 +1,7 @@
 import {Component} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {Api} from "../api/api.service";
-import {Game, GamePhase, GameState, Participant, Vote} from "../model";
+import {Game, GamePhase, GameState, Participant, Vote, VoteOption, VotingScheme} from "../model";
 import {Select, Store} from "@ngxs/store";
 import {SetCurrentUser, UserState} from "../../store/user/user.state";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
@@ -10,7 +10,7 @@ import {CreateUserDialogComponent} from "../../components/create-user-dialog/cre
 import {WebsocketApi} from "../api/websocket-api.service";
 import {first, map, tap} from "rxjs/operators";
 import {InvitePlayersDialogComponent} from "../../components/invite-players-dialog/invite-players-dialog.component";
-import {calculateAgreement} from "./agreement";
+import {calculateAgreement, isVoteNumerical} from "./agreement";
 
 export interface GameModel {
   name: string;
@@ -22,7 +22,7 @@ export interface GameModel {
   voteAverage: number;
   agreement: number | null;
   agreementEmoji: string;
-  votingScheme: Array<number>;
+  votingScheme: VotingScheme;
 }
 
 export interface ParticipantModel {
@@ -126,9 +126,9 @@ export class GameComponent {
 
   private toGameModel(game: Game, currentUser: Participant): GameModel {
     const voteCount = Object.values(game.gameState.votesByParticipantId).filter(v => v.voted).length;
-    const nonNegativeVoteCount = Object.values(game.gameState.votesByParticipantId).filter(v => v.voted && v.vote != undefined && v.vote >= 0).length;
-    const voteSum = Object.values(game.gameState.votesByParticipantId).filter(v => v.voted && v.vote && v.vote >= 0).map(v => v.vote!).reduce((a, b) => a + b, 0);
-    const voteAverage = Math.round((nonNegativeVoteCount > 0 ? voteSum / nonNegativeVoteCount : 0) * 100) / 100;
+    const nonQuestionmarkVoteCount = Object.values(game.gameState.votesByParticipantId).filter(v => v.voted && isVoteNumerical(v)).length;
+    const voteSum = Object.values(game.gameState.votesByParticipantId).filter(v => v.voted && isVoteNumerical(v)).map(v => v.vote! as number).reduce((a, b) => a + b, 0);
+    const voteAverage = Math.round((nonQuestionmarkVoteCount > 0 ? voteSum / nonQuestionmarkVoteCount : 0) * 100) / 100;
     const agreement = calculateAgreement(Object.values(game.gameState.votesByParticipantId));
     return {
       name: game.name,
@@ -143,6 +143,8 @@ export class GameComponent {
       votingScheme: game.votingScheme
     }
   }
+
+
 
   private getAgreementEmoji(agreement: number | null): string {
     if (agreement == null) {
@@ -160,7 +162,7 @@ export class GameComponent {
     }
   }
 
-  public selectOption(option: number) {
+  public selectOption(option: VoteOption) {
     if (this.game?.self?.vote.vote == option) {
       this.api.vote(this.game!.slug, undefined).subscribe()
     } else {

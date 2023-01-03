@@ -10,13 +10,13 @@ const (
 )
 
 type VoteDTO struct {
-	Voted bool     `json:"voted"`
-	Vote  *float32 `json:"vote"`
+	Voted bool `json:"voted"`
+	Vote  any  `json:"vote"`
 }
 
 type GameState struct {
 	Phase                GamePhase
-	VotesByParticipantId map[string]float32
+	VotesByParticipantId map[string]any
 	LastTransition       time.Time
 }
 
@@ -52,7 +52,7 @@ func (g *GameState) ProgressToNextPhase() {
 	if g.Phase == VOTING {
 		g.Phase = REVEALED
 	} else {
-		g.VotesByParticipantId = make(map[string]float32)
+		g.VotesByParticipantId = make(map[string]any)
 		g.Phase = VOTING
 	}
 	g.LastTransition = time.Now()

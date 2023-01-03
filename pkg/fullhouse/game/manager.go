@@ -57,7 +57,7 @@ func New(websocketHub *websocket.WebsocketHub, ctx context.Context) *GameManager
 		ctx:          ctx,
 	}
 	manager.cleanOldGamesPeriodically()
-	go manager.handleWebsocketDisconnects(ctx)
+	manager.websocketHub.SubscribeToUnregistrations(manager)
 
 	promauto.NewGaugeFunc(prometheus.GaugeOpts{
 		Name: "full_house_active_games_size",
@@ -158,7 +158,7 @@ func (g *GameManager) Vote(slug string, vote *models.VoteDTO, participantId stri
 
 	gameBySlug.Lock.Lock()
 	if vote.Vote != nil {
-		gameBySlug.GameState.VotesByParticipantId[participantId] = *vote.Vote
+		gameBySlug.GameState.VotesByParticipantId[participantId] = vote.Vote
 	} else {
 		delete(gameBySlug.GameState.VotesByParticipantId, participantId)
 	}
@@ -268,26 +268,14 @@ func (g *GameManager) cleanOldGamesPeriodically() {
 	}()
 }
 
-func (g *GameManager) handleWebsocketDisconnects(ctx context.Context) {
-	in := make(chan string)
-	g.websocketHub.SubscribeToUnregistrations(in)
-	for {
-		select {
-		case unregisteredId := <-in:
-			func() {
-				gamesLock.RLock()
-				defer gamesLock.RUnlock()
+func (g *GameManager) AllWebsocketSessionsWithIdUnregistered(sessionId string) {
+	gamesLock.RLock()
+	defer gamesLock.RUnlock()
 
-				for _, game := range g.games {
-					if g.websocketHub.CountClientsWithSessionId(unregisteredId) == 0 {
-						if game.CountParticipantsBySessionId(unregisteredId) > 0 {
-							go g.delayedRemoval(game.Slug, unregisteredId)
-						}
-					}
-				}
-			}()
-		case <-ctx.Done():
-			break
+	for _, game := range g.games {
+		if game.CountParticipantsBySessionId(sessionId) > 0 {
+			g.log.Debugw("starting delayed removal of user in game", "slug", game.Slug, "sessionId", sessionId)
+			go g.delayedRemoval(game.Slug, sessionId)
 		}
 	}
 }
