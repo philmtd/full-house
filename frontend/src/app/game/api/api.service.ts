@@ -1,7 +1,7 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {Game, Participant} from "../model";
+import {Game, Participant, VoteOption, VotingScheme} from "../model";
 
 @Injectable()
 export class Api {
@@ -9,7 +9,11 @@ export class Api {
   constructor(private client: HttpClient) {
   }
 
-  public createNewGame(name: string, scheme: Array<number>): Observable<Game> {
+  public votingSchemes(): Observable<Array<VotingScheme>> {
+    return this.client.get<Array<VotingScheme>>(`/api/game/votingSchemes`);
+  }
+
+  public createNewGame(name: string, scheme: VotingScheme): Observable<Game> {
     return this.client.post<Game>(`/api/game/new`, {
       name: name,
       votingScheme: scheme
@@ -30,7 +34,7 @@ export class Api {
     return this.client.post<Game>(`/api/game/${slug}/join`, participant);
   }
 
-  public vote(slug: string, vote?: number): Observable<any> {
+  public vote(slug: string, vote?: VoteOption): Observable<any> {
     return this.client.post(`/api/game/${slug}/vote`, {
       vote: vote,
       voted: vote !== undefined

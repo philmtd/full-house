@@ -26,18 +26,40 @@ helm repo add philmtd https://philmtd.github.io/helm-charts
 
 ## Configuration
 
-No configuration is required to run Full House.
+Full House runs perfectly fine with the default configuration.
+
+### Customising voting schemes
+It is possible to adjust the available voting schemes from which the users can choose when creating a new game. 
+Per default there are the following two schemes available:
+
+```yaml
+fullHouse:
+  votingSchemes:
+    - name: Fibonacci
+      scheme: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+      includesQuestionmark: true
+    - name: Extended Fibonacci
+      scheme: [0, 0.25, 0.5, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+      includesQuestionmark: true
+```
+
+If you want your own custom voting schemes you need to place your configuration in a `fullhouse.yaml` in the `config` sub-directory
+of the Full House installation directory.
+
+Each scheme needs a name, the numbers available to vote (need to be 0 or greater, can be floating point numbers) and you can define whether 
+to include a questionmark `?` voting card or not. If you use a custom config the defaults will be overwritten, so if you want to include the default
+schemes just copy them into your configuration.
 
 ## Persistence
 
-Full House is a super simple application: It does not persist any data. All the state is kept in memory.
+Full House does not persist any data. All the state is kept in memory.
 
 This has some theoretical downsides:
 
 * Restarting the application will wipe all currently running games and the players will have to create a new game.
 * As memory is unique to the application, Full House cannot be scaled horizontally.
 
-Practically you'll probably not be confronted with these minor inconveniences.
+Practically these should not appear as problems at the scale this app is intended for.
 
 ## Screenshots
 
