@@ -11,8 +11,8 @@ import (
 var log = logger.New("full-house")
 var rootCmd *cobra.Command
 
-var GitCommit = "dev"
-var GitTag = "dev"
+var GitCommit = ""
+var GitTag = ""
 var commandVersion string
 
 func init() {

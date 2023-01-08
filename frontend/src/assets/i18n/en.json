@@ -14,6 +14,9 @@
       "auto": "Auto",
       "dark": "Dark",
       "light": "Light"
+    },
+    "navigation": {
+      "appInfo": "Full House Version: {version}"
     }
   },
   "game": {

@@ -1,7 +1,7 @@
 import {HttpClient} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {Game, Participant, VoteOption, VotingScheme} from "../model";
+import {AppInfo, Game, Participant, VoteOption, VotingScheme} from "../model";
 
 @Injectable()
 export class Api {
@@ -11,6 +11,10 @@ export class Api {
 
   public votingSchemes(): Observable<Array<VotingScheme>> {
     return this.client.get<Array<VotingScheme>>(`/api/game/votingSchemes`);
+  }
+
+  public appInfo(): Observable<AppInfo> {
+    return this.client.get<AppInfo>(`/api/info`);
   }
 
   public createNewGame(name: string, scheme: VotingScheme): Observable<Game> {
