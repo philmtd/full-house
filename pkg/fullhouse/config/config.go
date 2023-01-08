@@ -61,6 +61,7 @@ type Config struct {
 
 type GameConfig struct {
 	Server        ServerConfig   `yaml:"server" validate:"required,dive"`
+	Metrics       MetricsConfig  `yaml:"metrics" validate:"required,dive"`
 	Mode          Mode           `yaml:"mode"`
 	VotingSchemes []VotingScheme `yaml:"votingSchemes" validate:"required,dive"`
 }
@@ -78,5 +79,9 @@ const (
 )
 
 type ServerConfig struct {
+	Port int `yaml:"port" validate:"required,number"`
+}
+
+type MetricsConfig struct {
 	Port int `yaml:"port" validate:"required,number"`
 }

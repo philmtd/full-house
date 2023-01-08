@@ -1,9 +1,8 @@
 GO         ?= go
 LINTER     ?= golangci-lint
 GO_TESTSUM ?= gotestsum
-GIT_DIRTY  := $(shell git diff --quiet || echo '-dirty')
 VERSION	   := $(shell [ -z $$(git tag --points-at HEAD) ] && echo "unknown" || echo $$(git tag --points-at HEAD))
-COMMIT     := $(shell git rev-parse --short HEAD)$(GIT_DIRTY)
+COMMIT     := $(shell git rev-parse --short HEAD)
 LDFLAGS    += -ldflags '-extldflags "-static" -s -w -X=main.GitTag=$(VERSION) -X=main.GitCommit=$(COMMIT)' # -s -w reduces binary size by removing some debug information
 BUILDFLAGS += -installsuffix cgo --tags release
 
@@ -40,7 +39,6 @@ prepare:
 
 build:
 	$(GO) build -o $(CMD) -a $(BUILDFLAGS) $(LDFLAGS) $(CMD_SRC)
-	upx $(CMD) # reduce binary size
 
 build-for-docker:
 	CGO_ENABLED=0 GOOS=linux $(GO) build -o $(CMD) -a $(BUILDFLAGS) $(LDFLAGS) $(CMD_SRC)

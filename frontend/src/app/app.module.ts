@@ -32,13 +32,14 @@ import {InvitePlayersDialogComponent} from "./components/invite-players-dialog/i
 import {configureSvgIcons, configureTranslations, provideAnimationDriverBasedOnUserPreferences} from "./configuration/configuration";
 import {ParticipantComponent} from "./game/participant/participant.component";
 import {AnimationDriver} from "@angular/animations/browser";
-import {MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions} from "@angular/material/tooltip";
+import {MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions, MatTooltipModule} from "@angular/material/tooltip";
 import {ThemingState} from "./store/theming/theming.state";
 import {ThemeSwitcherComponent} from "./components/theme-switcher/theme-switcher.component";
 import {MatMenuModule} from "@angular/material/menu";
 import {FractionFilterPipe} from "./game/game/fraction-filter.pipe";
-import {TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
+import {TranslateCompiler, TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
@@ -74,11 +75,16 @@ export function HttpLoaderFactory(http: HttpClient) {
     NgxsLoggerPluginModule.forRoot(),
     MatIconModule,
     MatMenuModule,
+    MatTooltipModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
+      },
+      compiler: {
+        provide: TranslateCompiler,
+        useClass: TranslateMessageFormatCompiler
       }
     })
   ],

@@ -1,7 +1,7 @@
 <div class="nav-container fx-layout-row">
   <nav class="fx-flex fx-layout-row fx-align--start-x fx-align--x-center fx-gap--1em">
     <a class="fx-layout-row fx-align--start-x fx-align--x-center fx-gap--1em" routerLink="/">
-      <img [src]="logoSrc" alt="Full House Logo" />
+      <img [matTooltip]="'components.navigation.appInfo' | translate:{version: version}" [src]="logoSrc" alt="Full House Logo" />
       <h1>{{ navTitle || "Full House" }}</h1>
     </a>
     <div class="fx-flex"></div>
