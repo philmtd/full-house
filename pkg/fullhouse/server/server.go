@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"fullhouse/pkg/fullhouse/config"
 	"fullhouse/pkg/fullhouse/game"
@@ -14,7 +13,6 @@ import (
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -29,12 +27,17 @@ type Server struct {
 	websocketHandler *websocket.WebsocketHandler
 	ctx              context.Context
 }
+type appInfo struct {
+	Version string `json:"version"`
+}
 
-var appVersion string
+var info appInfo
 
 func New(ctx context.Context, version string) Server {
 	handler := websocket.NewWebsocketHandler()
-	appVersion = version
+	info = appInfo{
+		Version: version,
+	}
 	return Server{
 		log:              logger.New("server"),
 		manager:          game.New(handler.Hub, ctx),
@@ -44,7 +47,7 @@ func New(ctx context.Context, version string) Server {
 }
 
 func (s *Server) Start(c config.Config) {
-	metrics.RegisterCommonMetrics(appVersion)
+	metrics.RegisterCommonMetrics(info.Version)
 
 	if c.FullHouse.Mode == config.PRODUCTION {
 		gin.SetMode(gin.ReleaseMode)
@@ -54,23 +57,24 @@ func (s *Server) Start(c config.Config) {
 
 	r := gin.New()
 
-	r.Use(ginzap.GinzapWithConfig(s.log.Desugar(), &ginzap.Config{
+	ginzapMiddleware := ginzap.GinzapWithConfig(s.log.Desugar(), &ginzap.Config{
 		TimeFormat: time.RFC3339,
 		UTC:        false,
 		SkipPaths:  []string{"/up", "/metrics"},
-	}))
+	})
+	r.Use(ginzapMiddleware)
 
 	r.Use(static.Serve("/", static.LocalFile("frontend", true)))
 	r.NoRoute(func(c *gin.Context) {
 		c.File(path.Join("frontend", "index.html"))
 	})
 
-	r.GET("/metrics", metrics.PrometheusHandler())
 	r.GET("/up", s.upHandler)
 
 	api := r.Group("/api")
 	api.POST("/participant/new", s.newParticipant)
 	api.Any("/ws", s.wsHandler)
+	api.GET("/info", s.infoHandler)
 
 	gameApi := api.Group("/game")
 	gameApi.GET("/votingSchemes", s.votingSchemes)
@@ -80,17 +84,35 @@ func (s *Server) Start(c config.Config) {
 	gameApi.POST("/:slug/progress", s.progressToNextPhase)
 	gameApi.GET("/:slug", s.getGame)
 
-	address := fmt.Sprintf(":%d", c.FullHouse.Server.Port)
-	srv := &http.Server{
-		Addr:    address,
+	var servers []*http.Server
+
+	defaultServerAddress := fmt.Sprintf(":%d", c.FullHouse.Server.Port)
+	servers = append(servers, &http.Server{
+		Addr:    defaultServerAddress,
 		Handler: r,
+	})
+
+	if c.FullHouse.Metrics.Port == c.FullHouse.Server.Port {
+		r.GET("/metrics", metrics.PrometheusHandler())
+	} else {
+		metricsHandler := gin.New()
+		metricsHandler.Use(ginzapMiddleware)
+		metricsHandler.GET("/metrics", metrics.PrometheusHandler())
+		metricsServerAddress := fmt.Sprintf(":%d", c.FullHouse.Metrics.Port)
+		servers = append(servers, &http.Server{
+			Addr:    metricsServerAddress,
+			Handler: metricsHandler,
+		})
 	}
 
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen: %s\n", err)
-		}
-	}()
+	for _, server := range servers {
+		srv := server
+		go func() {
+			if err := srv.ListenAndServe(); err != nil {
+				s.log.Warnw("listen error", "server", srv.Addr, "error", err)
+			}
+		}()
+	}
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -98,8 +120,10 @@ func (s *Server) Start(c config.Config) {
 	s.log.Info("shutting down server")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("server forced to shutdown:", err)
+	for _, server := range servers {
+		if err := server.Shutdown(ctx); err != nil {
+			s.log.Fatalw("server forced to shutdown", "server", server.Addr, "error", err)
+		}
 	}
 }
 
@@ -204,4 +228,7 @@ func getSessionIdCookie(ctx *gin.Context) (string, error) {
 
 func (s *Server) wsHandler(c *gin.Context) {
 	s.websocketHandler.HandleMessages(c.Writer, c.Request)
+}
+func (s *Server) infoHandler(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, info)
 }
