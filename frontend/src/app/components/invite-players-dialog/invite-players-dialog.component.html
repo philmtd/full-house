@@ -3,7 +3,7 @@
   <div mat-dialog-content>
     <div class="fx-layout-column fx-align--x-center fx-align--center-x qr">
       <qrcode [qrdata]="gameUrl"
-              *ngIf="qrCodeVisible"
+              *ngIf="(qrCodeVisible$ | async)"
               elementType="svg"
               [colorLight]="'00000000'"
               cssClass="full-house-qr"
@@ -22,10 +22,10 @@
       </div>
     </button>
 
-    <button class="show-qr-button" tabindex="-1" mat-stroked-button color="primary" (click)="qrCodeVisible = !qrCodeVisible">
+    <button class="show-qr-button" tabindex="-1" mat-stroked-button color="primary" (click)="toggleQrCodeVisibility()">
       <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
         <mat-icon svgIcon="qr-code-scanner"></mat-icon>
-        <span>{{ 'components.invitePlayersDialog.showQrButton' | translate: {visible: qrCodeVisible} }}</span>
+        <span>{{ 'components.invitePlayersDialog.showQrButton' | translate: {visible: (qrCodeVisible$ | async)} }}</span>
       </div>
     </button>
   </div>

@@ -1,6 +1,9 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild} from "@angular/core";
 import {MatDialogRef} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
+import {Select, Store} from "@ngxs/store";
+import {Observable} from "rxjs";
+import {SettingsState, ToggleQrCodeVisibility} from "../../store/settings/settings.state";
 
 @Component({
   selector: 'invite-players-dialog-component',
@@ -10,13 +13,13 @@ import {Clipboard} from "@angular/cdk/clipboard";
 export class InvitePlayersDialogComponent implements AfterViewInit {
 
   public gameUrl: string;
-  public qrCodeVisible: boolean;
-
+  @Select(SettingsState.isInviteQrCodeVisible) qrCodeVisible$: Observable<boolean>;
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
   constructor(private dialogRef: MatDialogRef<InvitePlayersDialogComponent>,
               private clipboard: Clipboard,
-              private cd: ChangeDetectorRef) {
+              private cd: ChangeDetectorRef,
+              private store: Store) {
     this.gameUrl = window.location.toString();
   }
 
@@ -30,4 +33,7 @@ export class InvitePlayersDialogComponent implements AfterViewInit {
     this.cd.detectChanges();
   }
 
+  toggleQrCodeVisibility() {
+    this.store.dispatch(new ToggleQrCodeVisibility());
+  }
 }
