@@ -40,6 +40,7 @@ import {FractionFilterPipe} from "./game/game/fraction-filter.pipe";
 import {TranslateCompiler, TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
+import {QRCodeModule} from "angularx-qrcode";
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
@@ -76,6 +77,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
+    QRCodeModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

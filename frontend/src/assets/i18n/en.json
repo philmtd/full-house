@@ -8,7 +8,8 @@
     "invitePlayersDialog": {
       "title": "Invite players",
       "urlLabel": "URL",
-      "copyButton": "Copy game link"
+      "copyButton": "Copy game link",
+      "showQrButton": "{visible, select, true{Hide} other{Show}} QR code"
     },
     "themeSwitcher": {
       "auto": "Auto",

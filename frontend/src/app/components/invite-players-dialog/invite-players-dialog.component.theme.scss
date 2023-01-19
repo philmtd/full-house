@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@import "src/styles/mixins";
+
+@mixin invite-players-dialog-theme($theme) {
+  $primary: map-get($theme, primary);
+  .full-house-qr {
+    svg {
+      path {
+        stroke: mat.get-color-from-palette($primary, 500);
+      }
+    }
+  }
+}

@@ -1,15 +1,16 @@
-import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild} from "@angular/core";
 import {MatDialogRef} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
 
 @Component({
   selector: 'invite-players-dialog-component',
   templateUrl: 'invite-players-dialog.component.html',
-  styleUrls: ['./invite-players-dialog.component.scss']
+  styleUrls: ['./invite-players-dialog.component.scss'],
 })
 export class InvitePlayersDialogComponent implements AfterViewInit {
 
   public gameUrl: string;
+  public qrCodeVisible: boolean;
 
   @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
