@@ -27,6 +27,7 @@
     "@ngxs/logger-plugin": "3.7.6",
     "@ngxs/storage-plugin": "3.7.6",
     "@ngxs/store": "3.7.6",
+    "angularx-qrcode": "^15.0.1",
     "css-fx-layout": "2.1.0",
     "ngx-translate-messageformat-compiler": "^6.2.0",
     "rxjs": "~7.8.0",
