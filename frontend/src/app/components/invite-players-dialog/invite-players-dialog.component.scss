@@ -1,12 +1,20 @@
 .invite-players-dialog {
   padding: 2em;
 
-  h1 {
+  h2 {
     margin: 0;
   }
 
   mat-form-field, button {
     width: 100%;
+  }
+
+  .show-qr-button {
+    margin-top: 1em;
+  }
+
+  .qr {
+    margin-bottom: 1em;
   }
 
 }

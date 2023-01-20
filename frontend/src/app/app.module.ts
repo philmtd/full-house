@@ -40,6 +40,8 @@ import {FractionFilterPipe} from "./game/game/fraction-filter.pipe";
 import {TranslateCompiler, TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
+import {QRCodeModule} from "angularx-qrcode";
+import {SettingsState} from "./store/settings/settings.state";
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
@@ -70,12 +72,13 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     HttpClientModule,
     NgxsModule.forRoot(appStates, {developmentMode: !environment.production}),
-    NgxsStoragePluginModule.forRoot({key: [UserState, ThemingState]}),
+    NgxsStoragePluginModule.forRoot({key: [UserState, ThemingState, SettingsState]}),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot(),
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
+    QRCodeModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

@@ -1,10 +1,32 @@
 <div class="invite-players-dialog fx-layout-column fx-gap--2em">
   <h2 mat-dialog-title>{{ 'components.invitePlayersDialog.title' | translate }}</h2>
   <div mat-dialog-content>
+    <div class="fx-layout-column fx-align--x-center fx-align--center-x qr">
+      <qrcode [qrdata]="gameUrl"
+              *ngIf="(qrCodeVisible$ | async)"
+              elementType="svg"
+              [colorLight]="'00000000'"
+              cssClass="full-house-qr"
+              [margin]="0"
+              [width]="240">
+      </qrcode>
+    </div>
     <mat-form-field appearance="fill">
       <mat-label>{{ 'components.invitePlayersDialog.urlLabel' | translate }}</mat-label>
-      <input matInput #input autofocus readonly name="gameurl" [value]="gameUrl" />
+      <input matInput #input autofocus readonly name="gameurl" [value]="gameUrl"/>
     </mat-form-field>
-    <button mat-flat-button color="primary" (click)="copyUrl()">{{ 'components.invitePlayersDialog.copyButton' | translate }}</button>
+    <button mat-flat-button color="primary" (click)="copyUrl()">
+      <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
+        <mat-icon svgIcon="content-copy"></mat-icon>
+        <span>{{ 'components.invitePlayersDialog.copyButton' | translate }}</span>
+      </div>
+    </button>
+
+    <button class="show-qr-button" tabindex="-1" mat-stroked-button color="primary" (click)="toggleQrCodeVisibility()">
+      <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
+        <mat-icon svgIcon="qr-code-scanner"></mat-icon>
+        <span>{{ 'components.invitePlayersDialog.showQrButton' | translate: {visible: (qrCodeVisible$ | async)} }}</span>
+      </div>
+    </button>
   </div>
 </div>
