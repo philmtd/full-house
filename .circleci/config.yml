@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   backend:
     docker:
-      - image: registry.hub.docker.com/philmtd/golang-builder:1.0.0
+      - image: registry.hub.docker.com/philmtd/golang-builder:1.2.0
     steps:
       - checkout
       - restore_cache:
@@ -17,17 +17,17 @@ jobs:
             - "/go/pkg/mod"
       - run:
           name: Run tests
-          command: make go-test-ci
+          command: mage testci
       - store_test_results:
           path: ./test_results.xml
       - run:
           name: Lint
-          command: make go-lint-ci
+          command: mage lintci
       - store_test_results:
           path: ./linter_results.xml
       - run:
           name: Build the application
-          command: make go-build-for-docker
+          command: mage buildfordocker
       - run: mkdir ./circle-artifacts && cp ./full-house ./circle-artifacts/
       - save_cache:
           key: full-house-backend-{{ or .Environment.CIRCLE_TAG .Environment.CIRCLE_SHA1 }}
