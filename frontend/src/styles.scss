@@ -2,7 +2,7 @@
 @import "styles/typography";
 
 @include fx.class-selectors;
-@include fx.gap-class-selectors(1, 10, px em);
+@include fx.gap-class-selectors(1, 10, 1, px em);
 
 html, body {
   height: 100%;
