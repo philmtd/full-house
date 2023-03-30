@@ -24,7 +24,7 @@
     "@messageformat/core": "^3.0.1",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
-    "@ngxs/logger-plugin": "3.7.6",
+    "@ngxs/logger-plugin": "3.8.0",
     "@ngxs/storage-plugin": "3.7.6",
     "@ngxs/store": "3.7.6",
     "angularx-qrcode": "^15.0.1",
