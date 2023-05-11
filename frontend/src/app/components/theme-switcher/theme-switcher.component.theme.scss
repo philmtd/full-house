@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import "src/styles/mixins";
+@import "../../../styles/mixins";
 
 @mixin theme-switcher-component-theme($theme) {
   $primary: map-get($theme, primary);
