@@ -69,3 +69,79 @@ The UI has light and dark modes:
 |--------------------------------------------------|----------------------------------------------------|
 | ![Voting in light mode](./docs/voting-light.png) | ![Results in light mode](./docs/results-light.png) |
 | ![Voting in light mode](./docs/voting-dark.png)  | ![Results in dark mode](./docs/results-dark.png)   |
+
+## Development
+
+To build the project you need the following tools installed:
+
+* Go
+* [Mage](https://magefile.org/)
+* NodeJS / npm
+
+### Build locally
+
+To build the app, you need to build the frontend and the backend.
+
+The backend can be built with mage:
+
+```bash
+go mod download # if not done yet
+mage build
+```
+
+This command will build the application for the system you're running the build on. If you need to cross-compile it for another
+system, you'll need to change the parameters passed to the Go compiler in the [magefile](./magefiles/magefile.go).
+
+The build the frontend you need to use `npm` in the `frontend` directory:
+
+```bash
+npm install # if not done yet
+npm run build
+```
+
+### Running the built application
+
+The application expects the following directory structure:
+
+```
+full-house # the compiled application
+config/ # config directory
+├─ fullhouse-default.yaml # default configuration
+├─ fullhouse.yaml # optional
+frontend/ # the compiled frontend (contents from the dist directory)
+├─ ...
+```
+
+Given this structure, you can run Full House:
+
+```bash
+./full-house server
+```
+
+### Build for Docker
+
+Build the frontend as described above. Then run:
+
+```bash
+mage buildForDocker
+```
+
+This will compile the project and build the Docker image `philmtd/full-house`.
+
+### Running for development
+
+You can start the frontend development server in the frontend directory with
+
+```yaml
+npm start
+```
+
+The frontend will be available on port `4200`.
+
+To run the backend, run the `fullhouse/cmd/fullhouse` package with the `server` argument:
+
+```yaml
+go run fullhouse/cmd/fullhouse server 
+```
+
+This can of course be configured as a run configuration in your favorite IDE.
