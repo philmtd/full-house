@@ -19,7 +19,7 @@
     "@angular/forms": "^16.1.6",
     "@angular/material": "^16.1.5",
     "@angular/platform-browser": "^16.1.6",
-    "@angular/platform-browser-dynamic": "^16.1.5",
+    "@angular/platform-browser-dynamic": "^16.1.7",
     "@angular/router": "^16.1.5",
     "@messageformat/core": "^3.2.0",
     "@ngx-translate/core": "^15.0.0",
