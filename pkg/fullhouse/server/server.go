@@ -10,9 +10,9 @@ import (
 	"fullhouse/pkg/fullhouse/models"
 	"fullhouse/pkg/fullhouse/websocket"
 	"github.com/gin-contrib/static"
-	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
+	sloggin "github.com/samber/slog-gin"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -22,7 +22,7 @@ import (
 )
 
 type Server struct {
-	log              *zap.SugaredLogger
+	log              *slog.Logger
 	manager          *game.GameManager
 	websocketHandler *websocket.WebsocketHandler
 	ctx              context.Context
@@ -57,12 +57,8 @@ func (s *Server) Start(c config.Config) {
 
 	r := gin.New()
 
-	ginzapMiddleware := ginzap.GinzapWithConfig(s.log.Desugar(), &ginzap.Config{
-		TimeFormat: time.RFC3339,
-		UTC:        false,
-		SkipPaths:  []string{"/up", "/metrics"},
-	})
-	r.Use(ginzapMiddleware)
+	slogMiddleware := sloggin.NewWithConfig(s.log, sloggin.Config{})
+	r.Use(slogMiddleware)
 
 	r.Use(static.Serve("/", static.LocalFile("frontend", true)))
 	r.NoRoute(func(c *gin.Context) {
@@ -96,7 +92,7 @@ func (s *Server) Start(c config.Config) {
 		r.GET("/metrics", metrics.PrometheusHandler())
 	} else {
 		metricsHandler := gin.New()
-		metricsHandler.Use(ginzapMiddleware)
+		metricsHandler.Use(slogMiddleware)
 		metricsHandler.GET("/metrics", metrics.PrometheusHandler())
 		metricsServerAddress := fmt.Sprintf(":%d", c.FullHouse.Metrics.Port)
 		servers = append(servers, &http.Server{
@@ -109,7 +105,7 @@ func (s *Server) Start(c config.Config) {
 		srv := server
 		go func() {
 			if err := srv.ListenAndServe(); err != nil {
-				s.log.Warnw("listen error", "server", srv.Addr, "error", err)
+				s.log.Warn("listen error", slog.String("server", srv.Addr), slog.Any("error", err))
 			}
 		}()
 	}
@@ -122,7 +118,7 @@ func (s *Server) Start(c config.Config) {
 	defer cancel()
 	for _, server := range servers {
 		if err := server.Shutdown(ctx); err != nil {
-			s.log.Fatalw("server forced to shutdown", "server", server.Addr, "error", err)
+			s.log.Error("server forced to shutdown", slog.String("server", server.Addr), slog.Any("error", err))
 		}
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"fullhouse/pkg/fullhouse/utils"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"go.uber.org/zap"
+	"log/slog"
 	"strings"
 	"sync"
 )
@@ -28,7 +28,7 @@ type UnregisterObserver interface {
 }
 
 type WebsocketHub struct {
-	log                 *zap.SugaredLogger
+	log                 *slog.Logger
 	broadcast           chan []byte
 	register            chan *WebsocketClient
 	unregister          chan *WebsocketClient
@@ -61,12 +61,12 @@ func (h *WebsocketHub) CountClientsWithSessionId(id string) int {
 		}
 		return true
 	})
-	h.log.Debugw("counted clients with session id", "id", id, "count", count)
+	h.log.Debug("counted clients with session id", slog.String("id", id), slog.Int("count", count))
 	return count
 }
 
 func (h *WebsocketHub) BroadcastToClients(message interface{}, clientIds []string) {
-	h.log.Debugw("broadcasting to clients", "clientIds", clientIds)
+	h.log.Debug("broadcasting to clients", slog.Any("clientIds", clientIds))
 	msg, err := json.Marshal(message)
 	if err != nil {
 		return
@@ -89,7 +89,7 @@ func (h *WebsocketHub) BroadcastToClients(message interface{}, clientIds []strin
 }
 
 func (h *WebsocketHub) unregisterClient(client *WebsocketClient) {
-	h.log.Debugw("unregistering client", "sessionId", client.sessionId)
+	h.log.Debug("unregistering client", slog.String("sessionId", client.sessionId))
 	lock.Lock()
 	defer lock.Unlock()
 	var doUnregister = false
@@ -102,7 +102,7 @@ func (h *WebsocketHub) unregisterClient(client *WebsocketClient) {
 		activeWebsocketSessions.Dec()
 
 		if h.CountClientsWithSessionId(client.sessionId) == 0 {
-			h.log.Debugw("All websocket sessions with id unregistered. Notifying observers.", "sessionId", client.sessionId)
+			h.log.Debug("All websocket sessions with id unregistered. Notifying observers.", slog.String("sessionId", client.sessionId))
 			for _, listener := range h.unregisterObservers {
 				listener.AllWebsocketSessionsWithIdUnregistered(client.sessionId)
 			}
@@ -111,13 +111,13 @@ func (h *WebsocketHub) unregisterClient(client *WebsocketClient) {
 }
 
 func (h *WebsocketHub) registerClient(client *WebsocketClient) {
-	h.log.Debugw("registering client", "sessionId", client.sessionId)
+	h.log.Debug("registering client", slog.String("sessionId", client.sessionId))
 	h.clients.Put(client, true)
 	activeWebsocketSessions.Inc()
 }
 
 func (h *WebsocketHub) onBroadcast(message []byte) {
-	h.log.Debugw("broadcasting message to all")
+	h.log.Debug("broadcasting message to all")
 	h.clients.Range(func(client *WebsocketClient, value bool) bool {
 		select {
 		case client.send <- message:
