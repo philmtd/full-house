@@ -57,7 +57,9 @@ func (s *Server) Start(c config.Config) {
 
 	r := gin.New()
 
-	slogMiddleware := sloggin.NewWithConfig(s.log, sloggin.Config{})
+	slogMiddleware := sloggin.NewWithConfig(s.log, sloggin.Config{
+		DefaultLevel: logger.LevelTrace,
+	})
 	r.Use(slogMiddleware)
 
 	r.Use(static.Serve("/", static.LocalFile("frontend", true)))

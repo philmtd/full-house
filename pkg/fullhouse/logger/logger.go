@@ -10,6 +10,8 @@ import (
 
 var rootLogger *slog.Logger
 
+const LevelTrace = slog.Level(-8)
+
 func init() {
 	mode := config.Configuration.FullHouse.Mode
 	var (
