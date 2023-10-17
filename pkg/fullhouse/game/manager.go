@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"go.uber.org/zap"
+	"log/slog"
 	"strings"
 	"sync"
 	"time"
@@ -44,7 +44,7 @@ var (
 
 type GameManager struct {
 	games        []*models.Game
-	log          *zap.SugaredLogger
+	log          *slog.Logger
 	websocketHub *websocket.WebsocketHub
 	ctx          context.Context
 }
@@ -99,7 +99,7 @@ func (g *GameManager) CreateGame(game *models.GameDTO) *models.GameDTO {
 	gamesLock.Lock()
 	g.games = append(g.games, createdGame)
 	gamesLock.Unlock()
-	g.log.Infow("created new game", "name", createdGame.Name, "slug", createdGame.Slug)
+	g.log.Info("created new game", slog.String("name", createdGame.Name), slog.String("slug", createdGame.Slug))
 	totalCreatedGamesCounter.Inc()
 	return models.ToGameDto(createdGame)
 }
@@ -138,7 +138,7 @@ func (g *GameManager) JoinGame(slug string, dto *models.ParticipantDTO, sessionI
 	}
 	if !exists {
 		game.Participants = append(game.Participants, participant)
-		g.log.Infow("player joined game", "slug", slug, "sessionId", sessionId, "playerName", participant.Name)
+		g.log.Info("player joined game", slog.String("slug", slug), slog.String("sessionId", sessionId), slog.String("playerName", participant.Name))
 	}
 	game.Lock.Unlock()
 	g.updateInteractionTimestamp(slug)
@@ -181,13 +181,13 @@ func (g *GameManager) ProgressGameToNextState(slug string) error {
 	}
 
 	if gameBySlug.GameState.LastTransition.Add(3 * time.Second).After(time.Now()) {
-		g.log.Infow("not progressing game to next state because the last transition occurred less than 3 seconds ago", "slug", slug)
+		g.log.Info("not progressing game to next state because the last transition occurred less than 3 seconds ago", slog.String("slug", slug))
 
 		return nil
 	}
 
 	gameBySlug.GameState.ProgressToNextPhase()
-	g.log.Infow("progressing game to next state", "slug", slug, "newPhase", gameBySlug.GameState.Phase)
+	g.log.Info("progressing game to next state", slog.String("slug", slug), slog.String("newPhase", gameBySlug.GameState.Phase))
 	g.updateInteractionTimestamp(slug)
 	defer g.broadcastGameState(slug)
 	return nil
@@ -234,7 +234,7 @@ func (g *GameManager) cleanOldGamesPeriodically() {
 		gamesLock.Lock()
 		defer gamesLock.Unlock()
 
-		g.log.Debugw("checking for expired games")
+		g.log.Debug("checking for expired games")
 		now := time.Now()
 		toRemove := []int{}
 		for idx, game := range g.games {
@@ -245,7 +245,7 @@ func (g *GameManager) cleanOldGamesPeriodically() {
 				continue
 			}
 			if game.LastInteraction.Add(1 * time.Hour).Before(now) {
-				g.log.Infow("game timed out", "slug", game.Slug)
+				g.log.Info("game timed out", slog.String("slug", game.Slug))
 				toRemove = append(toRemove, idx)
 			}
 		}
@@ -274,7 +274,7 @@ func (g *GameManager) AllWebsocketSessionsWithIdUnregistered(sessionId string) {
 
 	for _, game := range g.games {
 		if game.CountParticipantsBySessionId(sessionId) > 0 {
-			g.log.Debugw("starting delayed removal of user in game", "slug", game.Slug, "sessionId", sessionId)
+			g.log.Debug("starting delayed removal of user in game", slog.String("slug", game.Slug), slog.String("sessionId", sessionId))
 			go g.delayedRemoval(game.Slug, sessionId)
 		}
 	}
@@ -287,7 +287,7 @@ func (g *GameManager) delayedRemoval(slug, unregisteredId string) {
 		if err != nil {
 			return
 		}
-		g.log.Debugw("removing disconnected participant from game", "slug", slug, "sessionId", unregisteredId)
+		g.log.Debug("removing disconnected participant from game", slog.String("slug", slug), slog.String("sessionId", unregisteredId))
 		if modified := game.RemoveParticipantBySessionId(unregisteredId); modified {
 			g.broadcastGameState(slug)
 		}

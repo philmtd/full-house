@@ -2,12 +2,12 @@ package websocket
 
 import (
 	"fullhouse/pkg/fullhouse/logger"
-	"go.uber.org/zap"
+	"log/slog"
 	"net/http"
 )
 
 type WebsocketHandler struct {
-	log *zap.SugaredLogger
+	log *slog.Logger
 	Hub *WebsocketHub
 }
 
@@ -23,12 +23,12 @@ func NewWebsocketHandler() *WebsocketHandler {
 func (h *WebsocketHandler) HandleMessages(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		h.log.Error(err)
+		h.log.Error("Error during upgrade", slog.Any("error", err))
 		return
 	}
 	sessionId, err := r.Cookie("SESSION_ID")
 	if err != nil {
-		h.log.Error(err)
+		h.log.Error("Error reading session id cookie", slog.Any("error", err))
 		return
 	}
 	client := &WebsocketClient{hub: h.Hub, conn: conn, send: make(chan []byte, 512), sessionId: sessionId.Value, log: logger.New("WebsocketClient")}

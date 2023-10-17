@@ -3,8 +3,8 @@ package websocket
 import (
 	"bytes"
 	"github.com/gorilla/websocket"
-	"go.uber.org/zap"
 	"log"
+	"log/slog"
 	"time"
 )
 
@@ -36,7 +36,7 @@ type WebsocketClient struct {
 	conn      *websocket.Conn
 	send      chan []byte
 	sessionId string
-	log       *zap.SugaredLogger
+	log       *slog.Logger
 }
 
 func (c *WebsocketClient) readPump() {

@@ -1,38 +1,44 @@
 package logger
 
 import (
-	"fmt"
 	"fullhouse/pkg/fullhouse/config"
-	"go.uber.org/zap"
+	"github.com/lmittmann/tint"
+	"github.com/mattn/go-isatty"
+	"log/slog"
+	"os"
 )
 
-var rootLogger *zap.SugaredLogger
+var rootLogger *slog.Logger
+
+const LevelTrace = slog.Level(-8)
 
 func init() {
 	mode := config.Configuration.FullHouse.Mode
 	var (
-		logger *zap.Logger
-		err    error
+		handler slog.Handler
 	)
 	if mode == config.DEVELOPMENT {
-		logger, err = zap.NewDevelopment(zap.AddCaller(), zap.AddCallerSkip(1))
+		handler = tint.NewHandler(os.Stdout, &tint.Options{
+			AddSource:   true,
+			Level:       slog.LevelDebug,
+			ReplaceAttr: nil,
+			NoColor:     !isatty.IsTerminal(os.Stderr.Fd()),
+		})
 	} else if mode == config.PRODUCTION {
-		logger, err = zap.NewProduction(zap.AddCaller(), zap.AddCallerSkip(1))
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelDebug,
+		})
 	} else {
-		logger = zap.NewNop()
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			AddSource: true,
+			Level:     slog.LevelError,
+		})
 	}
 
-	if err != nil {
-		panic(fmt.Sprintf("failed to setup logging: %v", err))
-	}
-
-	rootLogger = logger.Sugar()
+	rootLogger = slog.New(handler)
 }
 
-func New(name string) *zap.SugaredLogger {
-	return rootLogger.Named(name)
-}
-
-func Root() *zap.SugaredLogger {
-	return rootLogger
+func New(name string) *slog.Logger {
+	return rootLogger.With(slog.String("logger", name))
 }
