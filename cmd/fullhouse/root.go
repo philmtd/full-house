@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"fullhouse/pkg/fullhouse/logger"
 	"github.com/spf13/cobra"
+	"log/slog"
 	"os"
 )
 
@@ -39,7 +40,7 @@ func init() {
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Error(err, "command failed")
+		log.Error("command failed", slog.Any("error", err))
 		os.Exit(1)
 	}
 }
