@@ -8,7 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.15.5
 	github.com/google/uuid v1.3.1
 	github.com/gorilla/websocket v1.5.0
-	github.com/lmittmann/tint v1.0.2
+	github.com/lmittmann/tint v1.0.3
 	github.com/magefile/mage v1.15.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/prometheus/client_golang v1.17.0
