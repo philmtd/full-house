@@ -86,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "planning-poker:build:production"
+              "buildTarget": "planning-poker:build:production"
             },
             "development": {
-              "browserTarget": "planning-poker:build:development"
+              "buildTarget": "planning-poker:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -97,7 +97,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "planning-poker:build"
+            "buildTarget": "planning-poker:build"
           }
         },
         "test": {
