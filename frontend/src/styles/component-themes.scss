@@ -1,7 +1,7 @@
-@import "src/app/components/invite-players-dialog/invite-players-dialog.component.theme";
-@import "src/app/components/theme-switcher/theme-switcher.component.theme";
-@import "src/app/game/game/game.component.theme";
-@import "src/app/game/participant/participant.component.theme";
+@import "../app/components/invite-players-dialog/invite-players-dialog.component.theme";
+@import "../app/components/theme-switcher/theme-switcher.component.theme";
+@import "../app/game/game/game.component.theme";
+@import "../app/game/participant/participant.component.theme";
 
 @mixin component-themes($theme) {
   @include invite-players-dialog-theme($theme);
