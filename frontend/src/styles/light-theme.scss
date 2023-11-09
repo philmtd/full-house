@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
-@import "typography";
-@import "mixins";
-@import "component-themes";
+@import "./typography";
+@import "./mixins";
+@import "./component-themes";
 
 @include mat.core();
 
