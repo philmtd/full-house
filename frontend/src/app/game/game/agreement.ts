@@ -15,7 +15,7 @@ function calculateAgreementInternal(numbers: number[]): number | null {
   const votedValueRange: number = Math.max(...numbers) - Math.min(...numbers);
   const minMaxDeviationPercentage: number = 10;
   const maxDeviationScalingFactor: number = 5;
-  const maxDeviationPercentage: number = Math.max(minMaxDeviationPercentage, 70 - (votedValueRange / maxDeviationScalingFactor));
+  const maxDeviationPercentage: number = Math.max(minMaxDeviationPercentage, 70 - (votedValueRange * maxDeviationScalingFactor));
   const maxDeviation: number = (maxDeviationPercentage / 100) * consensus;
   return Math.max(0, (1 - averageDeviation / maxDeviation) * 100);
 }
