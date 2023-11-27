@@ -155,7 +155,9 @@ export class GameComponent {
       return '🤩'
     } else if (agreement >= 50) {
       return '🙂'
-    } else if (agreement >= 25) {
+    } else if (agreement >= 30) {
+      return '😐'
+    } else if (agreement >= 15) {
       return '😕'
     } else {
       return '😡'

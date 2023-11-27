@@ -59,18 +59,11 @@
     font-size: 2em;
   }
   .agreement {
-    .agreement-circle {
-      height: 96px;
-      width: 96px;
-      position: relative;
-      span {
-        display: block;
-        font-size: 48px;
-        margin: 0;
-        position: absolute;
-        top: calc(50% - 12px);
-        left: calc(50% - 24px);
-      }
+    mat-spinner {
+      position: absolute;
+      height: 3rem !important;
+      width: 3rem !important;
+      top: 3rem;
     }
   }
 }

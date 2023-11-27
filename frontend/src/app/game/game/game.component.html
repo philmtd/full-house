@@ -82,6 +82,8 @@
       <strong class="large">{{ game.voteCount }}</strong>
     </div>
     <div class="agreement fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em" *ngIf="game.agreement != null">
+      <mat-spinner mode="determinate" [value]="100-game.agreement"></mat-spinner>
+      <mat-spinner mode="determinate" [value]="game.agreement"></mat-spinner>
       <span class="gray">{{ 'game.agreement' | translate }}</span>
       <strong class="large">{{ game.agreementEmoji }}</strong>
     </div>

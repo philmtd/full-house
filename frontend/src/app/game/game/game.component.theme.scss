@@ -44,4 +44,18 @@
     }
   }
 
+  .agreement {
+    mat-spinner {
+      &:first-of-type {
+        transform: scaleX(-1);
+        circle {
+          @if($isDark) {
+            stroke: desaturate(darken(mat.get-color-from-palette($primary, 50), 70%), 75%);
+          } @else {
+            stroke: mat.get-color-from-palette($primary, 50);
+          }
+        }
+      }
+    }
+  }
 }
