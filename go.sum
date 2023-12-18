@@ -238,8 +238,8 @@ github.com/sagikazarmark/locafero v0.3.0 h1:zT7VEGWC2DTflmccN/5T1etyKvxSxpHsjb9c
 github.com/sagikazarmark/locafero v0.3.0/go.mod h1:w+v7UsPNFwzF1cHuOajOOzoq4U7v/ig1mpRjqV+Bu1U=
 github.com/sagikazarmark/slog-shim v0.1.0 h1:diDBnUNK9N/354PgrxMywXnAwEr1QZcOr6gto+ugjYE=
 github.com/sagikazarmark/slog-shim v0.1.0/go.mod h1:SrcSrq8aKtyuqEI1uvTDTK1arOWRIczQRv+GVI1AkeQ=
-github.com/samber/slog-gin v1.6.0 h1:N9PB+vZWLDeNHkAwvhFrJdzqik8ILmy0EhVHy9d+Ao4=
-github.com/samber/slog-gin v1.6.0/go.mod h1:3QtLUGJHqsS88fY/acFvqjzzaQaFeRu2xx3zGXx3dt0=
+github.com/samber/slog-gin v1.7.0 h1:qowtG5Uy607uyIyZhu1kVGhiJTLfzeeab8hmYblX0RI=
+github.com/samber/slog-gin v1.7.0/go.mod h1:3QtLUGJHqsS88fY/acFvqjzzaQaFeRu2xx3zGXx3dt0=
 github.com/sourcegraph/conc v0.3.0 h1:OQTbbt6P72L20UqAkXXuLOj79LfEanQ+YQFNpLA9ySo=
 github.com/sourcegraph/conc v0.3.0/go.mod h1:Sdozi7LEKbFPqYX2/J+iBAM6HpqSLTASQIKqDmF7Mt0=
 github.com/spf13/afero v1.10.0 h1:EaGW2JJh15aKOejeuJ+wpFSHnbd7GE6Wvp3TsNhb6LY=
