@@ -13,7 +13,9 @@
       <mat-form-field appearance="fill">
         <mat-label>{{ 'newGame.votingSystemLabel' | translate }}</mat-label>
         <mat-select [(value)]="selectedScheme">
-          <mat-option [value]="scheme.id" *ngFor="let scheme of votingSchemes">{{ scheme.label }}</mat-option>
+          @for (scheme of votingSchemes; track scheme) {
+            <mat-option [value]="scheme.id">{{ scheme.label }}</mat-option>
+          }
         </mat-select>
       </mat-form-field>
       <button [disabled]="form.form.invalid" mat-flat-button color="primary" type="submit">{{ 'newGame.createGame' | translate }}</button>

@@ -2,8 +2,10 @@
   <mat-icon [svgIcon]="(currentModeIcon | async) || ''"></mat-icon>
 </button>
 <mat-menu #modeMenu class="theme-switcher-menu">
-  <button mat-menu-item *ngFor="let mode of modes" (click)="setMode(mode.mode)" [class.active]="(themingMode$ | async) === mode.mode">
-    <mat-icon [svgIcon]="mode.icon"></mat-icon>
-    <span>{{mode.label | async}}</span>
-  </button>
+  @for (mode of modes; track mode) {
+    <button mat-menu-item (click)="setMode(mode.mode)" [class.active]="(themingMode$ | async) === mode.mode">
+      <mat-icon [svgIcon]="mode.icon"></mat-icon>
+      <span>{{mode.label | async}}</span>
+    </button>
+  }
 </mat-menu>
