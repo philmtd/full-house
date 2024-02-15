@@ -12,80 +12,114 @@
 </navigation>
 <div class="fx-layout-column game-container">
   <div>
-    <div class="game-view fx-layout-column fx-align--start-x fx-align--x-center" *ngIf="game">
-      <div class="row top-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
-        <div *ngIf="game.otherParticipants?.length == 0" class="invite-hint fx-layout-column fx-align--center-x fx-align--x-center">
-          <p>{{ 'game.inviteOthersShorttext' | translate }}</p>
-          <button mat-button color="primary" (click)="openInviteDialog()">
-            <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
-              <mat-icon svgIcon="group-add"></mat-icon>
-              <span>{{ 'game.inviteOthers' | translate }}</span>
+    @if (game) {
+      <div class="game-view fx-layout-column fx-align--start-x fx-align--x-center">
+        <div class="row top-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
+          @if (game.otherParticipants.length == 0) {
+            <div class="invite-hint fx-layout-column fx-align--center-x fx-align--x-center">
+              <p>{{ 'game.inviteOthersShorttext' | translate }}</p>
+              <button mat-button color="primary" (click)="openInviteDialog()">
+                <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
+                  <mat-icon svgIcon="group-add"></mat-icon>
+                  <span>{{ 'game.inviteOthers' | translate }}</span>
+                </div>
+              </button>
             </div>
-          </button>
+          }
+          @for (p of game.otherParticipants | participantRow: 'top'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+          }
         </div>
-        <participant *ngFor="let p of game.otherParticipants | participantRow: 'top'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
-      </div>
-      <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
-        <participant *ngFor="let p of game.otherParticipants | participantRow: 'left'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
-
-        <div class="table fx-layout-column fx-align--center-x fx-align--x-center">
-          <div *ngIf="game.phase == 'VOTING' && game.voteCount == 0">
-            <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
-              <mat-icon color="primary" svgIcon="sports-score"></mat-icon>
-              <span>{{ 'game.tableNoVotesText' | translate }}</span>
-            </div>
+        <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
+          @for (p of game.otherParticipants | participantRow: 'left'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+          }
+          <div class="table fx-layout-column fx-align--center-x fx-align--x-center">
+            @if (game.phase == 'VOTING' && game.voteCount == 0) {
+              <div>
+                <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
+                  <mat-icon color="primary" svgIcon="sports-score"></mat-icon>
+                  <span>{{ 'game.tableNoVotesText' | translate }}</span>
+                </div>
+              </div>
+            }
+            @if (game.phase == 'VOTING' && game.voteCount > 0) {
+              <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button color="primary" (click)="nextPhase()">
+                <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
+                  <mat-icon svgIcon="visibility"></mat-icon>
+                  <span>{{ 'game.revealButton' | translate }}</span>
+                </div>
+              </button>
+            }
+            @if (game.phase == 'REVEALED') {
+              <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button (click)="nextPhase()" color="primary">
+                <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
+                  <mat-icon svgIcon="loop"></mat-icon>
+                  <span>{{ 'game.newVotingButton' | translate }}</span>
+                </div>
+              </button>
+            }
           </div>
-          <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button color="primary" (click)="nextPhase()" *ngIf="game.phase == 'VOTING' && game.voteCount > 0">
-            <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
-              <mat-icon svgIcon="visibility"></mat-icon>
-              <span>{{ 'game.revealButton' | translate }}</span>
-            </div>
-          </button>
-          <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button (click)="nextPhase()" color="primary" *ngIf="game.phase == 'REVEALED'">
-            <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
-              <mat-icon svgIcon="loop"></mat-icon>
-              <span>{{ 'game.newVotingButton' | translate }}</span>
-            </div>
-          </button>
+          @for (p of game.otherParticipants | participantRow: 'right'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+          }
         </div>
-
-        <participant *ngFor="let p of game.otherParticipants | participantRow: 'right'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+        <div class="row bottom-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
+          @for (p of game.otherParticipants | participantRow: 'bottom_left'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+          }
+          @if (game.self) {
+            <participant [participant]="game.self" [vote]="game.self.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+          }
+          @for (p of game.otherParticipants | participantRow: 'bottom_right'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+          }
+        </div>
       </div>
-      <div class="row bottom-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
-        <participant *ngFor="let p of game.otherParticipants | participantRow: 'bottom_left'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
-        <participant *ngIf="game.self" [participant]="game.self" [vote]="game.self.vote" [revealed]="game.phase == 'REVEALED'"></participant>
-        <participant *ngFor="let p of game.otherParticipants | participantRow: 'bottom_right'" [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+    }
+    @if (isError) {
+      <div class="fx-layout-column fx-align--center-x fx-align--x-center">
+        <span>{{ 'game.gameNotFoundText' | translate }}</span>
+        <a mat-button color="primary" [routerLink]="'/'">{{ 'game.createNewGameButton' | translate }}</a>
       </div>
-    </div>
-    <div class="fx-layout-column fx-align--center-x fx-align--x-center" *ngIf="isError">
-      <span>{{ 'game.gameNotFoundText' | translate }}</span>
-      <a mat-button color="primary" [routerLink]="'/'">{{ 'game.createNewGameButton' | translate }}</a>
-    </div>
+    }
   </div>
 </div>
-<div *ngIf="game" class="bottom-menu fx-layout-row fx-align--center-x fx-align--x-center fx-gap--1em">
-  <div *ngIf="game.phase == 'VOTING'" class="bottom-menu-container">
-    <div *ngFor="let option of game.votingScheme.scheme" class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option">
-      <span>{{ option | fraction }}</span>
-    </div>
-    <div *ngIf="game.votingScheme.includesQuestionmark" class="card" (click)="selectOption('?')" [class.selected]="this.game.self?.vote?.vote == '?'">
-      <span>{{ '?' }}</span>
-    </div>
+@if (game) {
+  <div class="bottom-menu fx-layout-row fx-align--center-x fx-align--x-center fx-gap--1em">
+    @if (game.phase == 'VOTING') {
+      <div class="bottom-menu-container">
+        @for (option of game.votingScheme.scheme; track option) {
+          <div class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option">
+            <span>{{ option | fraction }}</span>
+          </div>
+        }
+        @if (game.votingScheme.includesQuestionmark) {
+          <div class="card" (click)="selectOption('?')" [class.selected]="this.game.self?.vote?.vote == '?'">
+            <span>{{ '?' }}</span>
+          </div>
+        }
+      </div>
+    }
+    @if (game.phase == 'REVEALED') {
+      <div class="bottom-menu-container fx-layout-row fx-align--center-x fx-align--x-start fx-gap--4em">
+        <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
+          <span class="gray">{{ 'game.average' | translate }}</span>
+          <strong class="large">{{ game.voteAverage | fraction }}</strong>
+        </div>
+        <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
+          <span class="gray">{{ 'game.votes' | translate }}</span>
+          <strong class="large">{{ game.voteCount }}</strong>
+        </div>
+        @if (game.agreement != null) {
+          <div class="agreement fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
+            <mat-spinner mode="determinate" [value]="100-game.agreement"></mat-spinner>
+            <mat-spinner mode="determinate" [value]="game.agreement"></mat-spinner>
+            <span class="gray">{{ 'game.agreement' | translate }}</span>
+            <strong class="large">{{ game.agreementEmoji }}</strong>
+          </div>
+        }
+      </div>
+    }
   </div>
-  <div class="bottom-menu-container fx-layout-row fx-align--center-x fx-align--x-start fx-gap--4em" *ngIf="game.phase == 'REVEALED'">
-    <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
-      <span class="gray">{{ 'game.average' | translate }}</span>
-      <strong class="large">{{ game.voteAverage | fraction }}</strong>
-    </div>
-    <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
-      <span class="gray">{{ 'game.votes' | translate }}</span>
-      <strong class="large">{{ game.voteCount }}</strong>
-    </div>
-    <div class="agreement fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em" *ngIf="game.agreement != null">
-      <mat-spinner mode="determinate" [value]="100-game.agreement"></mat-spinner>
-      <mat-spinner mode="determinate" [value]="game.agreement"></mat-spinner>
-      <span class="gray">{{ 'game.agreement' | translate }}</span>
-      <strong class="large">{{ game.agreementEmoji }}</strong>
-    </div>
-  </div>
-</div>
+}
