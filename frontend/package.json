@@ -18,7 +18,7 @@
     "@angular/core": "^17.2.1",
     "@angular/forms": "^17.2.1",
     "@angular/material": "^17.2.0",
-    "@angular/platform-browser": "^17.2.1",
+    "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.2.1",
     "@angular/router": "^17.2.1",
     "@messageformat/core": "^3.3.0",
