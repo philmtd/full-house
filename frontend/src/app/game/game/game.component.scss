@@ -16,6 +16,12 @@
   margin: 1.5em 0;
 }
 
+.middle-row {
+  &.shift-left {
+    transform: translateX(-112px);
+  }
+}
+
 .table {
   min-width: 360px;
   width: 100%;
@@ -30,7 +36,7 @@
   right: 0;
 
   .bottom-menu-container {
-    padding: 1em 1em 2em;
+    padding: 2em;
     overflow: auto;
     white-space: nowrap;
     .card {
@@ -44,7 +50,7 @@
       height: 72px;
       line-height: 72px;
       cursor: pointer;
-      transition: transform ease-in-out 0.125s;
+      transition: transform ease-in-out 0.125s, box-shadow ease-in-out 0.125s;
       @include user-select(none);
       &:hover {
         transform: translateY(-3px);
@@ -64,7 +70,7 @@
       position: absolute;
       height: 4rem !important;
       width: 4rem !important;
-      top: 2.5rem;
+      top: 3.5rem;
     }
   }
 }

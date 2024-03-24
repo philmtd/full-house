@@ -1,6 +1,5 @@
 @use '@angular/material' as mat;
 @use '@angular/material-experimental' as matx;
-@import "./typography.scss";
 @import "./mixins.scss";
 @import "./component-themes.scss";
 
@@ -11,7 +10,7 @@ $warn: mat.define-palette($pp-red);
 $dark-theme: matx.define-theme((
   color: (
     theme-type: dark,
-    primary: matx.$m3-rose-palette,
+    primary: matx.$m3-azure-palette,
   ),
   typography: (
     plain-family: $font-family,
@@ -22,7 +21,8 @@ $dark-theme: matx.define-theme((
   )
 ));
 
-.dark-theme {
+html:has(body.dark-theme) {
+  @include mat.core();
   @include mat.all-component-typographies($dark-theme);
   @include mat.typography-hierarchy($dark-theme);
   @include mat.core-theme($dark-theme);

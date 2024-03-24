@@ -14,4 +14,14 @@
       font-size: 1.2em;
     }
   }
+  strong {
+    width: 160px;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
