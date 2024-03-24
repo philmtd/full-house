@@ -44,7 +44,7 @@
               </div>
             }
             @if (game.phase == 'VOTING' && game.voteCount > 0) {
-              <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button color="primary" (click)="nextPhase()">
+              <button [disabled]="nextPhaseButtonDisabled | async" mat-raised-button color="primary" (click)="nextPhase()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="visibility"></mat-icon>
                   <span>{{ 'game.revealButton' | translate }}</span>
@@ -52,7 +52,7 @@
               </button>
             }
             @if (game.phase == 'REVEALED') {
-              <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button (click)="nextPhase()" color="primary">
+              <button [disabled]="nextPhaseButtonDisabled | async" mat-raised-button (click)="nextPhase()" color="primary">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="loop"></mat-icon>
                   <span>{{ 'game.newVotingButton' | translate }}</span>

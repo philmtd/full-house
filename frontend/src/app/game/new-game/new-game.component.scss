@@ -1,6 +1,9 @@
 .container {
   height: 100%;
   margin: 2em;
+  h2 {
+    font-size: 2em;
+  }
   mat-form-field, button {
     width: 100%;
   }

@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use '@angular/material-experimental' as matx;
 @import "./typography.scss";
 @import "./mixins.scss";
 @import "./component-themes.scss";
@@ -7,16 +8,23 @@ $primary: mat.define-palette($pp-yellow);
 $accent: mat.define-palette($pp-green);
 $warn: mat.define-palette($pp-red);
 
-$dark-theme: mat.define-dark-theme((
+$dark-theme: matx.define-theme((
   color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn),
-  typography: $custom-typography,
-  density: 0,
+    theme-type: dark,
+    primary: matx.$m3-violet-palette,
+  ),
+  typography: (
+    plain-family: $font-family,
+    brand-family: $font-family,
+  ),
+  density: (
+    scale: 0
+  )
 ));
 
 .dark-theme {
+  @include mat.all-component-typographies($dark-theme);
+  @include mat.typography-hierarchy($dark-theme);
   @include mat.core-theme($dark-theme);
   @include mat.all-component-themes($dark-theme);
   @include component-themes($dark-theme);
