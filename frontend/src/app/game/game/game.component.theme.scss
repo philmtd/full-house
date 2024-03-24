@@ -4,6 +4,9 @@
 @mixin game-component-theme($theme) {
   $isDark: mat.get-theme-type($theme) == 'dark';
 
+  button[mat-icon-button] {
+    --mdc-icon-button-icon-color: #{mat.get-theme-color($theme, primary)};
+  }
   .table {
     color: mat.get-theme-color($theme, primary, 10);
     @if($isDark) {
