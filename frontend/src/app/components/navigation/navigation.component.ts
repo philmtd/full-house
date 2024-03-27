@@ -14,13 +14,13 @@ export class NavigationComponent {
 
   @Select(ThemingState.isDarkMode) isDarkMode$: Observable<boolean>;
 
-  logoSrc: string = '/assets/pplogo-light.svg';
+  logoSrc: string = '/assets/pplogo.svg';
   version: string = '';
   constructor(private store: Store,
               private api: Api) {
-    this.isDarkMode$.subscribe(isDarkMode => {
-      this.logoSrc = `/assets/pplogo-${isDarkMode ? 'dark' : 'light'}.svg`;
-    });
+    //this.isDarkMode$.subscribe(isDarkMode => {
+    //  this.logoSrc = `/assets/pplogo-${isDarkMode ? 'dark' : 'light'}.svg`;
+    //});
     this.api.appInfo().subscribe(info => this.version = info.version);
   }
 }

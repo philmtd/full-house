@@ -16,11 +16,17 @@
   margin: 1.5em 0;
 }
 
+.middle-row {
+  &.shift-left {
+    transform: translateX(-92px);
+  }
+}
+
 .table {
   min-width: 360px;
   width: 100%;
   height: 140px;
-  border-radius: 4 * $mat-radius;
+  border-radius: 8 * $mat-radius;
 }
 
 .bottom-menu {
@@ -39,12 +45,12 @@
       text-align: center;
       font-size: 1.4rem;
       font-weight: 500;
-      border-radius: 2 * $mat-radius;
+      border-radius: 4 * $mat-radius;
       min-width: 48px;
       height: 72px;
       line-height: 72px;
       cursor: pointer;
-      transition: transform ease-in-out 0.125s;
+      transition: transform ease-in-out 0.125s, box-shadow ease-in-out 0.125s;
       @include user-select(none);
       &:hover {
         transform: translateY(-3px);
@@ -57,13 +63,14 @@
 
   .large {
     font-size: 2em;
+    line-height: 1em;
   }
   .agreement {
     mat-spinner {
       position: absolute;
-      height: 3rem !important;
-      width: 3rem !important;
-      top: 3rem;
+      height: 4rem !important;
+      width: 4rem !important;
+      top: 3.5rem;
     }
   }
 }

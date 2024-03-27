@@ -4,11 +4,13 @@
     margin: 1em;
     a {
       white-space: nowrap;
-      img {
+      svg {
         height: 40px;
+        width: auto;
       }
       h1 {
         font-weight: bold;
+        font-size: 2em;
         margin: 0;
       }
     }

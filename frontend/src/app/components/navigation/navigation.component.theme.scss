@@ -1,0 +1,13 @@
+@use '@angular/material' as mat;
+@import "../../../styles/mixins";
+
+@mixin navigation-component-theme($theme) {
+  .nav-container {
+    .main-color {
+      fill: mat.get-theme-color($theme, primary);
+    }
+    .text-color {
+      fill: mat.get-theme-color($theme, on-primary);
+    }
+  }
+}

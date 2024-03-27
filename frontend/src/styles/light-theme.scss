@@ -1,30 +1,34 @@
 @use '@angular/material' as mat;
-@import "./typography";
+@use '@angular/material-experimental' as matx;
 @import "./mixins";
 @import "./component-themes";
 
-@include mat.core();
 
 $primary: mat.define-palette($pp-purple);
 $accent: mat.define-palette($pp-yellow);
 $warn: mat.define-palette($pp-red);
 
-$light-theme: mat.define-light-theme((
+
+$light-theme: matx.define-theme((
   color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn),
-  typography: $custom-typography,
-  density: 0,
+    theme-type: light,
+    primary: matx.$m3-violet-palette,
+  ),
+  typography: (
+    plain-family: $font-family,
+    brand-family: $font-family,
+    bold-weight: 800
+  ),
+  density: (
+    scale: 0
+  )
 ));
 
-$background: map-get($light-theme, background);
-$light-theme: map-merge($light-theme, (
-  background: map-merge($background, (
-    app-bar: white
-  ))
-));
-
-@include mat.core-theme($light-theme);
-@include mat.all-component-themes($light-theme);
-@include component-themes($light-theme);
+html {
+  @include mat.core();
+  @include mat.all-component-typographies($light-theme);
+  @include mat.typography-hierarchy($light-theme);
+  @include mat.core-theme($light-theme);
+  @include mat.all-component-themes($light-theme);
+  @include component-themes($light-theme);
+}

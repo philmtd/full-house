@@ -1,11 +1,11 @@
 <navigation [navTitle]="game?.name">
-  <button mat-flat-button color="primary" (click)="openInviteDialog()">
+  <button mat-flat-button (click)="openInviteDialog()">
     <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
       <mat-icon svgIcon="group-add"></mat-icon>
       <span>{{ 'game.inviteOthers' | translate }}</span>
     </div>
   </button>
-  <button mat-icon-button color="primary" (click)="openUserDialog()">
+  <button mat-icon-button (click)="openUserDialog()">
     <mat-icon svgIcon="account-circle"></mat-icon>
   </button>
   <pp-theme-switcher></pp-theme-switcher>
@@ -14,11 +14,11 @@
   <div>
     @if (game) {
       <div class="game-view fx-layout-column fx-align--start-x fx-align--x-center">
-        <div class="row top-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
+        <div class="row top-row fx-layout-row fx-align--center-x fx-align--x-start fx-gap--2em">
           @if (game.otherParticipants.length == 0) {
             <div class="invite-hint fx-layout-column fx-align--center-x fx-align--x-center">
               <p>{{ 'game.inviteOthersShorttext' | translate }}</p>
-              <button mat-button color="primary" (click)="openInviteDialog()">
+              <button mat-raised-button (click)="openInviteDialog()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="group-add"></mat-icon>
                   <span>{{ 'game.inviteOthers' | translate }}</span>
@@ -30,7 +30,7 @@
             <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
           }
         </div>
-        <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
+        <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em" [class.shift-left]="game.otherParticipants.length == 4">
           @for (p of game.otherParticipants | participantRow: 'left'; track p) {
             <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
           }
@@ -38,13 +38,13 @@
             @if (game.phase == 'VOTING' && game.voteCount == 0) {
               <div>
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
-                  <mat-icon color="primary" svgIcon="sports-score"></mat-icon>
+                  <mat-icon svgIcon="sports-score"></mat-icon>
                   <span>{{ 'game.tableNoVotesText' | translate }}</span>
                 </div>
               </div>
             }
             @if (game.phase == 'VOTING' && game.voteCount > 0) {
-              <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button color="primary" (click)="nextPhase()">
+              <button [disabled]="nextPhaseButtonDisabled | async" mat-raised-button (click)="nextPhase()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="visibility"></mat-icon>
                   <span>{{ 'game.revealButton' | translate }}</span>
@@ -52,7 +52,7 @@
               </button>
             }
             @if (game.phase == 'REVEALED') {
-              <button [disabled]="nextPhaseButtonDisabled | async" mat-flat-button (click)="nextPhase()" color="primary">
+              <button [disabled]="nextPhaseButtonDisabled | async" mat-raised-button (click)="nextPhase()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="loop"></mat-icon>
                   <span>{{ 'game.newVotingButton' | translate }}</span>
@@ -64,7 +64,7 @@
             <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
           }
         </div>
-        <div class="row bottom-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em">
+        <div class="row bottom-row fx-layout-row fx-align--center-x fx-align--x-start fx-gap--2em">
           @for (p of game.otherParticipants | participantRow: 'bottom_left'; track p) {
             <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
           }
@@ -80,7 +80,7 @@
     @if (isError) {
       <div class="fx-layout-column fx-align--center-x fx-align--x-center">
         <span>{{ 'game.gameNotFoundText' | translate }}</span>
-        <a mat-button color="primary" [routerLink]="'/'">{{ 'game.createNewGameButton' | translate }}</a>
+        <a mat-button [routerLink]="'/'">{{ 'game.createNewGameButton' | translate }}</a>
       </div>
     }
   </div>
