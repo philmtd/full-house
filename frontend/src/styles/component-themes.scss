@@ -1,5 +1,6 @@
 @import "../app/components/invite-players-dialog/invite-players-dialog.component.theme";
 @import "../app/components/theme-switcher/theme-switcher.component.theme";
+@import "../app/components/navigation/navigation.component.theme";
 @import "../app/game/game/game.component.theme";
 @import "../app/game/participant/participant.component.theme";
 
@@ -8,4 +9,5 @@
   @include theme-switcher-component-theme($theme);
   @include game-component-theme($theme);
   @include participant-component-theme($theme);
+  @include navigation-component-theme($theme);
 }

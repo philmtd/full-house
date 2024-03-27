@@ -1,5 +1,4 @@
 @use "css-fx-layout" as fx;
-@import "styles/typography";
 
 @include fx.class-selectors;
 @include fx.gap-class-selectors(1, 10, 1, px em);

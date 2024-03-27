@@ -4,22 +4,19 @@
 @import "../../../styles/mixins";
 
 @mixin participant-component-theme($theme) {
-  $primary: map-get($theme, primary);
-  $background: map-get($theme, background);
-  $isDark: map-get($theme, is-dark);
+  $isDark: mat.get-theme-type($theme) == 'dark';
 
   .participant {
 
     .participant-card {
 
-      background: map-get($background, selected-button);
+      background: mat.get-theme-color($theme, surface-dim);
       @include mat.elevation(0);
 
-
       &.voted {
-        $color1: mat.get-color-from-palette($primary, 900);
-        $color2: mat.get-color-from-palette($primary, 300);
-        $color3: mat.get-color-from-palette($primary, 100);
+        $color1: mat.get-theme-color($theme, primary, 30);
+        $color2: mat.get-theme-color($theme, primary, 50);
+        $color3: mat.get-theme-color($theme, primary, 80);
 
         $patternSize: 12px;
 
@@ -31,9 +28,9 @@
       }
 
       &.revealed {
-        $color1: mat.get-color-from-palette($primary, 500);
+        $color1: mat.get-theme-color($theme, primary);
         border: 2px solid $color1;
-        background: map-get($background, app-bar);
+        background: mat.get-theme-color($theme, surface);
         color: $color1;
         @include mat.elevation(2);
       }

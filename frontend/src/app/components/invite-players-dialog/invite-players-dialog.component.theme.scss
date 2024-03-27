@@ -2,11 +2,10 @@
 @import "../../../styles/mixins";
 
 @mixin invite-players-dialog-theme($theme) {
-  $primary: map-get($theme, primary);
   .full-house-qr {
     svg {
       path {
-        stroke: mat.get-color-from-palette($primary, 500);
+        stroke: mat.get-theme-color($theme, primary);
       }
     }
   }

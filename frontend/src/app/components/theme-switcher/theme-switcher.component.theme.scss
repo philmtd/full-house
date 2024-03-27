@@ -2,13 +2,12 @@
 @import "../../../styles/mixins";
 
 @mixin theme-switcher-component-theme($theme) {
-  $primary: map-get($theme, primary);
   .theme-switcher-menu {
     .active {
       font-weight: 600;
-      color: mat.get-color-from-palette($primary, 500);
+      color: mat.get-theme-color($theme, primary, 40);
       mat-icon {
-        color: mat.get-color-from-palette($primary, 500);
+        color: mat.get-theme-color($theme, primary, 40);
       }
     }
   }
