@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+(.[0-9]+)*'
+
+jobs:
+  frontend:
+    uses: ./.github/workflows/frontend.yml
+  backend:
+    uses: ./.github/workflows/backend.yml
+  dockerize_dev:
+    uses: ./.github/workflows/dockerize.yml
+    with:
+      tag: ${{ github.ref_name }}
+      latest: true
+    secrets: inherit
+    needs:
+      - frontend
+      - backend
