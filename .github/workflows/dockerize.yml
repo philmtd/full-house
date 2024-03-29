@@ -14,9 +14,6 @@ on:
 jobs:
   dockerize:
     name: Dockerize Version
-    needs:
-      - frontend
-      - backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
