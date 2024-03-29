@@ -81,10 +81,3 @@ jobs:
         with:
           name: backend
           path: full-house
-
-  dockerize_dev:
-    name: Dockerize Development Version
-    needs:
-      - frontend
-      - backend
-    runs-on: ubuntu-latest
