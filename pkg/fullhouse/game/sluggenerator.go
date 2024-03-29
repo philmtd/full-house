@@ -3,7 +3,6 @@ package game
 import (
 	"math/rand"
 	"strings"
-	"time"
 )
 
 var (
@@ -162,6 +161,7 @@ var (
 		"Monkey",
 		"Mosquito",
 		"Mouse",
+		"Octopus",
 		"Panda",
 		"Penguin",
 		"Pig",
@@ -181,10 +181,6 @@ var (
 		"Zebra",
 	}
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 func GetRandomSlug() string {
 	return strings.ToLower(left[rand.Intn(len(left))] + "_" + right[rand.Intn(len(right))])
