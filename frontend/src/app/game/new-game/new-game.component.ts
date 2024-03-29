@@ -3,6 +3,8 @@ import {Router} from "@angular/router";
 import {Api} from "../api/api.service";
 import {VotingScheme} from "../model";
 import {transformToFraction} from "../game/fraction-filter.pipe";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {TranslateService} from "@ngx-translate/core";
 
 interface VotingSchemeModel {
   scheme: VotingScheme;
@@ -22,7 +24,9 @@ export class NewGameComponent {
   selectedScheme = '';
 
   constructor(private api: Api,
-              private router: Router) {
+              private router: Router,
+              private snackBar: MatSnackBar,
+              private translate: TranslateService) {
     this.api.votingSchemes().subscribe(votingSchemes => this.initVotingSchemes(votingSchemes));
   }
 
@@ -38,8 +42,15 @@ export class NewGameComponent {
   }
 
   createGame() {
-    this.api.createNewGame(this.gameName, this.getSchemeById(this.selectedScheme)).subscribe(game => {
-      this.router.navigate([`/game/`, game.slug]);
+    this.api.createNewGame(this.gameName, this.getSchemeById(this.selectedScheme)).subscribe({
+      next: game => {
+        this.router.navigate([`/game/`, game.slug]);
+      },
+      error: err => {
+        this.snackBar.open(this.translate.instant("newGame.failedToCreateGame"), undefined, {
+          duration: 5000
+        });
+      }
     });
   }
 
