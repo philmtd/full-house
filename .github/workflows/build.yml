@@ -1,0 +1,20 @@
+name: Build and Push
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  frontend:
+    uses: ./.github/workflows/frontend.yml
+  backend:
+    uses: ./.github/workflows/backend.yml
+  dockerize_dev:
+    uses: ./.github/workflows/dockerize.yml
+    with:
+      tag: latest-dev
+    secrets: inherit
+    needs:
+      - frontend
+      - backend

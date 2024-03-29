@@ -1,0 +1,21 @@
+name: Build PR
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  frontend:
+    uses: ./.github/workflows/frontend.yml
+  backend:
+    uses: ./.github/workflows/backend.yml
+  dockerize_dev:
+    uses: ./.github/workflows/dockerize.yml
+    with:
+      tag: pr
+      push: false
+    secrets: inherit
+    needs:
+      - frontend
+      - backend
