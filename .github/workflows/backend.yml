@@ -30,6 +30,7 @@ jobs:
         uses: mikepenz/action-junit-report@v4
         if: success() || failure()
         with:
+          check_name: Test Reports
           include_passed: true
           report_paths: "test_results.xml"
           detailed_summary: true
@@ -39,6 +40,7 @@ jobs:
         uses: mikepenz/action-junit-report@v4
         if: success() || failure()
         with:
+          check_name: Lint Reports
           include_passed: true
           report_paths: "linter_results.xml"
           detailed_summary: true
