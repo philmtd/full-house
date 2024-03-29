@@ -43,7 +43,7 @@ jobs:
         run: docker push philmtd/full-house:${{ inputs.tag }}
       - name: Tag latest
         if: ${{ inputs.latest }}
-        run: docker tag philmtd/full-house:${{ inputs.tag }} philmtd/full-house:latest .
+        run: docker tag philmtd/full-house:${{ inputs.tag }} philmtd/full-house:latest
       - name: Push latest
         if: ${{ inputs.latest }}
         run: echo "would have pushed" #docker push philmtd/full-house:latest
