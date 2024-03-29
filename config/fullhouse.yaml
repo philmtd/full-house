@@ -1,2 +1,6 @@
 fullHouse:
   mode: development
+  persistentGames:
+    - name: Test
+      slug: test_testy
+      votingSchemeName: Fibonacci

@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	"strings"
 )
@@ -45,25 +44,16 @@ func readInConfig() Config {
 	return readConfig
 }
 
-func validateConfig(c Config) error {
-	validate := validator.New()
-
-	if err := validate.Struct(c); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 type Config struct {
 	FullHouse GameConfig `yaml:"fullHouse"`
 }
 
 type GameConfig struct {
-	Server        ServerConfig   `yaml:"server" validate:"required"`
-	Metrics       MetricsConfig  `yaml:"metrics" validate:"required"`
-	Mode          Mode           `yaml:"mode"`
-	VotingSchemes []VotingScheme `yaml:"votingSchemes" validate:"required,dive"`
+	Server          ServerConfig           `yaml:"server" validate:"required"`
+	Metrics         MetricsConfig          `yaml:"metrics" validate:"required"`
+	Mode            Mode                   `yaml:"mode"`
+	VotingSchemes   []VotingScheme         `yaml:"votingSchemes" validate:"required,dive"`
+	PersistentGames []PersistentGameConfig `yaml:"persistentGames" validate:"dive"`
 }
 
 type VotingScheme struct {
@@ -84,4 +74,10 @@ type ServerConfig struct {
 
 type MetricsConfig struct {
 	Port int `yaml:"port" validate:"required,number"`
+}
+
+type PersistentGameConfig struct {
+	Slug             string `yaml:"slug" validate:"required,lowercase,gameSlug,max=64"`
+	Name             string `yaml:"name" validate:"required,alphanumunicode,max=64"`
+	VotingSchemeName string `yaml:"votingSchemeName" validate:"required,votingSchemeName"`
 }
