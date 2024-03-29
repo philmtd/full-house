@@ -34,25 +34,23 @@ jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
-    container: registry.hub.docker.com/philmtd/golang-builder:1.4.0
+    container:
+      image: registry.hub.docker.com/philmtd/golang-builder:1.4.0
+      options: --user 1001
     steps:
       - uses: actions/checkout@v3
       - name: Restore dependencies cache
         uses: actions/cache/restore@v4
         id: go-cache-restore
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
+          path: /go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
       - name: Install dependencies
         run: go mod download
       - name: Save dependencies cache
         uses: actions/cache/save@v4
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
+          path: /go/pkg/mod
           key: ${{ steps.go-cache-restore.outputs.cache-primary-key }}
       - name: Run tests
         run: mage testci
