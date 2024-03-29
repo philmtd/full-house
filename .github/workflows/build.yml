@@ -40,6 +40,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend
+      - name: Fix permissions
+        run: chmod +x full-house
       - name: Build image
         run: docker build -t philmtd/full-house:latest-dev .
       - name: Push image
