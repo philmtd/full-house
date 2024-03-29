@@ -35,7 +35,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend
-          download-path: frontend/dist
+          path: ./frontend/dist
       - name: Download backend
         uses: actions/download-artifact@v4
         with:
