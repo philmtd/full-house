@@ -7,7 +7,7 @@ jobs:
     name: Backend
     runs-on: ubuntu-latest
     container:
-      image: registry.hub.docker.com/philmtd/golang-builder:1.4.0
+      image: registry.hub.docker.com/philmtd/golang-builder:1.4.1
       options: --user 1001
     steps:
       - uses: actions/checkout@v4
