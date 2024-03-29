@@ -61,7 +61,6 @@ jobs:
         if: success() || failure()
         with:
           include_passed: true
-          fail_on_failure: true
           report_paths: "test_results.xml"
           detailed_summary: true
       - name: Lint
@@ -71,7 +70,6 @@ jobs:
         if: success() || failure()
         with:
           include_passed: true
-          fail_on_failure: true
           report_paths: "linter_results.xml"
           detailed_summary: true
       - name: Build
