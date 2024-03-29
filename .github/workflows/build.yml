@@ -10,70 +10,16 @@ on:
 
 jobs:
   frontend:
-    name: Frontend
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: npm
-          cache-dependency-path: 'frontend/package-lock.json'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build frontend
-        run: npm run build
-      - name: Store frontend artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend
-          path: frontend/dist
+    uses: ./github/workflows/frontend.yml
   backend:
-    name: Backend
+    uses: ./github/workflows/backend.yml
+
+  dockerize_dev:
+    name: Dockerize Development Version
+    needs:
+      - frontend
+      - backend
     runs-on: ubuntu-latest
-    container:
-      image: registry.hub.docker.com/philmtd/golang-builder:1.4.0
-      options: --user 1001
     steps:
-      - uses: actions/checkout@v3
-      - name: Restore dependencies cache
-        uses: actions/cache/restore@v4
-        id: go-cache-restore
-        with:
-          path: /go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-      - name: Install dependencies
-        run: go mod download
-      - name: Save dependencies cache
-        uses: actions/cache/save@v4
-        with:
-          path: /go/pkg/mod
-          key: ${{ steps.go-cache-restore.outputs.cache-primary-key }}
-      - name: Run tests
-        run: mage testci
-      - name: Save test results
-        uses: mikepenz/action-junit-report@v4
-        if: success() || failure()
-        with:
-          include_passed: true
-          report_paths: "test_results.xml"
-          detailed_summary: true
-      - name: Lint
-        run: mage lintci
-      - name: Save lint results
-        uses: mikepenz/action-junit-report@v4
-        if: success() || failure()
-        with:
-          include_passed: true
-          report_paths: "linter_results.xml"
-          detailed_summary: true
-      - name: Build
-        run: mage buildfordocker
-      - name: Store application
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend
-          path: full-house
+      - name: Test
+        run: echo "test"

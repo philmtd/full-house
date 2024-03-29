@@ -1,0 +1,51 @@
+name: Backend
+
+on: [workflow_call]
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    container:
+      image: registry.hub.docker.com/philmtd/golang-builder:1.4.0
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore dependencies cache
+        uses: actions/cache/restore@v4
+        id: go-cache-restore
+        with:
+          path: /go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      - name: Install dependencies
+        run: go mod download
+      - name: Save dependencies cache
+        uses: actions/cache/save@v4
+        with:
+          path: /go/pkg/mod
+          key: ${{ steps.go-cache-restore.outputs.cache-primary-key }}
+      - name: Run tests
+        run: mage testci
+      - name: Save test results
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure()
+        with:
+          include_passed: true
+          report_paths: "test_results.xml"
+          detailed_summary: true
+      - name: Lint
+        run: mage lintci
+      - name: Save lint results
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure()
+        with:
+          include_passed: true
+          report_paths: "linter_results.xml"
+          detailed_summary: true
+      - name: Build
+        run: mage buildfordocker
+      - name: Store application
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend
+          path: full-house
