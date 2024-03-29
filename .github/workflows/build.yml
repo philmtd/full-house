@@ -18,6 +18,7 @@ jobs:
     with:
       latest: true
       tag: latest-dev
+    secrets: inherit
     needs:
       - frontend
       - backend
