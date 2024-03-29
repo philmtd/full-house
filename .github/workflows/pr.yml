@@ -13,7 +13,7 @@ jobs:
   dockerize_dev:
     uses: ./.github/workflows/dockerize.yml
     with:
-      tag: ${{ github.ref_name }}
+      tag: pr
       push: false
     secrets: inherit
     needs:
