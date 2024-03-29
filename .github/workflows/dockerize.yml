@@ -10,6 +10,10 @@ on:
         type: boolean
         default: false
         required: false
+      push:
+        type: boolean
+        default: true
+        required: false
 
 jobs:
   dockerize:
@@ -40,10 +44,11 @@ jobs:
       - name: Build image
         run: docker build -t philmtd/full-house:${{ inputs.tag }} .
       - name: Push image
+        if: ${{ inputs.push }}
         run: docker push philmtd/full-house:${{ inputs.tag }}
       - name: Tag latest
         if: ${{ inputs.latest }}
         run: docker tag philmtd/full-house:${{ inputs.tag }} philmtd/full-house:latest
       - name: Push latest
-        if: ${{ inputs.latest }}
+        if: ${{ inputs.latest && inputs.push }}
         run: echo "would have pushed" #docker push philmtd/full-house:latest
