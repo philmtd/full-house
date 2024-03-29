@@ -1,6 +1,6 @@
 # Full House
 
-[![CircleCI](https://circleci.com/gh/philmtd/full-house/tree/master.svg?style=svg)](https://circleci.com/gh/philmtd/full-house/tree/master)
+[![Build and Push](https://github.com/philmtd/full-house/actions/workflows/build.yml/badge.svg)](https://github.com/philmtd/full-house/actions/workflows/build.yml)
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/philmtd/full-house?color=2496ED&label=philmtd%2Ffull-house&logo=docker&logoColor=white&sort=semver)](https://hub.docker.com/r/philmtd/full-house/tags)
 
 This is a simple software implementation of a [Planning Poker](https://en.wikipedia.org/wiki/Planning_poker) game,
