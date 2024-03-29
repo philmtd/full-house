@@ -10,9 +10,9 @@ on:
 
 jobs:
   frontend:
-    uses: ./github/workflows/frontend.yml
+    uses: ./.github/workflows/frontend.yml
   backend:
-    uses: ./github/workflows/backend.yml
+    uses: ./.github/workflows/backend.yml
 
   dockerize_dev:
     name: Dockerize Development Version
