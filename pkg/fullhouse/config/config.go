@@ -78,6 +78,6 @@ type MetricsConfig struct {
 
 type PersistentGameConfig struct {
 	Slug             string `yaml:"slug" validate:"required,lowercase,gameSlug,max=64"`
-	Name             string `yaml:"name" validate:"required,alphanumunicode,max=64"`
+	Name             string `yaml:"name" validate:"required,max=64"`
 	VotingSchemeName string `yaml:"votingSchemeName" validate:"required,votingSchemeName"`
 }

@@ -185,3 +185,7 @@ var (
 func GetRandomSlug() string {
 	return strings.ToLower(left[rand.Intn(len(left))] + "_" + right[rand.Intn(len(right))])
 }
+
+func maximumNumberOfSlugs() int {
+	return len(left) * len(right)
+}
