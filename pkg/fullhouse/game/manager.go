@@ -110,9 +110,7 @@ func (g *GameManager) CreateGame(game *models.GameDTO) (*models.GameDTO, error) 
 }
 
 func (g *GameManager) createGameLocked(name, slug string, votingScheme models.VotingScheme) *models.Game {
-	if !gamesLock.TryLock() {
-		panic("could not claim lock")
-	}
+	gamesLock.Lock()
 	createdGame := models.NewGame(name, slug, votingScheme)
 	g.games = append(g.games, createdGame)
 	gamesLock.Unlock()

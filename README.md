@@ -30,7 +30,7 @@ Full House runs perfectly fine with the default configuration.
 
 ### Customising voting schemes
 It is possible to adjust the available voting schemes from which the users can choose when creating a new game. 
-Per default there are the following two schemes available:
+Per default, there are the following two schemes available:
 
 ```yaml
 fullHouse:
@@ -47,16 +47,16 @@ If you want your own custom voting schemes you need to place your configuration 
 of the Full House installation directory.
 
 Each scheme needs a name, the numbers available to vote (need to be 0 or greater, can be floating point numbers) and you can define whether
-to include a questionmark `?` voting card or not. If you use a custom config the defaults will be overwritten, so if you want to include the default
-schemes just copy them into your configuration.
+to include a questionmark `?` voting card or not. If you use a custom config, the defaults will be overwritten, so if you want to include the default
+ schemes, just copy them into your configuration.
 
 ### Persistent games
 
 It is possible to configure games which will be persistent. This will allow you e.g. to keep the link to a game
-as a bookmark or on a intranet page. Whenever you open a link to a persistent game you will directly join the game
+as a bookmark or on an intranet page. Whenever you open a link to a persistent game you will directly join the game,
 and it will be created under the hood if necessary. The game's settings are stored in the configuration file.
 
-Per default there are no persistent games. If you wish to create one, you can configure them like this:
+Per default, there are no persistent games. If you wish to create one, you can configure them like this:
 ```yaml
 fullHouse:
   persistentGames:

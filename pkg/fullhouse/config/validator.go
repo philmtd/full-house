@@ -7,8 +7,12 @@ import (
 
 func validateConfig(c Config) error {
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	_ = validate.RegisterValidation("votingSchemeName", validateVotingSchemeName)
-	_ = validate.RegisterValidation("gameSlug", validateSlug)
+	if err := validate.RegisterValidation("votingSchemeName", validateVotingSchemeName); err != nil {
+		return err
+	}
+	if err := validate.RegisterValidation("gameSlug", validateSlug); err != nil {
+		return err
+	}
 	if err := validate.Struct(c); err != nil {
 		return err
 	}
