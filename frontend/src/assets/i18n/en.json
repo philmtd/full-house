@@ -37,6 +37,7 @@
     "chooseNameText": "Choose a name for your poker table.",
     "tableNameLabel": "Poker Table Name",
     "votingSystemLabel": "Voting System",
-    "createGame": "Create game"
+    "createGame": "Create game",
+    "failedToCreateGame": "Failed to create game. Please check the application logs."
   }
 }
