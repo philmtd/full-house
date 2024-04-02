@@ -3,6 +3,7 @@ package game
 import (
 	"context"
 	"fmt"
+	"fullhouse/pkg/fullhouse/config"
 	"fullhouse/pkg/fullhouse/logger"
 	"fullhouse/pkg/fullhouse/models"
 	"fullhouse/pkg/fullhouse/websocket"
@@ -77,16 +78,25 @@ func (g *GameManager) GetGameBySlug(slug string) (*models.GameDTO, error) {
 	return models.ToGameDto(game), nil
 }
 
-func (g *GameManager) CreateGame(game *models.GameDTO) *models.GameDTO {
+func (g *GameManager) CreateGame(game *models.GameDTO) (*models.GameDTO, error) {
 	slugExists := func(s string) bool {
+		for _, pg := range config.Configuration.FullHouse.PersistentGames {
+			if pg.Slug == s {
+				return true // prevent creating games with slugs of persistent games
+			}
+		}
 		for _, existing := range g.games {
 			if existing.Slug == s {
-				return true
+				return true // prevent creating games with slugs of active games
 			}
 		}
 		return false
 	}
 	var slug string
+
+	if len(g.games) >= maximumNumberOfSlugs() {
+		return nil, fmt.Errorf("maxium number of games reached")
+	}
 
 	for {
 		slug = GetRandomSlug()
@@ -95,13 +105,18 @@ func (g *GameManager) CreateGame(game *models.GameDTO) *models.GameDTO {
 		}
 	}
 
-	createdGame := models.NewGame(game.Name, slug, game.VotingScheme)
+	createdGame := g.createGameLocked(game.Name, slug, game.VotingScheme)
+	return models.ToGameDto(createdGame), nil
+}
+
+func (g *GameManager) createGameLocked(name, slug string, votingScheme models.VotingScheme) *models.Game {
 	gamesLock.Lock()
+	createdGame := models.NewGame(name, slug, votingScheme)
 	g.games = append(g.games, createdGame)
 	gamesLock.Unlock()
 	g.log.Info("created new game", slog.String("name", createdGame.Name), slog.String("slug", createdGame.Slug))
 	totalCreatedGamesCounter.Inc()
-	return models.ToGameDto(createdGame)
+	return createdGame
 }
 
 func (g *GameManager) CreateParticipant(name string) *models.ParticipantDTO {
@@ -219,14 +234,45 @@ func (g *GameManager) updateInteractionTimestamp(slug string) {
 
 func (g *GameManager) findGame(slug string) (*models.Game, error) {
 	gamesLock.RLock()
-	defer gamesLock.RUnlock()
-
 	for _, game := range g.games {
 		if strings.EqualFold(game.Slug, slug) {
+			gamesLock.RUnlock()
 			return game, nil
 		}
 	}
+	gamesLock.RUnlock()
+
+	game, err := g.createPersistentGameIfConfigured(slug)
+
+	if err != nil {
+		return nil, err
+	} else {
+		return game, nil
+	}
+}
+
+func (g *GameManager) createPersistentGameIfConfigured(slug string) (*models.Game, error) {
+	for _, pg := range config.Configuration.FullHouse.PersistentGames {
+		if pg.Slug == slug {
+			scheme, err := g.getVotingSchemeByName(pg.VotingSchemeName)
+			if err != nil {
+				return nil, err
+			}
+			createdGame := g.createGameLocked(pg.Name, pg.Slug, scheme)
+			g.log.Info("created persistent game", slog.String("slug", slug))
+			return createdGame, nil
+		}
+	}
 	return nil, fmt.Errorf("game not found")
+}
+
+func (g *GameManager) getVotingSchemeByName(name string) (models.VotingScheme, error) {
+	for _, v := range config.Configuration.FullHouse.VotingSchemes {
+		if v.Name == name {
+			return models.VotingSchemeFromConfig(v), nil
+		}
+	}
+	return models.VotingScheme{}, fmt.Errorf("voting scheme with name %s not found", name)
 }
 
 func (g *GameManager) cleanOldGamesPeriodically() {

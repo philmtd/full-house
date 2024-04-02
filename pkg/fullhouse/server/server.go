@@ -153,7 +153,11 @@ func (s *Server) newGame(ctx *gin.Context) {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	createdGame := s.manager.CreateGame(dto)
+	createdGame, err := s.manager.CreateGame(dto)
+	if err != nil {
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 	ctx.JSON(http.StatusCreated, createdGame)
 }
 

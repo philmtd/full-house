@@ -1,6 +1,6 @@
 # Full House
 
-[![CircleCI](https://circleci.com/gh/philmtd/full-house/tree/master.svg?style=svg)](https://circleci.com/gh/philmtd/full-house/tree/master)
+[![Build and Push](https://github.com/philmtd/full-house/actions/workflows/build.yml/badge.svg)](https://github.com/philmtd/full-house/actions/workflows/build.yml)
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/philmtd/full-house?color=2496ED&label=philmtd%2Ffull-house&logo=docker&logoColor=white&sort=semver)](https://hub.docker.com/r/philmtd/full-house/tags)
 
 This is a simple software implementation of a [Planning Poker](https://en.wikipedia.org/wiki/Planning_poker) game,
@@ -30,7 +30,7 @@ Full House runs perfectly fine with the default configuration.
 
 ### Customising voting schemes
 It is possible to adjust the available voting schemes from which the users can choose when creating a new game. 
-Per default there are the following two schemes available:
+Per default, there are the following two schemes available:
 
 ```yaml
 fullHouse:
@@ -46,9 +46,28 @@ fullHouse:
 If you want your own custom voting schemes you need to place your configuration in a `fullhouse.yaml` in the `config` sub-directory
 of the Full House installation directory.
 
-Each scheme needs a name, the numbers available to vote (need to be 0 or greater, can be floating point numbers) and you can define whether 
-to include a questionmark `?` voting card or not. If you use a custom config the defaults will be overwritten, so if you want to include the default
-schemes just copy them into your configuration.
+Each scheme needs a name, the numbers available to vote (need to be 0 or greater, can be floating point numbers) and you can define whether
+to include a questionmark `?` voting card or not. If you use a custom config, the defaults will be overwritten, so if you want to include the default
+ schemes, just copy them into your configuration.
+
+### Persistent games
+
+It is possible to configure games which will be persistent. This will allow you e.g. to keep the link to a game
+as a bookmark or on an intranet page. Whenever you open a link to a persistent game you will directly join the game,
+and it will be created under the hood if necessary. The game's settings are stored in the configuration file.
+
+Per default, there are no persistent games. If you wish to create one, you can configure them like this:
+```yaml
+fullHouse:
+  persistentGames:
+    - name: My Persistent Game
+      slug: persistent_game
+      votingSchemeName: Fibonacci
+```
+
+This will create a game that will be available under `<FULL_HOUSE_HOSTNAME>/game/persistent_game` with the Fibonacci voting scheme
+and with the name "My Persistent Game". The voting scheme name needs to be the name of one of the voting schemes of your
+Full House instance.
 
 ## Persistence
 
