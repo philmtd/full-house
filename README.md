@@ -16,6 +16,14 @@ Full House can be easily run with Docker:
 docker run -p 8080:8080 philmtd/full-house
 ```
 
+If you want to mount a custom configuration file, you can do it like this:
+
+```bash
+docker run -p 8080:8080 -v "./path/to/your/fullhouse.yaml:/app/config/fullhouse.yaml" philmtd/full-house
+```
+
+With this, Full House will be available on your machine on port 8080.
+
 ## Install in Kubernetes with Helm
 
 The [Full House Helm chart](https://artifacthub.io/packages/helm/philmtd/full-house) is available in the following chart repo:
