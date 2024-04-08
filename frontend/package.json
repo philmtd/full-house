@@ -19,7 +19,7 @@
     "@angular/forms": "^17.3.2",
     "@angular/material": "^17.3.2",
     "@angular/material-experimental": "^17.3.2",
-    "@angular/platform-browser": "^17.3.2",
+    "@angular/platform-browser": "^17.3.3",
     "@angular/platform-browser-dynamic": "^17.3.2",
     "@angular/router": "^17.3.2",
     "@fontsource-variable/inter": "^5.0.17",
