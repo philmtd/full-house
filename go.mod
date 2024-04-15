@@ -12,7 +12,7 @@ require (
 	github.com/magefile/mage v1.15.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/prometheus/client_golang v1.19.0
-	github.com/samber/slog-gin v1.11.0
+	github.com/samber/slog-gin v1.11.1
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 )
