@@ -4,6 +4,11 @@ updates:
     directory: "/frontend"
     schedule: 
       interval: "weekly"
+    groups:
+      angular:
+        applies-to: version-updates
+        patterns:
+        - "@angular*"
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
