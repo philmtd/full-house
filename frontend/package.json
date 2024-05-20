@@ -42,7 +42,7 @@
     "@angular/compiler-cli": "^17.3.9",
     "@ngxs/devtools-plugin": "3.8.2",
     "@types/jasmine": "~5.1.4",
-    "@types/node": "^20.12.2",
+    "@types/node": "^20.12.12",
     "@types/qrcode": "^1.5.5",
     "gzipper": "7.2.0",
     "jasmine-core": "~5.1.2",
