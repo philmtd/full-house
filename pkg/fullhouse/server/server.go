@@ -9,9 +9,6 @@ import (
 	"fullhouse/pkg/fullhouse/metrics"
 	"fullhouse/pkg/fullhouse/models"
 	"fullhouse/pkg/fullhouse/websocket"
-	"github.com/gin-contrib/static"
-	"github.com/gin-gonic/gin"
-	sloggin "github.com/samber/slog-gin"
 	"log/slog"
 	"net/http"
 	"os"
@@ -19,6 +16,10 @@ import (
 	"path"
 	"syscall"
 	"time"
+
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
+	sloggin "github.com/samber/slog-gin"
 )
 
 type Server struct {
@@ -73,6 +74,7 @@ func (s *Server) Start(c config.Config) {
 	api.POST("/participant/new", s.newParticipant)
 	api.Any("/ws", s.wsHandler)
 	api.GET("/info", s.infoHandler)
+	api.GET("/storyPointsMapping", s.storyPointsMappingHandler)
 
 	gameApi := api.Group("/game")
 	gameApi.GET("/votingSchemes", s.votingSchemes)
@@ -102,7 +104,7 @@ func (s *Server) Start(c config.Config) {
 			Handler: metricsHandler,
 		})
 	}
-
+	// Start servers
 	for _, server := range servers {
 		srv := server
 		go func() {
@@ -123,6 +125,11 @@ func (s *Server) Start(c config.Config) {
 			s.log.Error("server forced to shutdown", slog.String("server", server.Addr), slog.Any("error", err))
 		}
 	}
+}
+
+// storyPointsMappingHandler returns the story points mapping from config as JSON
+func (s *Server) storyPointsMappingHandler(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, config.Configuration.FullHouse.StoryPointsMapping)
 }
 
 func (s *Server) upHandler(ctx *gin.Context) {
