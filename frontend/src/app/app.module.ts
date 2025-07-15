@@ -42,6 +42,7 @@ import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {TranslateMessageFormatCompiler} from "ngx-translate-messageformat-compiler";
 import {QRCodeModule} from "angularx-qrcode";
 import {SettingsState} from "./store/settings/settings.state";
+import {StoryPointsSettingsState} from "./store/settings/story-points-settings.state";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -73,7 +74,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         FormsModule,
         HttpClientModule,
         NgxsModule.forRoot(appStates, {developmentMode: !environment.production}),
-        NgxsStoragePluginModule.forRoot({key: [UserState, ThemingState, SettingsState]}),
+        NgxsStoragePluginModule.forRoot({key: [UserState, ThemingState, SettingsState, StoryPointsSettingsState]}),
         NgxsReduxDevtoolsPluginModule.forRoot(),
         NgxsLoggerPluginModule.forRoot(),
         MatIconModule,
