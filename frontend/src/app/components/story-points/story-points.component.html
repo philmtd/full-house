@@ -1,0 +1,16 @@
+<div class="story-points-container">
+  <h2>Story Points</h2>
+  <div class="story-points">
+    <ng-container *ngIf="storyPoints$ | async as storyPoints">
+      <div
+        class="point"
+        *ngFor="let sp of storyPoints"
+        [attr.title]="sp.description"
+        tabindex="0"
+      >
+        {{ sp.value }}
+      </div>
+    </ng-container>
+  </div>
+</div>
+

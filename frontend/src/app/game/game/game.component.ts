@@ -11,6 +11,7 @@ import {WebsocketApi} from "../api/websocket-api.service";
 import {first, map, tap} from "rxjs/operators";
 import {InvitePlayersDialogComponent} from "../../components/invite-players-dialog/invite-players-dialog.component";
 import {calculateAgreement, isVoteNumerical} from "./agreement";
+import { StoryPointsSettingsState, StoryPointMapping } from '../../store/settings/story-points-settings.state';
 
 export interface GameModel {
   name: string;
@@ -45,6 +46,9 @@ export class GameComponent {
   @Select(UserState.currentUser)
   public currentUser$: Observable<Participant>;
 
+  @Select(StoryPointsSettingsState.customStoryPoints)
+  storyPoints$!: Observable<StoryPointMapping[]>;
+
   constructor(route: ActivatedRoute,
               private api: Api,
               private store: Store,
@@ -55,12 +59,13 @@ export class GameComponent {
   }
 
   private initGame(slug: string | null) {
-    try {
-      if (slug == null) {
-        throw Error("slug is null")
-      }
-      this.slug = slug;
-      this.api.getGame(slug).subscribe(g => {
+    if (!slug) {
+      this.isError = true;
+      return;
+    }
+    this.slug = slug;
+    this.api.getGame(slug).subscribe({
+      next: g => {
         this.currentUser$.subscribe(currentUser => {
           if (!currentUser) {
             this.createUser();
@@ -85,12 +90,12 @@ export class GameComponent {
               });
           }
         });
-      }, _ => {
+      },
+      error: err => {
+        // If getGame fails (404), show error or optionally create the game here
         this.isError = true;
-      })
-    } catch (e) {
-
-    }
+      }
+    });
   }
 
   private setNextPhaseButtonDisabledState(gameState: GameState) {
@@ -110,9 +115,24 @@ export class GameComponent {
     this.dialog.open(CreateUserDialogComponent, {
       width: '80%'
     }).afterClosed().subscribe(participant => {
-      this.store.dispatch(new SetCurrentUser(participant))
-        .subscribe(() => this.wsApi.reconnect());
-    })
+      if (!participant) return;
+      this.store.dispatch(new SetCurrentUser(participant)).subscribe(() => {
+        // Always try to join the game after user creation
+        if (this.slug) {
+          this.api.joinGame(this.slug, participant).subscribe({
+            next: () => {
+              this.wsApi.reconnect();
+            },
+            error: err => {
+              // If join fails, show error and do not reconnect
+              this.isError = true;
+            }
+          });
+        } else {
+          this.wsApi.reconnect();
+        }
+      });
+    });
   }
 
   private toParticipantModel(game: Game, participant: Participant): ParticipantModel {
@@ -197,5 +217,15 @@ export class GameComponent {
         this.store.dispatch(new SetCurrentUser(participant));
       });
     });
+  }
+
+  getStoryPointDescription(option: number, storyPoints: StoryPointMapping[]): string {
+    if (option === 0) {
+      // fallback if not found in mapping
+      const found = storyPoints.find(sp => sp.value === 0);
+      return found ? found.description : 'No estimate / Not started';
+    }
+    const found = storyPoints.find(sp => sp.value === option);
+    return found ? found.description : '';
   }
 }
