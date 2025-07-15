@@ -37,7 +37,7 @@ helm repo add philmtd https://philmtd.github.io/helm-charts
 Full House runs perfectly fine with the default configuration.
 
 ### Customising voting schemes
-It is possible to adjust the available voting schemes from which the users can choose when creating a new game. 
+It is possible to adjust the available voting schemes from which the users can choose when creating a new game.
 Per default, there are the following two schemes available:
 
 ```yaml
@@ -57,6 +57,43 @@ of the Full House installation directory.
 Each scheme needs a name, the numbers available to vote (need to be 0 or greater, can be floating point numbers) and you can define whether
 to include a questionmark `?` voting card or not. If you use a custom config, the defaults will be overwritten, so if you want to include the default
  schemes, just copy them into your configuration.
+
+
+### Customizing story point tooltips
+
+You can configure the story point (Fibonacci) value/description pairs shown as tooltips on voting cards via YAML, not just in the frontend code. This allows you to provide custom explanations for each card, including 0 and '?', for your team.
+
+Add a `storyPointsMapping` section to your config:
+
+```yaml
+fullHouse:
+  storyPointsMapping:
+    - value: 0
+      description: No estimate / Not started
+    - value: 1
+      description: Less than an hour of work
+    - value: 2
+      description: A couple hours of work
+    - value: 3
+      description: A few hours of work
+    - value: 5
+      description: About a day of work
+    - value: 8
+      description: Several days of work
+    - value: 13
+      description: About a week of work
+    - value: 21
+      description: Multiple weeks of work
+    - value: 34
+      description: A month or more of work
+    - value: 55
+      description: Several months of work
+    - value: 89
+      description: Major project, multiple quarters
+    # You can add more or fewer values as needed
+```
+
+If this section is present, the backend will serve it at `/api/storyPointsMapping` and the frontend will use it for all story point tooltips. If not present, the default mapping is used.
 
 ### Persistent games
 
@@ -93,7 +130,7 @@ Practically these should not appear as problems at the scale this app is intende
 The UI has light and dark modes:
 
 | Voting                                           | Results                                            |
-|--------------------------------------------------|----------------------------------------------------|
+| ------------------------------------------------ | -------------------------------------------------- |
 | ![Voting in light mode](./docs/voting-light.png) | ![Results in light mode](./docs/results-light.png) |
 | ![Voting in light mode](./docs/voting-dark.png)  | ![Results in dark mode](./docs/results-dark.png)   |
 
@@ -168,7 +205,7 @@ The frontend will be available on port `4200`.
 To run the backend, run the `fullhouse/cmd/fullhouse` package with the `server` argument:
 
 ```yaml
-go run fullhouse/cmd/fullhouse server 
+go run fullhouse/cmd/fullhouse server
 ```
 
 This can of course be configured as a run configuration in your favorite IDE.

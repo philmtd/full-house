@@ -1,8 +1,6 @@
 fullHouse:
   server:
     port: 8080
-    # No cookieDomain; using ctx.Request.Host for cookie domain (legacy logic)
-    # cookieSecure is ignored in this mode
   metrics:
     port: 8090
   mode: production

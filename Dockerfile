@@ -1,17 +1,13 @@
-FROM alpine AS builder
-# Install SSL ca certificates.
-# Ca-certificates is required to call HTTPS endpoints.
-RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates
+FROM --platform=$BUILDPLATFORM golang:1.22-alpine AS builder
+WORKDIR /src
+COPY . .
+RUN apk add --no-cache ca-certificates && update-ca-certificates
+RUN GOOS=linux GOARCH=$(echo $TARGETPLATFORM | cut -d'/' -f2) go build -o /full-house ./cmd/fullhouse
 
 FROM scratch
-
-# Import from builder.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-
 ADD /config/fullhouse-default.yaml /app/config/
-ADD /full-house /app/
 ADD /frontend/dist/browser /app/frontend
-
+COPY --from=builder /full-house /app/full-house
 WORKDIR /app
-
 CMD ["/app/full-house", "server"]
