@@ -144,7 +144,12 @@ export class GameComponent {
     }
   }
 
-
+  public labelForAverage(average: number, votingScheme: VotingScheme): string | undefined {
+    if (!votingScheme.labels) return undefined;
+    const nearest = votingScheme.scheme.reduce((a, b) => Math.abs(b - average) <= Math.abs(a - average) ? b : a);
+    const index = votingScheme.scheme.indexOf(nearest);
+    return votingScheme.labels[index];
+  }
 
   private getAgreementEmoji(agreement: number | null): string {
     if (agreement == null) {

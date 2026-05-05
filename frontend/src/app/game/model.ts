@@ -14,6 +14,7 @@ export interface Participant {
 export interface VotingScheme {
   name: string;
   scheme: Array<number>;
+  labels?: Array<string>;
   includesQuestionmark: boolean;
 }
 

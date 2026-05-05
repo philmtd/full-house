@@ -60,7 +60,7 @@ export class NewGameComponent {
 
   private createLabel(scheme: VotingScheme): string {
     let res = `${scheme.name} (`;
-    res += scheme.scheme.map(v => transformToFraction(v)).join(", ")
+    res += scheme.scheme.map((v, i) => scheme.labels?.[i] ?? transformToFraction(v)).join(", ")
     if (scheme.includesQuestionmark) {
       res += `, ?`
     }

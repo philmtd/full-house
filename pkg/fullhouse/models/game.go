@@ -20,6 +20,7 @@ type Game struct {
 type VotingScheme struct {
 	Name                 string    `json:"name"`
 	Scheme               []float32 `json:"scheme"`
+	Labels               []string  `json:"labels"`
 	IncludesQuestionmark bool      `json:"includesQuestionmark"`
 }
 
@@ -27,6 +28,7 @@ func VotingSchemeFromConfig(scheme config.VotingScheme) VotingScheme {
 	return VotingScheme{
 		Name:                 scheme.Name,
 		Scheme:               scheme.Scheme,
+		Labels:               scheme.Labels,
 		IncludesQuestionmark: scheme.IncludesQuestionmark,
 	}
 }
