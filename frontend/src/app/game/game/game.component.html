@@ -27,12 +27,12 @@
             </div>
           }
           @for (p of game.otherParticipants | participantRow: 'top'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme"></participant>
           }
         </div>
         <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em" [class.shift-left]="game.otherParticipants.length == 4">
           @for (p of game.otherParticipants | participantRow: 'left'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme"></participant>
           }
           <div class="table fx-layout-column fx-align--center-x fx-align--x-center">
             @if (game.phase == 'VOTING' && game.voteCount == 0) {
@@ -61,18 +61,18 @@
             }
           </div>
           @for (p of game.otherParticipants | participantRow: 'right'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme"></participant>
           }
         </div>
         <div class="row bottom-row fx-layout-row fx-align--center-x fx-align--x-start fx-gap--2em">
           @for (p of game.otherParticipants | participantRow: 'bottom_left'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme"></participant>
           }
           @if (game.self) {
-            <participant [participant]="game.self" [vote]="game.self.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+            <participant [participant]="game.self" [vote]="game.self.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme"></participant>
           }
           @for (p of game.otherParticipants | participantRow: 'bottom_right'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'"></participant>
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme"></participant>
           }
         </div>
       </div>
@@ -89,9 +89,9 @@
   <div class="bottom-menu fx-layout-row fx-align--center-x fx-align--x-center fx-gap--1em">
     @if (game.phase == 'VOTING') {
       <div class="bottom-menu-container">
-        @for (option of game.votingScheme.scheme; track option) {
+        @for (option of game.votingScheme.scheme; track option; let i = $index) {
           <div class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option" [matTooltip]="getSchemeTooltip(option)">
-            <span>{{ option | fraction }}</span>
+            <span>{{ game.votingScheme.labels?.[i] ?? (option | fraction) }}</span>
           </div>
         }
         @if (game.votingScheme.includesQuestionmark) {
@@ -105,7 +105,7 @@
       <div class="bottom-menu-container fx-layout-row fx-align--center-x fx-align--x-start fx-gap--4em">
         <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
           <span class="gray">{{ 'game.average' | translate }}</span>
-          <strong class="large">{{ game.voteAverage | fraction }}</strong>
+          <strong class="large">{{ labelForAverage(game.voteAverage, game.votingScheme) ?? (game.voteAverage | fraction) }}</strong>
         </div>
         <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
           <span class="gray">{{ 'game.votes' | translate }}</span>

@@ -60,6 +60,7 @@ type GameConfig struct {
 type VotingScheme struct {
 	Name                 string                 `yaml:"name" json:"name" validate:"required"`
 	Scheme               []float32              `yaml:"scheme" json:"scheme" validate:"required,dive,number,min=0"`
+  Labels               []string               `yaml:"labels" json:"labels"`
 	IncludesQuestionmark bool                   `yaml:"includesQuestionmark" json:"includesQuestionmark"`
 	SchemeTooltipMapping []SchemeTooltipMapping `yaml:"schemeTooltipMapping" json:"schemeTooltipMapping"`
 }

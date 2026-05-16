@@ -11,3 +11,7 @@ fullHouse:
     - name: Extended Fibonacci
       scheme: [0, 0.25, 0.5, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
       includesQuestionmark: true
+    - name: T-Shirt Sizes
+      scheme: [1, 2, 3, 4, 5, 6]
+      labels: [XS, S, M, L, XL, XXL]
+      includesQuestionmark: true

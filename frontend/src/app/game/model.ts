@@ -19,6 +19,7 @@ export interface SchemeTooltipMapping {
 export interface VotingScheme {
   name: string;
   scheme: Array<number>;
+  labels?: Array<string>;
   includesQuestionmark: boolean;
   schemeTooltipMapping: Array<SchemeTooltipMapping>;
 }
