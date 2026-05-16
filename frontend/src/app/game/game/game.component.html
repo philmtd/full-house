@@ -90,7 +90,7 @@
     @if (game.phase == 'VOTING') {
       <div class="bottom-menu-container">
         @for (option of game.votingScheme.scheme; track option) {
-          <div class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option">
+          <div class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option" [matTooltip]="getSchemeTooltip(option)">
             <span>{{ option | fraction }}</span>
           </div>
         }

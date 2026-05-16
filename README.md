@@ -37,7 +37,7 @@ helm repo add philmtd https://philmtd.github.io/helm-charts
 Full House runs perfectly fine with the default configuration.
 
 ### Customising voting schemes
-It is possible to adjust the available voting schemes from which the users can choose when creating a new game. 
+It is possible to adjust the available voting schemes from which the users can choose when creating a new game.
 Per default, there are the following two schemes available:
 
 ```yaml
@@ -57,6 +57,46 @@ of the Full House installation directory.
 Each scheme needs a name, the numbers available to vote (need to be 0 or greater, can be floating point numbers) and you can define whether
 to include a questionmark `?` voting card or not. If you use a custom config, the defaults will be overwritten, so if you want to include the default
  schemes, just copy them into your configuration.
+
+
+### Customising voting card tooltips
+
+You can configure tooltips that will be shown on voting cards via the configuration file. This allows you to provide custom explanations for each card.
+
+Add a `schemeTooltipMapping` section to your `votingScheme` config, for example:
+
+```yaml
+fullHouse:
+  votingSchemes:
+    - name: Fibonacci
+      scheme: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+      includesQuestionmark: true
+      schemeTooltipMapping:
+        - value: 0
+          tooltip: No estimate / Not started
+        - value: 1
+          tooltip: Less than an hour of work
+        - value: 2
+          tooltip: A couple hours of work
+        - value: 3
+          tooltip: A few hours of work
+        - value: 5
+          tooltip: About a day of work
+        - value: 8
+          tooltip: Several days of work
+        - value: 13
+          tooltip: About a week of work
+        - value: 21
+          tooltip: Multiple weeks of work
+        - value: 34
+          tooltip: A month or more of work
+        - value: 55
+          tooltip: Several months of work
+        - value: 89
+          tooltip: Major project, multiple quarters
+```
+
+If not present, no tooltips will be displayed.
 
 ### Persistent games
 
@@ -93,7 +133,7 @@ Practically these should not appear as problems at the scale this app is intende
 The UI has light and dark modes:
 
 | Voting                                           | Results                                            |
-|--------------------------------------------------|----------------------------------------------------|
+| ------------------------------------------------ | -------------------------------------------------- |
 | ![Voting in light mode](./docs/voting-light.png) | ![Results in light mode](./docs/results-light.png) |
 | ![Voting in light mode](./docs/voting-dark.png)  | ![Results in dark mode](./docs/results-dark.png)   |
 
@@ -168,7 +208,7 @@ The frontend will be available on port `4200`.
 To run the backend, run the `fullhouse/cmd/fullhouse` package with the `server` argument:
 
 ```yaml
-go run fullhouse/cmd/fullhouse server 
+go run fullhouse/cmd/fullhouse server
 ```
 
 This can of course be configured as a run configuration in your favorite IDE.

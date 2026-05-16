@@ -5,5 +5,5 @@ import {SettingsState} from "./settings/settings.state";
 export const appStates = [
   ThemingState,
   UserState,
-  SettingsState
+  SettingsState,
 ];

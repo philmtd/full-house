@@ -55,12 +55,13 @@ export class GameComponent {
   }
 
   private initGame(slug: string | null) {
-    try {
-      if (slug == null) {
-        throw Error("slug is null")
-      }
-      this.slug = slug;
-      this.api.getGame(slug).subscribe(g => {
+    if (!slug) {
+      this.isError = true;
+      return;
+    }
+    this.slug = slug;
+    this.api.getGame(slug).subscribe({
+      next: g => {
         this.currentUser$.subscribe(currentUser => {
           if (!currentUser) {
             this.createUser();
@@ -85,12 +86,12 @@ export class GameComponent {
               });
           }
         });
-      }, _ => {
+      },
+      error: err => {
+        // If getGame fails (404), show error or optionally create the game here
         this.isError = true;
-      })
-    } catch (e) {
-
-    }
+      }
+    });
   }
 
   private setNextPhaseButtonDisabledState(gameState: GameState) {
@@ -110,9 +111,24 @@ export class GameComponent {
     this.dialog.open(CreateUserDialogComponent, {
       width: '80%'
     }).afterClosed().subscribe(participant => {
-      this.store.dispatch(new SetCurrentUser(participant))
-        .subscribe(() => this.wsApi.reconnect());
-    })
+      if (!participant) return;
+      this.store.dispatch(new SetCurrentUser(participant)).subscribe(() => {
+        // Always try to join the game after user creation
+        if (this.slug) {
+          this.api.joinGame(this.slug, participant).subscribe({
+            next: () => {
+              this.wsApi.reconnect();
+            },
+            error: err => {
+              // If join fails, show error and do not reconnect
+              this.isError = true;
+            }
+          });
+        } else {
+          this.wsApi.reconnect();
+        }
+      });
+    });
   }
 
   private toParticipantModel(game: Game, participant: Participant): ParticipantModel {
@@ -197,5 +213,17 @@ export class GameComponent {
         this.store.dispatch(new SetCurrentUser(participant));
       });
     });
+  }
+
+  getSchemeTooltip(option: number): string {
+    const scheme = this.game?.votingScheme;
+    if (scheme?.schemeTooltipMapping) {
+      for (const op of scheme.schemeTooltipMapping) {
+        if (op.value === option) {
+          return op.tooltip;
+        }
+      }
+    }
+    return '';
   }
 }
