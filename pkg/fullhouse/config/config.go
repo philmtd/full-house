@@ -50,24 +50,23 @@ type Config struct {
 }
 
 type GameConfig struct {
-	Server             ServerConfig           `yaml:"server" validate:"required"`
-	Metrics            MetricsConfig          `yaml:"metrics" validate:"required"`
-	Mode               Mode                   `yaml:"mode"`
-	VotingSchemes      []VotingScheme         `yaml:"votingSchemes" validate:"required,dive"`
-	PersistentGames    []PersistentGameConfig `yaml:"persistentGames" validate:"dive"`
-	StoryPointsMapping []StoryPointMapping    `yaml:"storyPointsMapping" json:"storyPointsMapping"`
+	Server          ServerConfig           `yaml:"server" validate:"required"`
+	Metrics         MetricsConfig          `yaml:"metrics" validate:"required"`
+	Mode            Mode                   `yaml:"mode"`
+	VotingSchemes   []VotingScheme         `yaml:"votingSchemes" validate:"required,dive"`
+	PersistentGames []PersistentGameConfig `yaml:"persistentGames" validate:"dive"`
 }
 
 type VotingScheme struct {
-	Name                 string    `yaml:"name" json:"name"`
-	Scheme               []float32 `yaml:"scheme" json:"scheme"`
-	IncludesQuestionmark bool      `yaml:"includesQuestionmark" json:"includesQuestionmark"`
+	Name                 string                 `yaml:"name" json:"name" validate:"required"`
+	Scheme               []float32              `yaml:"scheme" json:"scheme" validate:"required,dive,number,min=0"`
+	IncludesQuestionmark bool                   `yaml:"includesQuestionmark" json:"includesQuestionmark"`
+	SchemeTooltipMapping []SchemeTooltipMapping `yaml:"schemeTooltipMapping" json:"schemeTooltipMapping"`
 }
 
-// StoryPointMapping allows customizing the value/description pairs for story points.
-type StoryPointMapping struct {
-	Value       float64 `yaml:"value" json:"value"`
-	Description string  `yaml:"description" json:"description"`
+type SchemeTooltipMapping struct {
+	Value   float32 `yaml:"value" json:"value"`
+	Tooltip string  `yaml:"tooltip" json:"tooltip"`
 }
 type Mode string
 
@@ -78,7 +77,6 @@ const (
 
 type ServerConfig struct {
 	Port         int  `yaml:"port" validate:"required,number"`
-	CookieSecure bool `yaml:"cookieSecure"`
 }
 
 type MetricsConfig struct {

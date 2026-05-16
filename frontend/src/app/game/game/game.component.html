@@ -89,15 +89,13 @@
   <div class="bottom-menu fx-layout-row fx-align--center-x fx-align--x-center fx-gap--1em">
     @if (game.phase == 'VOTING') {
       <div class="bottom-menu-container">
-        <ng-container *ngIf="storyPoints$ | async as storyPoints">
-          @for (option of game.votingScheme.scheme; track option) {
-            <div class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option" [matTooltip]="getStoryPointDescription(option, storyPoints)">
-              <span>{{ option | fraction }}</span>
-            </div>
-          }
-        </ng-container>
+        @for (option of game.votingScheme.scheme; track option) {
+          <div class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option" [matTooltip]="getSchemeTooltip(option)">
+            <span>{{ option | fraction }}</span>
+          </div>
+        }
         @if (game.votingScheme.includesQuestionmark) {
-          <div class="card" (click)="selectOption('?')" [class.selected]="this.game.self?.vote?.vote == '?'" [matTooltip]="'Unknown'">
+          <div class="card" (click)="selectOption('?')" [class.selected]="this.game.self?.vote?.vote == '?'">
             <span>{{ '?' }}</span>
           </div>
         }

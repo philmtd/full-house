@@ -11,7 +11,6 @@ import {WebsocketApi} from "../api/websocket-api.service";
 import {first, map, tap} from "rxjs/operators";
 import {InvitePlayersDialogComponent} from "../../components/invite-players-dialog/invite-players-dialog.component";
 import {calculateAgreement, isVoteNumerical} from "./agreement";
-import { StoryPointsSettingsState, StoryPointMapping } from '../../store/settings/story-points-settings.state';
 
 export interface GameModel {
   name: string;
@@ -45,9 +44,6 @@ export class GameComponent {
 
   @Select(UserState.currentUser)
   public currentUser$: Observable<Participant>;
-
-  @Select(StoryPointsSettingsState.customStoryPoints)
-  storyPoints$!: Observable<StoryPointMapping[]>;
 
   constructor(route: ActivatedRoute,
               private api: Api,
@@ -219,13 +215,15 @@ export class GameComponent {
     });
   }
 
-  getStoryPointDescription(option: number, storyPoints: StoryPointMapping[]): string {
-    if (option === 0) {
-      // fallback if not found in mapping
-      const found = storyPoints.find(sp => sp.value === 0);
-      return found ? found.description : 'No estimate / Not started';
+  getSchemeTooltip(option: number): string {
+    const scheme = this.game?.votingScheme;
+    if (scheme?.schemeTooltipMapping) {
+      for (const op of scheme.schemeTooltipMapping) {
+        if (op.value === option) {
+          return op.tooltip;
+        }
+      }
     }
-    const found = storyPoints.find(sp => sp.value === option);
-    return found ? found.description : '';
+    return '';
   }
 }
