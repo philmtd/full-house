@@ -9,9 +9,6 @@ import (
 	"fullhouse/pkg/fullhouse/metrics"
 	"fullhouse/pkg/fullhouse/models"
 	"fullhouse/pkg/fullhouse/websocket"
-	"github.com/gin-contrib/static"
-	"github.com/gin-gonic/gin"
-	sloggin "github.com/samber/slog-gin"
 	"log/slog"
 	"net/http"
 	"os"
@@ -19,6 +16,10 @@ import (
 	"path"
 	"syscall"
 	"time"
+
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
+	sloggin "github.com/samber/slog-gin"
 )
 
 type Server struct {
