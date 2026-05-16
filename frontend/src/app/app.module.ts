@@ -13,7 +13,7 @@ import {MatOptionModule} from "@angular/material/core";
 import {MatButtonModule} from "@angular/material/button";
 import {FormsModule} from "@angular/forms";
 import {Api} from "./game/api/api.service";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import {NgxsModule} from "@ngxs/store";
 import {environment} from "../environments/environment";
 import {NgxsStoragePluginModule} from "@ngxs/storage-plugin";
@@ -48,70 +48,64 @@ export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
 }
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    GameComponent,
-    NewGameComponent,
-    CreateUserDialogComponent,
-    ParticipantComponent,
-    ParticipantFilterPipe,
-    NavigationComponent,
-    InvitePlayersDialogComponent,
-    ThemeSwitcherComponent,
-    FractionFilterPipe
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatDialogModule,
-    MatInputModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatButtonModule,
-    FormsModule,
-    HttpClientModule,
-    NgxsModule.forRoot(appStates, {developmentMode: !environment.production}),
-    NgxsStoragePluginModule.forRoot({key: [UserState, ThemingState, SettingsState]}),
-    NgxsReduxDevtoolsPluginModule.forRoot(),
-    NgxsLoggerPluginModule.forRoot(),
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    QRCodeModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      },
-      compiler: {
-        provide: TranslateCompiler,
-        useClass: TranslateMessageFormatCompiler
-      }
-    }),
-    MatProgressSpinnerModule,
-    TranslateModule
-  ],
-  providers: [
-    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}},
-    {
-      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
-      useValue: <MatTooltipDefaultOptions>{
-        showDelay: 500
-      }
-    },
-    Api,
-    WebsocketService,
-    WebsocketApi,
-    {
-      provide: AnimationDriver,
-      useFactory: () => provideAnimationDriverBasedOnUserPreferences()
-    }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        GameComponent,
+        NewGameComponent,
+        CreateUserDialogComponent,
+        ParticipantComponent,
+        ParticipantFilterPipe,
+        NavigationComponent,
+        InvitePlayersDialogComponent,
+        ThemeSwitcherComponent,
+        FractionFilterPipe
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatDialogModule,
+        MatInputModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatButtonModule,
+        FormsModule,
+        NgxsModule.forRoot(appStates, { developmentMode: !environment.production }),
+        NgxsStoragePluginModule.forRoot({ key: [UserState, ThemingState, SettingsState] }),
+        NgxsReduxDevtoolsPluginModule.forRoot(),
+        NgxsLoggerPluginModule.forRoot(),
+        MatIconModule,
+        MatMenuModule,
+        MatTooltipModule,
+        QRCodeModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            },
+            compiler: {
+                provide: TranslateCompiler,
+                useClass: TranslateMessageFormatCompiler
+            }
+        }),
+        MatProgressSpinnerModule,
+        TranslateModule], providers: [
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+        {
+            provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+            useValue: <MatTooltipDefaultOptions>{
+                showDelay: 500
+            }
+        },
+        Api,
+        WebsocketService,
+        WebsocketApi,
+        {
+            provide: AnimationDriver,
+            useFactory: () => provideAnimationDriverBasedOnUserPreferences()
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {
 
   constructor(iconRegistry: MatIconRegistry,
