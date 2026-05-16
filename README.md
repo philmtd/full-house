@@ -59,41 +59,44 @@ to include a questionmark `?` voting card or not. If you use a custom config, th
  schemes, just copy them into your configuration.
 
 
-### Customizing story point tooltips
+### Customising voting card tooltips
 
-You can configure the story point (Fibonacci) value/description pairs shown as tooltips on voting cards via YAML, not just in the frontend code. This allows you to provide custom explanations for each card, including 0 and '?', for your team.
+You can configure tooltips that will be shown on voting cards via the configuration file. This allows you to provide custom explanations for each card.
 
-Add a `storyPointsMapping` section to your config:
+Add a `schemeTooltipMapping` section to your `votingScheme` config, for example:
 
 ```yaml
 fullHouse:
-  storyPointsMapping:
-    - value: 0
-      description: No estimate / Not started
-    - value: 1
-      description: Less than an hour of work
-    - value: 2
-      description: A couple hours of work
-    - value: 3
-      description: A few hours of work
-    - value: 5
-      description: About a day of work
-    - value: 8
-      description: Several days of work
-    - value: 13
-      description: About a week of work
-    - value: 21
-      description: Multiple weeks of work
-    - value: 34
-      description: A month or more of work
-    - value: 55
-      description: Several months of work
-    - value: 89
-      description: Major project, multiple quarters
-    # You can add more or fewer values as needed
+  votingSchemes:
+    - name: Fibonacci
+      scheme: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+      includesQuestionmark: true
+      schemeTooltipMapping:
+        - value: 0
+          tooltip: No estimate / Not started
+        - value: 1
+          tooltip: Less than an hour of work
+        - value: 2
+          tooltip: A couple hours of work
+        - value: 3
+          tooltip: A few hours of work
+        - value: 5
+          tooltip: About a day of work
+        - value: 8
+          tooltip: Several days of work
+        - value: 13
+          tooltip: About a week of work
+        - value: 21
+          tooltip: Multiple weeks of work
+        - value: 34
+          tooltip: A month or more of work
+        - value: 55
+          tooltip: Several months of work
+        - value: 89
+          tooltip: Major project, multiple quarters
 ```
 
-If this section is present, the backend will serve it at `/api/storyPointsMapping` and the frontend will use it for all story point tooltips. If not present, the default mapping is used.
+If not present, no tooltips will be displayed.
 
 ### Persistent games
 
