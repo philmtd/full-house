@@ -16,9 +16,9 @@
           </g>
         </g>
       </svg>
-      <h1>{{ navTitle || "Full House" }}</h1>
+      <h1>{{ navTitle() || "Full House" }}</h1>
     </a>
     <div class="fx-flex"></div>
-    <ng-content></ng-content>
+    <ng-content />
   </nav>
 </div>

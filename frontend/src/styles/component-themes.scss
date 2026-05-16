@@ -1,13 +1,13 @@
-@import "../app/components/invite-players-dialog/invite-players-dialog.component.theme";
-@import "../app/components/theme-switcher/theme-switcher.component.theme";
-@import "../app/components/navigation/navigation.component.theme";
-@import "../app/game/game/game.component.theme";
-@import "../app/game/participant/participant.component.theme";
+@use "../app/components/invite-players-dialog/invite-players-dialog.component.theme" as invite-dialog;
+@use "../app/components/theme-switcher/theme-switcher.component.theme" as switcher;
+@use "../app/components/navigation/navigation.component.theme" as navigation;
+@use "../app/game/game/game.component.theme" as game;
+@use "../app/game/participant/participant.component.theme" as participant;
 
 @mixin component-themes($theme) {
-  @include invite-players-dialog-theme($theme);
-  @include theme-switcher-component-theme($theme);
-  @include game-component-theme($theme);
-  @include participant-component-theme($theme);
-  @include navigation-component-theme($theme);
+  @include invite-dialog.invite-players-dialog-theme($theme);
+  @include switcher.theme-switcher-component-theme($theme);
+  @include game.game-component-theme($theme);
+  @include participant.participant-component-theme($theme);
+  @include navigation.navigation-component-theme($theme);
 }

@@ -1,5 +1,5 @@
 @use "@angular/material" as mat;
-@import "../../../styles/mixins";
+@use "../../../styles/mixins" as mix;
 
 .participant {
   margin: 0 1em;

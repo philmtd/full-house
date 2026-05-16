@@ -1,11 +1,11 @@
 @use '@angular/material' as mat;
-@import "../../../styles/mixins";
+@use "../../../styles/mixins" as mix;
 
 @mixin game-component-theme($theme) {
   $isDark: mat.get-theme-type($theme) == 'dark';
 
   button[mat-icon-button] {
-    --mdc-icon-button-icon-color: #{mat.get-theme-color($theme, primary)};
+    --mat-icon-button-icon-color: #{mat.get-theme-color($theme, primary)};
   }
   .table {
     color: mat.get-theme-color($theme, primary, 10);
@@ -15,7 +15,7 @@
       background: mat.get-theme-color($theme, primary, 90);
     }
     button[disabled] {
-      --mdc-protected-button-disabled-container-color: #{mat.get-theme-color($theme, on-primary)};
+      --mat-button-protected-disabled-container-color: #{mat.get-theme-color($theme, on-primary)};
     }
   }
 

@@ -1,10 +1,10 @@
 <button color="primary" mat-icon-button [matMenuTriggerFor]="modeMenu">
-  <mat-icon [svgIcon]="(currentModeIcon | async) || ''"></mat-icon>
+  <mat-icon [svgIcon]="(currentModeIcon | async) || ''" />
 </button>
 <mat-menu #modeMenu class="theme-switcher-menu">
   @for (mode of modes; track mode) {
     <button mat-menu-item (click)="setMode(mode.mode)" [class.active]="(themingMode$ | async) === mode.mode">
-      <mat-icon [svgIcon]="mode.icon"></mat-icon>
+      <mat-icon [svgIcon]="mode.icon" />
       <span>{{mode.label | async}}</span>
     </button>
   }

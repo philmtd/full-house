@@ -1,5 +1,5 @@
-import {Component} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import { Component, inject } from "@angular/core";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {Api} from "../api/api.service";
 import {Game, GamePhase, GameState, Participant, Vote, VoteOption, VotingScheme} from "../model";
 import {Select, Store} from "@ngxs/store";
@@ -11,6 +11,17 @@ import {WebsocketApi} from "../api/websocket-api.service";
 import {first, map, tap} from "rxjs/operators";
 import {InvitePlayersDialogComponent} from "../../components/invite-players-dialog/invite-players-dialog.component";
 import {calculateAgreement, isVoteNumerical} from "./agreement";
+import {TranslatePipe} from "@ngx-translate/core";
+import {FractionFilterPipe} from "./fraction-filter.pipe";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {ParticipantComponent} from "../participant/participant.component";
+import {MatIcon} from "@angular/material/icon";
+import {ThemeSwitcherComponent} from "../../components/theme-switcher/theme-switcher.component";
+import {NavigationComponent} from "../../components/navigation/navigation.component";
+import {ParticipantFilterPipe} from "./participant-filter.pipe";
+import {AsyncPipe} from "@angular/common";
+import {MatTooltip} from "@angular/material/tooltip";
 
 export interface GameModel {
   name: string;
@@ -34,9 +45,30 @@ export interface ParticipantModel {
 @Component({
   selector: 'game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
+  imports: [
+    TranslatePipe,
+    FractionFilterPipe,
+    MatProgressSpinner,
+    RouterLink,
+    MatButton,
+    ParticipantComponent,
+    MatIcon,
+    ThemeSwitcherComponent,
+    MatIconButton,
+    NavigationComponent,
+    ParticipantFilterPipe,
+    AsyncPipe,
+    MatTooltip
+  ],
+  standalone: true
 })
 export class GameComponent {
+  private api = inject(Api);
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+  private wsApi = inject(WebsocketApi);
+
   public slug?: string;
   public game?: GameModel;
   public isError = false;
@@ -45,11 +77,9 @@ export class GameComponent {
   @Select(UserState.currentUser)
   public currentUser$: Observable<Participant>;
 
-  constructor(route: ActivatedRoute,
-              private api: Api,
-              private store: Store,
-              private dialog: MatDialog,
-              private wsApi: WebsocketApi) {
+  constructor() {
+    const route = inject(ActivatedRoute);
+
     route.paramMap.subscribe(params => this.initGame(params.get("slug")));
     this.nextPhaseButtonDisabled = new BehaviorSubject(false);
   }

@@ -1,7 +1,7 @@
 @use "sass:list";
 
 @use "@angular/material" as mat;
-@import "../../../styles/mixins";
+@use "../../../styles/mixins" as mix;
 
 @mixin participant-component-theme($theme) {
   $isDark: mat.get-theme-type($theme) == 'dark';

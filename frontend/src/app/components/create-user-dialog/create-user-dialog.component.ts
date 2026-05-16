@@ -1,20 +1,39 @@
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Participant} from "../../game/model";
-import {Component, Inject} from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {Api} from "../../game/api/api.service";
+import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import {FormsModule} from "@angular/forms";
+import {TranslatePipe} from "@ngx-translate/core";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'create-user-dialog-component',
   templateUrl: 'create-user-dialog.component.html',
-  styleUrls: ['./create-user-dialog.component.scss']
+  styleUrls: ['./create-user-dialog.component.scss'],
+  imports: [
+    MatFormField,
+    MatDialogTitle,
+    MatDialogContent,
+    MatLabel,
+    FormsModule,
+    TranslatePipe,
+    MatInput,
+    MatButton
+  ],
+  standalone: true
 })
 export class CreateUserDialogComponent {
+  dialogRef = inject<MatDialogRef<CreateUserDialogComponent, Participant>>(MatDialogRef);
+  private api = inject(Api);
+  private data = inject<Participant>(MAT_DIALOG_DATA);
+
 
   public participant: { name: string, id?: string } = {name: ""};
 
-  constructor(public dialogRef: MatDialogRef<CreateUserDialogComponent, Participant>,
-              private api: Api,
-              @Inject(MAT_DIALOG_DATA) private data?: Participant) {
+  constructor() {
+    const data = this.data;
+
     if (data) {
       this.participant = {
         name: data.name,

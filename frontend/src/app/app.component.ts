@@ -1,19 +1,27 @@
-import {Component, Inject} from '@angular/core';
-import {DOCUMENT} from "@angular/common";
+import { Component, DOCUMENT, inject } from '@angular/core';
+
 import {Select, Store} from "@ngxs/store";
 import {Observable} from "rxjs";
 import {ThemingState} from "./store/theming/theming.state";
+import {RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  imports: [
+    RouterOutlet
+  ],
+  standalone: true
 })
 export class AppComponent {
+  private store = inject(Store);
+  private document = inject<Document>(DOCUMENT);
+
 
   @Select(ThemingState.isDarkMode) isDarkTheme$: Observable<boolean>;
 
-  constructor(private store: Store, @Inject(DOCUMENT) private document: Document) {
+  constructor() {
     this.isDarkTheme$.subscribe(isDarkTheme => {
       const bodyClassList = this.document.body.classList;
       if (isDarkTheme) {

@@ -2,6 +2,7 @@ import {MatIconRegistry} from "@angular/material/icon";
 import {DomSanitizer} from "@angular/platform-browser";
 import {AnimationDriver, NoopAnimationDriver, ɵWebAnimationsDriver as WebAnimationsDriver} from '@angular/animations/browser';
 import {TranslateService} from "@ngx-translate/core";
+import LAN_EN from './../i18n/en.json';
 
 export const configureSvgIcons = (iconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) => {
   iconRegistry.addSvgIconResolver((name, namespace) => {
@@ -21,6 +22,7 @@ export const provideAnimationDriverBasedOnUserPreferences = (): AnimationDriver 
 };
 
 export const configureTranslations = (translate: TranslateService) => {
+  translate.setTranslation('en', LAN_EN, false);
   translate.setDefaultLang('en');
   translate.use('en');
 };

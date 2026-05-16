@@ -1,13 +1,12 @@
 import { HttpClient } from "@angular/common/http";
-import {Injectable} from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {Observable} from "rxjs";
 import {AppInfo, Game, Participant, VoteOption, VotingScheme} from "../model";
 
 @Injectable()
 export class Api {
+  private client = inject(HttpClient);
 
-  constructor(private client: HttpClient) {
-  }
 
   public votingSchemes(): Observable<Array<VotingScheme>> {
     return this.client.get<Array<VotingScheme>>(`/api/game/votingSchemes`);

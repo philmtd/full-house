@@ -8,8 +8,7 @@
           [colorLight]="'00000000'"
           cssClass="full-house-qr"
           [margin]="0"
-          [width]="240">
-        </qrcode>
+          [width]="240" />
       }
     </div>
     <mat-form-field appearance="fill">
@@ -18,14 +17,14 @@
     </mat-form-field>
     <button mat-flat-button color="primary" (click)="copyUrl()">
       <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
-        <mat-icon svgIcon="content-copy"></mat-icon>
+        <mat-icon svgIcon="content-copy" />
         <span>{{ 'components.invitePlayersDialog.copyButton' | translate }}</span>
       </div>
     </button>
 
     <button class="show-qr-button" tabindex="-1" mat-stroked-button color="primary" (click)="toggleQrCodeVisibility()">
       <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
-        <mat-icon svgIcon="qr-code-scanner"></mat-icon>
+        <mat-icon svgIcon="qr-code-scanner" />
         <span>{{ 'components.invitePlayersDialog.showQrButton' | translate: {visible: (qrCodeVisible$ | async)} }}</span>
       </div>
     </button>

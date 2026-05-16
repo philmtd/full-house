@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {WebsocketService} from "./websocket.service";
 import {Observable} from "rxjs";
 import {Game} from "../model";
@@ -6,9 +6,8 @@ import {filter, map} from "rxjs/operators";
 
 @Injectable()
 export class WebsocketApi {
+  private ws = inject(WebsocketService);
 
-  constructor(private ws: WebsocketService) {
-  }
 
   public gameState(slug: string): Observable<Game> {
     return this.ws.stream().pipe(map(evt => {

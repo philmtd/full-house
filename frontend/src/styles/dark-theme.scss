@@ -1,11 +1,11 @@
 @use '@angular/material' as mat;
 @use '@angular/material-experimental' as matx;
-@import "./mixins.scss";
-@import "./component-themes.scss";
+@use "./variables.scss" as var;
+@use "./component-themes.scss" as ct;
 
-$primary: mat.m2-define-palette($pp-yellow);
-$accent: mat.m2-define-palette($pp-green);
-$warn: mat.m2-define-palette($pp-red);
+$primary: mat.m2-define-palette(var.$pp-yellow);
+$accent: mat.m2-define-palette(var.$pp-green);
+$warn: mat.m2-define-palette(var.$pp-red);
 
 $dark-theme: mat.define-theme((
   color: (
@@ -13,8 +13,8 @@ $dark-theme: mat.define-theme((
     primary: mat.$violet-palette,
   ),
   typography: (
-    plain-family: $font-family,
-    brand-family: $font-family,
+    plain-family: var.$font-family,
+    brand-family: var.$font-family,
   ),
   density: (
     scale: 0
@@ -22,10 +22,12 @@ $dark-theme: mat.define-theme((
 ));
 
 html:has(body.dark-theme) {
-  @include mat.core();
+  @include mat.elevation-classes();
+  @include mat.app-background();
   @include mat.all-component-typographies($dark-theme);
   @include mat.typography-hierarchy($dark-theme);
-  @include mat.core-theme($dark-theme);
+  @include mat.elevation-classes();
+  @include mat.app-background();
   @include mat.all-component-themes($dark-theme);
-  @include component-themes($dark-theme);
+  @include ct.component-themes($dark-theme);
 }
