@@ -3,14 +3,14 @@
 @import "./mixins.scss";
 @import "./component-themes.scss";
 
-$primary: mat.define-palette($pp-yellow);
-$accent: mat.define-palette($pp-green);
-$warn: mat.define-palette($pp-red);
+$primary: mat.m2-define-palette($pp-yellow);
+$accent: mat.m2-define-palette($pp-green);
+$warn: mat.m2-define-palette($pp-red);
 
-$dark-theme: matx.define-theme((
+$dark-theme: mat.define-theme((
   color: (
     theme-type: dark,
-    primary: matx.$m3-violet-palette,
+    primary: mat.$violet-palette,
   ),
   typography: (
     plain-family: $font-family,

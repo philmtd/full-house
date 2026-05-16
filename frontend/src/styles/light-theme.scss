@@ -4,15 +4,15 @@
 @import "./component-themes";
 
 
-$primary: mat.define-palette($pp-purple);
-$accent: mat.define-palette($pp-yellow);
-$warn: mat.define-palette($pp-red);
+$primary: mat.m2-define-palette($pp-purple);
+$accent: mat.m2-define-palette($pp-yellow);
+$warn: mat.m2-define-palette($pp-red);
 
 
-$light-theme: matx.define-theme((
+$light-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: matx.$m3-violet-palette,
+    primary: mat.$violet-palette,
   ),
   typography: (
     plain-family: $font-family,
