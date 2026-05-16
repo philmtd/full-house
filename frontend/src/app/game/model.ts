@@ -11,11 +11,17 @@ export interface Participant {
   id: string;
 }
 
+export interface SchemeTooltipMapping {
+  value: number;
+  tooltip: string;
+}
+
 export interface VotingScheme {
   name: string;
   scheme: Array<number>;
   labels?: Array<string>;
   includesQuestionmark: boolean;
+  schemeTooltipMapping: Array<SchemeTooltipMapping>;
 }
 
 export type GamePhase = 'VOTING' | 'REVEALED';

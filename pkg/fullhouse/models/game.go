@@ -17,11 +17,28 @@ type Game struct {
 	Lock            sync.RWMutex
 }
 
+type SchemeTooltipMapping struct {
+	Value   float32 `json:"value"`
+	Tooltip string  `json:"tooltip"`
+}
+
+func SchemeTooltipMappingFromConfig(mapping []config.SchemeTooltipMapping) []SchemeTooltipMapping {
+	result := []SchemeTooltipMapping{}
+	for _, m := range mapping {
+		result = append(result, SchemeTooltipMapping{
+			Value:   m.Value,
+			Tooltip: m.Tooltip,
+		})
+	}
+	return result
+}
+
 type VotingScheme struct {
-	Name                 string    `json:"name"`
-	Scheme               []float32 `json:"scheme"`
-	Labels               []string  `json:"labels"`
-	IncludesQuestionmark bool      `json:"includesQuestionmark"`
+	Name                 string                 `json:"name"`
+	Scheme               []float32              `json:"scheme"`
+	Labels               []string               `json:"labels"`
+	IncludesQuestionmark bool                   `json:"includesQuestionmark"`
+	SchemeTooltipMapping []SchemeTooltipMapping `json:"schemeTooltipMapping"`
 }
 
 func VotingSchemeFromConfig(scheme config.VotingScheme) VotingScheme {
@@ -30,6 +47,7 @@ func VotingSchemeFromConfig(scheme config.VotingScheme) VotingScheme {
 		Scheme:               scheme.Scheme,
 		Labels:               scheme.Labels,
 		IncludesQuestionmark: scheme.IncludesQuestionmark,
+		SchemeTooltipMapping: SchemeTooltipMappingFromConfig(scheme.SchemeTooltipMapping),
 	}
 }
 

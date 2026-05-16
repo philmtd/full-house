@@ -61,38 +61,39 @@ export function HttpLoaderFactory(http: HttpClient) {
     ThemeSwitcherComponent,
     FractionFilterPipe
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MatDialogModule,
-        MatInputModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatButtonModule,
-        FormsModule,
-        HttpClientModule,
-        NgxsModule.forRoot(appStates, {developmentMode: !environment.production}),
-        NgxsStoragePluginModule.forRoot({key: [UserState, ThemingState, SettingsState]}),
-        NgxsReduxDevtoolsPluginModule.forRoot(),
-        NgxsLoggerPluginModule.forRoot(),
-        MatIconModule,
-        MatMenuModule,
-        MatTooltipModule,
-        QRCodeModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient]
-            },
-            compiler: {
-                provide: TranslateCompiler,
-                useClass: TranslateMessageFormatCompiler
-            }
-        }),
-        MatProgressSpinnerModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatButtonModule,
+    FormsModule,
+    HttpClientModule,
+    NgxsModule.forRoot(appStates, {developmentMode: !environment.production}),
+    NgxsStoragePluginModule.forRoot({key: [UserState, ThemingState, SettingsState]}),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    NgxsLoggerPluginModule.forRoot(),
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    QRCodeModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      },
+      compiler: {
+        provide: TranslateCompiler,
+        useClass: TranslateMessageFormatCompiler
+      }
+    }),
+    MatProgressSpinnerModule,
+    TranslateModule
+  ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}},
     {

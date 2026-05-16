@@ -1,6 +1,41 @@
+# this is a development configuration file
 fullHouse:
+  server:
+    port: 8080
+  metrics:
+    port: 8090
   mode: development
+  votingSchemes:
+    - name: Fibonacci
+      scheme: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+      includesQuestionmark: true
+    - name: Fibonacci with Labels
+      scheme: [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+      includesQuestionmark: true
+      schemeTooltipMapping:
+        - value: 0
+          tooltip: No estimate / Not started
+        - value: 1
+          tooltip: Less than an hour of work
+        - value: 2
+          tooltip: A couple hours of work
+        - value: 3
+          tooltip: A few hours of work
+        - value: 5
+          tooltip: About a day of work
+        - value: 8
+          tooltip: Several days of work
+        - value: 13
+          tooltip: About a week of work
+        - value: 21
+          tooltip: Multiple weeks of work
+        - value: 34
+          tooltip: A month or more of work
+        - value: 55
+          tooltip: Several months of work
+        - value: 89
+          tooltip: Major project, multiple quarters
   persistentGames:
-    - name: Test Persistent Game
+    - name: Persistent
       slug: persistent_game
-      votingSchemeName: Fibonacci
+      votingSchemeName: Fibonacci with Labels
