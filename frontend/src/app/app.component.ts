@@ -1,8 +1,6 @@
-import { Component, DOCUMENT, inject } from '@angular/core';
-
-import {Select, Store} from "@ngxs/store";
-import {Observable} from "rxjs";
-import {ThemingState} from "./store/theming/theming.state";
+import { Component, DOCUMENT, inject, viewChild, ViewContainerRef, effect } from '@angular/core';
+import { Store } from "@ngxs/store";
+import { ThemingState } from "./store/theming/theming.state";
 import {RouterOutlet} from "@angular/router";
 
 @Component({
@@ -18,11 +16,11 @@ export class AppComponent {
   private store = inject(Store);
   private document = inject<Document>(DOCUMENT);
 
-
-  @Select(ThemingState.isDarkMode) isDarkTheme$: Observable<boolean>;
+  isDarkTheme = this.store.selectSignal(ThemingState.isDarkMode);
 
   constructor() {
-    this.isDarkTheme$.subscribe(isDarkTheme => {
+    effect(() => {
+      const isDarkTheme = this.isDarkTheme();
       const bodyClassList = this.document.body.classList;
       if (isDarkTheme) {
         bodyClassList.add('dark-theme');
@@ -31,5 +29,4 @@ export class AppComponent {
       }
     });
   }
-
 }

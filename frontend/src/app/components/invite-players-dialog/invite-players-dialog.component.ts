@@ -1,14 +1,12 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, viewChild } from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, viewChild} from "@angular/core";
 import {MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
-import {Select, Store} from "@ngxs/store";
-import {Observable} from "rxjs";
+import {Store} from "@ngxs/store";
 import {SettingsState, ToggleQrCodeVisibility} from "../../store/settings/settings.state";
 import {TranslatePipe} from "@ngx-translate/core";
 import {QRCodeComponent} from "angularx-qrcode";
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
-import {AsyncPipe} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 
 @Component({
@@ -23,7 +21,6 @@ import {MatButton} from "@angular/material/button";
     MatFormField,
     MatLabel,
     MatIcon,
-    AsyncPipe,
     MatButton,
     MatInput
   ],
@@ -37,7 +34,7 @@ export class InvitePlayersDialogComponent implements AfterViewInit {
 
 
   public gameUrl: string;
-  @Select(SettingsState.isInviteQrCodeVisible) qrCodeVisible$: Observable<boolean>;
+  qrCodeVisible = this.store.selectSignal(SettingsState.isInviteQrCodeVisible);
   readonly input = viewChild<ElementRef<HTMLInputElement>>('input');
 
   constructor() {

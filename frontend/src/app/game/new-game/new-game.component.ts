@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {Router} from "@angular/router";
 import {Api} from "../api/api.service";
 import {VotingScheme} from "../model";
@@ -44,7 +44,7 @@ export class NewGameComponent {
 
 
   gameName: string = "";
-  votingSchemes: Array<VotingSchemeModel> = [];
+  votingSchemes = signal<Array<VotingSchemeModel>>([]);
   selectedScheme = '';
 
   constructor() {
@@ -52,14 +52,14 @@ export class NewGameComponent {
   }
 
   private initVotingSchemes(schemes: Array<VotingScheme>) {
-    this.votingSchemes = schemes.map(scheme => {
+    this.votingSchemes.set(schemes.map(scheme => {
       return <VotingSchemeModel>{
         scheme: scheme,
         label: this.createLabel(scheme),
         id: scheme.name
       }
-    });
-    this.selectedScheme = this.votingSchemes[0]?.id;
+    }));
+    this.selectedScheme = this.votingSchemes()[0]?.id;
   }
 
   createGame() {
@@ -76,7 +76,7 @@ export class NewGameComponent {
   }
 
   private getSchemeById(id: string): VotingScheme {
-    return this.votingSchemes.filter(v => v.id === id)[0].scheme;
+    return this.votingSchemes().filter(v => v.id === id)[0].scheme;
   }
 
   private createLabel(scheme: VotingScheme): string {

@@ -2,7 +2,7 @@
   <h2 mat-dialog-title>{{ 'components.invitePlayersDialog.title' | translate }}</h2>
   <div mat-dialog-content>
     <div class="fx-layout-column fx-align--x-center fx-align--center-x qr">
-      @if (qrCodeVisible$ | async) {
+      @if (qrCodeVisible()) {
         <qrcode [qrdata]="gameUrl"
           elementType="svg"
           [colorLight]="'00000000'"
@@ -25,7 +25,7 @@
     <button class="show-qr-button" tabindex="-1" mat-stroked-button color="primary" (click)="toggleQrCodeVisibility()">
       <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
         <mat-icon svgIcon="qr-code-scanner" />
-        <span>{{ 'components.invitePlayersDialog.showQrButton' | translate: {visible: (qrCodeVisible$ | async)} }}</span>
+        <span>{{ 'components.invitePlayersDialog.showQrButton' | translate: {visible: qrCodeVisible()} }}</span>
       </div>
     </button>
   </div>

@@ -8,7 +8,7 @@ import {WebsocketApi} from './app/game/api/websocket-api.service';
 import {AnimationDriver} from '@angular/animations/browser';
 import {configureSvgIcons, configureTranslations, provideAnimationDriverBasedOnUserPreferences} from './app/configuration/configuration';
 import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
-import {bootstrapApplication, BrowserModule, DomSanitizer} from '@angular/platform-browser';
+import {bootstrapApplication, DomSanitizer} from '@angular/platform-browser';
 import {AppRoutingModule} from './app/app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -17,16 +17,15 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatOptionModule} from '@angular/material/core';
 import {MatButtonModule} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
-import {NgxsModule} from '@ngxs/store';
+import {provideStore} from '@ngxs/store';
 import {appStates} from './app/store';
-import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
-import {NgxsLoggerPluginModule} from '@ngxs/logger-plugin';
 import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
 import {provideTranslateCompiler, provideTranslateService, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateMessageFormatCompiler} from 'ngx-translate-messageformat-compiler';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {AppComponent} from './app/app.component';
+import {withNgxsStoragePlugin} from "@ngxs/storage-plugin";
 
 if (environment.production) {
   enableProdMode();
@@ -34,7 +33,10 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(BrowserModule, AppRoutingModule, BrowserAnimationsModule, MatDialogModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, FormsModule, NgxsModule.forRoot(appStates, {developmentMode: !environment.production}), NgxsReduxDevtoolsPluginModule.forRoot(), NgxsLoggerPluginModule.forRoot(), MatIconModule, MatMenuModule, MatTooltipModule), MatProgressSpinnerModule, TranslateModule,
+    importProvidersFrom(AppRoutingModule, BrowserAnimationsModule, MatDialogModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, FormsModule, MatIconModule, MatMenuModule, MatTooltipModule), MatProgressSpinnerModule, TranslateModule,
+    provideStore(appStates, {developmentMode: !environment.production, ...withNgxsStoragePlugin({
+        keys: '*'
+      })}),
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}},
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,

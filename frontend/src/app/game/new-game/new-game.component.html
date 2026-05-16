@@ -13,7 +13,7 @@
       <mat-form-field appearance="fill">
         <mat-label>{{ 'newGame.votingSystemLabel' | translate }}</mat-label>
         <mat-select [(value)]="selectedScheme">
-          @for (scheme of votingSchemes; track scheme) {
+          @for (scheme of votingSchemes(); track scheme) {
             <mat-option [value]="scheme.id">{{ scheme.label }}</mat-option>
           }
         </mat-select>

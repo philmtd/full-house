@@ -1,4 +1,4 @@
-<navigation [navTitle]="game?.name">
+<navigation [navTitle]="game()?.name">
   <button mat-flat-button (click)="openInviteDialog()">
     <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
       <mat-icon svgIcon="group-add" />
@@ -12,10 +12,10 @@
 </navigation>
 <div class="fx-layout-column game-container">
   <div>
-    @if (game) {
+    @if (game()) {
       <div class="game-view fx-layout-column fx-align--start-x fx-align--x-center">
         <div class="row top-row fx-layout-row fx-align--center-x fx-align--x-start fx-gap--2em">
-          @if (game.otherParticipants.length == 0) {
+          @if (game().otherParticipants.length == 0) {
             <div class="invite-hint fx-layout-column fx-align--center-x fx-align--x-center">
               <p>{{ 'game.inviteOthersShorttext' | translate }}</p>
               <button mat-raised-button (click)="openInviteDialog()">
@@ -26,16 +26,16 @@
               </button>
             </div>
           }
-          @for (p of game.otherParticipants | participantRow: 'top'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme" />
+          @for (p of game().otherParticipants | participantRow: 'top'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
         </div>
-        <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em" [class.shift-left]="game.otherParticipants.length == 4">
-          @for (p of game.otherParticipants | participantRow: 'left'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme" />
+        <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em" [class.shift-left]="game().otherParticipants.length == 4">
+          @for (p of game().otherParticipants | participantRow: 'left'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
           <div class="table fx-layout-column fx-align--center-x fx-align--x-center">
-            @if (game.phase == 'VOTING' && game.voteCount == 0) {
+            @if (game().phase == 'VOTING' && game().voteCount == 0) {
               <div>
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="sports-score" />
@@ -43,16 +43,16 @@
                 </div>
               </div>
             }
-            @if (game.phase == 'VOTING' && game.voteCount > 0) {
-              <button [disabled]="nextPhaseButtonDisabled | async" mat-raised-button (click)="nextPhase()">
+            @if (game().phase == 'VOTING' && game().voteCount > 0) {
+              <button [disabled]="nextPhaseButtonDisabled()" mat-raised-button (click)="nextPhase()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="visibility" />
                   <span>{{ 'game.revealButton' | translate }}</span>
                 </div>
               </button>
             }
-            @if (game.phase == 'REVEALED') {
-              <button [disabled]="nextPhaseButtonDisabled | async" mat-raised-button (click)="nextPhase()">
+            @if (game().phase == 'REVEALED') {
+              <button [disabled]="nextPhaseButtonDisabled()" mat-raised-button (click)="nextPhase()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="loop" />
                   <span>{{ 'game.newVotingButton' | translate }}</span>
@@ -60,19 +60,19 @@
               </button>
             }
           </div>
-          @for (p of game.otherParticipants | participantRow: 'right'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme" />
+          @for (p of game().otherParticipants | participantRow: 'right'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
         </div>
         <div class="row bottom-row fx-layout-row fx-align--center-x fx-align--x-start fx-gap--2em">
-          @for (p of game.otherParticipants | participantRow: 'bottom_left'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme" />
+          @for (p of game().otherParticipants | participantRow: 'bottom_left'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
-          @if (game.self) {
-            <participant [participant]="game.self" [vote]="game.self.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme" />
+          @if (game().self) {
+            <participant [participant]="game().self" [vote]="game().self.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
-          @for (p of game.otherParticipants | participantRow: 'bottom_right'; track p) {
-            <participant [participant]="p" [vote]="p.vote" [revealed]="game.phase == 'REVEALED'" [votingScheme]="game.votingScheme" />
+          @for (p of game().otherParticipants | participantRow: 'bottom_right'; track p) {
+            <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
         </div>
       </div>
@@ -85,38 +85,38 @@
     }
   </div>
 </div>
-@if (game) {
+@if (game()) {
   <div class="bottom-menu fx-layout-row fx-align--center-x fx-align--x-center fx-gap--1em">
-    @if (game.phase == 'VOTING') {
+    @if (game().phase == 'VOTING') {
       <div class="bottom-menu-container">
-        @for (option of game.votingScheme.scheme; track option; let i = $index) {
-          <div class="card" (click)="selectOption(option)" [class.selected]="this.game.self?.vote?.vote == option" [matTooltip]="getSchemeTooltip(option)">
-            <span>{{ game.votingScheme.labels?.[i] ?? (option | fraction) }}</span>
+        @for (option of game().votingScheme.scheme; track option; let i = $index) {
+          <div class="card" (click)="selectOption(option)" [class.selected]="this.game().self?.vote?.vote == option" [matTooltip]="getSchemeTooltip(option)">
+            <span>{{ game().votingScheme.labels?.[i] ?? (option | fraction) }}</span>
           </div>
         }
-        @if (game.votingScheme.includesQuestionmark) {
-          <div class="card" (click)="selectOption('?')" [class.selected]="this.game.self?.vote?.vote == '?'">
+        @if (game().votingScheme.includesQuestionmark) {
+          <div class="card" (click)="selectOption('?')" [class.selected]="this.game().self?.vote?.vote == '?'">
             <span>{{ '?' }}</span>
           </div>
         }
       </div>
     }
-    @if (game.phase == 'REVEALED') {
+    @if (game().phase == 'REVEALED') {
       <div class="bottom-menu-container fx-layout-row fx-align--center-x fx-align--x-start fx-gap--4em">
         <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
           <span class="gray">{{ 'game.average' | translate }}</span>
-          <strong class="large">{{ labelForAverage(game.voteAverage, game.votingScheme) ?? (game.voteAverage | fraction) }}</strong>
+          <strong class="large">{{ labelForAverage(game().voteAverage, game().votingScheme) ?? (game().voteAverage | fraction) }}</strong>
         </div>
         <div class="fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
           <span class="gray">{{ 'game.votes' | translate }}</span>
-          <strong class="large">{{ game.voteCount }}</strong>
+          <strong class="large">{{ game().voteCount }}</strong>
         </div>
-        @if (game.agreement != null) {
+        @if (game().agreement != null) {
           <div class="agreement fx-layout-column fx-align--center-x fx-align--x-center fx-gap--1em">
-            <mat-spinner mode="determinate" [value]="100-game.agreement" />
-            <mat-spinner mode="determinate" [value]="game.agreement" />
+            <mat-spinner mode="determinate" [value]="100-game().agreement" />
+            <mat-spinner mode="determinate" [value]="game().agreement" />
             <span class="gray">{{ 'game.agreement' | translate }}</span>
-            <strong class="large">{{ game.agreementEmoji }}</strong>
+            <strong class="large">{{ game().agreementEmoji }}</strong>
           </div>
         }
       </div>

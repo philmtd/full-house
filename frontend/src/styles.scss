@@ -40,3 +40,8 @@ img {
   border-image-repeat: initial;
   vertical-align: middle;
 }
+
+// TODO: remove this when https://github.com/angular/components/issues/31576 is fixed
+.mat-mdc-button-base .mat-icon {
+  min-height: unset !important;
+}

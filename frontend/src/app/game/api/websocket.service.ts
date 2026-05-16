@@ -1,10 +1,11 @@
-import {Injectable} from "@angular/core";
+import { Injectable, NgZone, inject } from "@angular/core";
 import {Observable, Subject} from "rxjs";
 
-export type WebSocketState = number;
+export type WsState = number;
 
 @Injectable()
 export class WebsocketService {
+  private zone = inject(NgZone);
 
   private stream$: Subject<MessageEvent> = new Subject();
   private ws?: WebSocket;
@@ -14,7 +15,7 @@ export class WebsocketService {
     this.connect();
   }
 
-  public get state(): WebSocketState | null {
+  public get state(): WsState | null {
     return this.ws ? this.ws.readyState : null;
   }
 
@@ -60,8 +61,10 @@ export class WebsocketService {
       console.log("Websocket connection established")
     }
     ws.onmessage = msg => {
-      console.log("Websocket message received")
-      this.stream$.next(msg)
+      this.zone.run(() => {
+        console.log("Websocket message received")
+        this.stream$.next(msg)
+      });
     }
     return ws;
   }
