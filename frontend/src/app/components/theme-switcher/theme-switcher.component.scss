@@ -1,5 +1,16 @@
 @use "../../../styles/mixins" as mix;
+@use "@angular/material" as mat;
 
-.active {
+button[mat-icon-button] {
+  @include mat.icon-button-overrides((
+    icon-color: var(--mat-sys-primary)
+  ));
+}
+
+button.active {
   font-weight: 600;
+  @include mat.menu-overrides((
+    item-label-text-color: var(--mat-sys-primary),
+    item-icon-color: var(--mat-sys-primary)
+  ));
 }

@@ -1,4 +1,4 @@
-<navigation [navTitle]="game()?.name">
+<navigation [navTitle]="game()?.name || ''">
   <button mat-flat-button (click)="openInviteDialog()">
     <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
       <mat-icon svgIcon="group-add" />

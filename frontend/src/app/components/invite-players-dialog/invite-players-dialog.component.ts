@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, viewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, viewChild, ViewEncapsulation} from "@angular/core";
 import {MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {Store} from "@ngxs/store";
@@ -24,7 +24,7 @@ import {MatButton} from "@angular/material/button";
     MatButton,
     MatInput
   ],
-  standalone: true
+  standalone: true,
 })
 export class InvitePlayersDialogComponent implements AfterViewInit {
   private dialogRef = inject<MatDialogRef<InvitePlayersDialogComponent>>(MatDialogRef);
@@ -47,7 +47,7 @@ export class InvitePlayersDialogComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.input().nativeElement.select();
+    this.input()?.nativeElement.select();
     this.cd.detectChanges();
   }
 

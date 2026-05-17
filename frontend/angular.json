@@ -31,22 +31,14 @@
               "src/assets"
             ],
             "styles": [
-              {
-                "input": "src/styles.scss",
-                "inject": true,
-                "bundleName": "styles"
-              },
-              {
-                "input": "src/styles/light-theme.scss",
-                "inject": true,
-                "bundleName": "light-theme"
-              },
-              {
-                "input": "src/styles/dark-theme.scss",
-                "inject": true,
-                "bundleName": "dark-theme"
-              }
+              "src/styles.scss",
+              "src/styles/theme.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "scripts": []
           },
           "configurations": {
@@ -111,22 +103,14 @@
               "src/assets"
             ],
             "styles": [
-              {
-                "input": "src/styles.scss",
-                "inject": true,
-                "bundleName": "styles"
-              },
-              {
-                "input": "src/styles/light-theme.scss",
-                "inject": true,
-                "bundleName": "light-theme"
-              },
-              {
-                "input": "src/styles/dark-theme.scss",
-                "inject": true,
-                "bundleName": "dark-theme"
-              }
+              "src/styles.scss",
+              "src/styles/theme.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "scripts": []
           }
         }

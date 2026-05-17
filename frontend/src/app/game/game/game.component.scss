@@ -7,6 +7,12 @@
   flex: 1 1 auto;
 }
 
+button[mat-icon-button] {
+  @include mat.icon-button-overrides((
+    icon-color: var(--mat-sys-primary)
+  ));
+}
+
 .game-container {
   margin: 2em;
   flex: 1 1 auto;
@@ -27,9 +33,13 @@
   width: 100%;
   height: 140px;
   border-radius: 8 * mix.$mat-radius;
+  color: var(--mat-sys-on-primary-container);
+  background: var(--mat-sys-primary-container);
 }
 
 .bottom-menu {
+  --bg-color: var(--mat-sys-surface-container-lowest);
+  background: var(--bg-color);
   position: sticky;
   bottom: 0;
   left: 0;
@@ -40,6 +50,10 @@
     overflow: auto;
     white-space: nowrap;
     .card {
+      background: var(--bg-color);
+      color: var(--mat-sys-primary);
+      border: 2px solid var(--mat-sys-primary);
+      box-shadow: var(--mat-sys-level0);
       display: inline-block;
       margin: 0 0.5em;
       text-align: center;
@@ -54,10 +68,19 @@
       @include mix.user-select(none);
       &:hover {
         transform: translateY(-3px);
+        background: color-mix(in srgb, var(--mat-sys-primary), 60% transparent);
+        box-shadow: var(--mat-sys-level1);
       }
       &.selected {
         transform: translateY(-6px);
+        color: var(--bg-color);
+        border-color: var(--mat-sys-primary);
+        background: var(--mat-sys-primary);
+        box-shadow: var(--mat-sys-level2);
       }
+    }
+    .gray {
+      color: var(--mat-sys-on-surface-variant);
     }
   }
 
@@ -71,6 +94,12 @@
       height: 4rem !important;
       width: 4rem !important;
       top: 3.5rem;
+      &:first-of-type {
+        transform: scaleX(-1);
+        @include mat.progress-spinner-overrides((
+          active-indicator-color: var(--mat-sys-surface-variant)
+        ));
+      }
     }
   }
 }

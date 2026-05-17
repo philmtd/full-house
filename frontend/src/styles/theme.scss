@@ -1,0 +1,43 @@
+@use '@angular/material' as mat;
+@use '@angular/material-experimental' as matx;
+@use "full-house" as fh;
+
+$full-house-theme-settings: (
+  color: (
+    theme-type: color-scheme,
+    primary: mat.$violet-palette,
+    tertiary: mat.$yellow-palette,
+    use-system-variables: true,
+    system-variables-prefix: mat-sys,
+  ),
+  typography: (
+    plain-family: fh.$font-family,
+    brand-family: fh.$font-family,
+    bold-weight: 800,
+  ),
+  density: (
+    scale: 0,
+  )
+);
+
+$full-house-theme: mat.define-theme($full-house-theme-settings);
+
+@include mat.elevation-classes();
+@include mat.app-background();
+
+html {
+  color-scheme: light;
+
+  @include mat.theme($full-house-theme-settings);
+  @include mat.all-component-themes($full-house-theme);
+  @include mat.typography-hierarchy($full-house-theme);
+
+  body {
+    background: var(--mat-sys-surface-container);
+    color: var(--mat-sys-on-background);
+
+    &.dark, *.dark-theme {
+      color-scheme: dark;
+    }
+  }
+}

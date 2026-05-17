@@ -23,9 +23,9 @@ export class AppComponent {
       const isDarkTheme = this.isDarkTheme();
       const bodyClassList = this.document.body.classList;
       if (isDarkTheme) {
-        bodyClassList.add('dark-theme');
+        bodyClassList.add('dark');
       } else {
-        bodyClassList.remove('dark-theme');
+        bodyClassList.remove('dark');
       }
     });
   }

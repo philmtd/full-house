@@ -45,3 +45,11 @@ img {
 .mat-mdc-button-base .mat-icon {
   min-height: unset !important;
 }
+
+.full-house-qr {
+  svg {
+    path {
+      stroke: var(--mat-sys-on-surface);
+    }
+  }
+}
