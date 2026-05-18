@@ -19,14 +19,14 @@ func readInConfig() Config {
 	viper.AddConfigPath(".")
 	viper.SetConfigName("fullhouse-default")
 	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("failed to read in default config: %w \n", err))
+		panic(fmt.Errorf("failed to read in default config: %w", err))
 	}
 
 	viper.SetConfigName("fullhouse.yaml")
 
 	if err := viper.MergeInConfig(); err != nil {
 		if _, isConfigFileNotFoundError := err.(viper.ConfigFileNotFoundError); !isConfigFileNotFoundError {
-			panic(fmt.Errorf("failed to read in config file: %w \n", err))
+			panic(fmt.Errorf("failed to read in config file: %w", err))
 		}
 	}
 
@@ -35,11 +35,11 @@ func readInConfig() Config {
 
 	readConfig := Config{}
 	if err := viper.Unmarshal(&readConfig); err != nil {
-		panic(fmt.Errorf("failed to parse config: %w \n", err))
+		panic(fmt.Errorf("failed to parse config: %w", err))
 	}
 
 	if err := validateConfig(readConfig); err != nil {
-		panic(fmt.Errorf("config is invalid: %w \n", err))
+		panic(fmt.Errorf("config is invalid: %w", err))
 	}
 
 	return readConfig

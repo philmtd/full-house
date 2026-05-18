@@ -1,27 +1,32 @@
-import {Component, Inject} from '@angular/core';
-import {DOCUMENT} from "@angular/common";
-import {Select, Store} from "@ngxs/store";
-import {Observable} from "rxjs";
-import {ThemingState} from "./store/theming/theming.state";
+import { Component, DOCUMENT, inject, viewChild, ViewContainerRef, effect } from '@angular/core';
+import { Store } from "@ngxs/store";
+import { ThemingState } from "./store/theming/theming.state";
+import {RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  imports: [
+    RouterOutlet
+  ],
+  standalone: true
 })
 export class AppComponent {
+  private store = inject(Store);
+  private document = inject<Document>(DOCUMENT);
 
-  @Select(ThemingState.isDarkMode) isDarkTheme$: Observable<boolean>;
+  isDarkTheme = this.store.selectSignal(ThemingState.isDarkMode);
 
-  constructor(private store: Store, @Inject(DOCUMENT) private document: Document) {
-    this.isDarkTheme$.subscribe(isDarkTheme => {
+  constructor() {
+    effect(() => {
+      const isDarkTheme = this.isDarkTheme();
       const bodyClassList = this.document.body.classList;
       if (isDarkTheme) {
-        bodyClassList.add('dark-theme');
+        bodyClassList.add('dark');
       } else {
-        bodyClassList.remove('dark-theme');
+        bodyClassList.remove('dark');
       }
     });
   }
-
 }

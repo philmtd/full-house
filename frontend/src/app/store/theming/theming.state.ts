@@ -1,5 +1,5 @@
 import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {filter, first} from 'rxjs/operators';
 
 export type ThemingMode = 'light' | 'dark' | 'auto';
@@ -35,8 +35,10 @@ export class SetThemeMode {
 })
 @Injectable()
 export class ThemingState implements NgxsOnInit {
+  private store = inject(Store);
 
-  constructor(private store: Store) {
+
+  constructor() {
     this.registerThemePreferenceListeners();
   }
 

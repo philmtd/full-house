@@ -15,4 +15,10 @@
       }
     }
   }
+  .main-color {
+    fill: var(--mat-sys-primary);
+  }
+  .text-color {
+    fill: var(--mat-sys-on-primary);
+  }
 }

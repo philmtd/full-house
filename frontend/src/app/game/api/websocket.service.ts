@@ -1,10 +1,11 @@
-import {Injectable} from "@angular/core";
+import { Injectable, NgZone, inject } from "@angular/core";
 import {Observable, Subject} from "rxjs";
 
-export type WebSocketState = number;
+export type WsState = number;
 
 @Injectable()
 export class WebsocketService {
+  private zone = inject(NgZone);
 
   private stream$: Subject<MessageEvent> = new Subject();
   private ws?: WebSocket;
@@ -14,26 +15,32 @@ export class WebsocketService {
     this.connect();
   }
 
-  public get state(): WebSocketState | null {
-    return this.ws ? this.ws.readyState : null;
-  }
-
   public stream(): Observable<MessageEvent> {
     return this.stream$.asObservable();
   }
 
   public connect() {
-    if (this.state != null) {
+    if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
       return;
     }
 
+    if (this.retryConnectionId !== -1) {
+      clearTimeout(this.retryConnectionId);
+      this.retryConnectionId = -1;
+    }
+
     const reconnection = (event: CloseEvent) => {
+      this.ws = undefined;
+
       if (event.code === 1000) {
         return;
       }
 
-      // reconnection
+      if (this.retryConnectionId !== -1) {
+        clearTimeout(this.retryConnectionId);
+      }
       this.retryConnectionId = window.setTimeout(() => {
+        this.retryConnectionId = -1;
         this.ws = this.createWebsocket((e) => reconnection(e));
       }, 2000);
     };
@@ -60,8 +67,10 @@ export class WebsocketService {
       console.log("Websocket connection established")
     }
     ws.onmessage = msg => {
-      console.log("Websocket message received")
-      this.stream$.next(msg)
+      this.zone.run(() => {
+        console.log("Websocket message received")
+        this.stream$.next(msg)
+      });
     }
     return ws;
   }
