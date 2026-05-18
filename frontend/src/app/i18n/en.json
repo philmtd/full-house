@@ -38,6 +38,6 @@
     "tableNameLabel": "Poker Table Name",
     "votingSystemLabel": "Voting System",
     "createGame": "Create game",
-    "failedToCreateGame": "Failed to create game. Please check the application logs."
+    "failedToCreateGame": "Failed to create game."
   }
 }

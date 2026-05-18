@@ -1,14 +1,14 @@
-import {Component, inject, OnDestroy, signal} from "@angular/core";
+import {Component, DestroyRef, inject, OnDestroy, signal} from "@angular/core";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {Api} from "../api/api.service";
 import {Game, GamePhase, GameState, Participant, Vote, VoteOption, VotingScheme} from "../model";
 import {Store} from "@ngxs/store";
 import {SetCurrentUser, UserState} from "../../store/user/user.state";
-import {combineLatest, merge, Subject, Subscription} from "rxjs";
+import {combineLatest, merge, Subscription} from "rxjs";
 import {MatDialog} from "@angular/material/dialog";
 import {CreateUserDialogComponent} from "../../components/create-user-dialog/create-user-dialog.component";
 import {WebsocketApi} from "../api/websocket-api.service";
-import {filter, first, map, switchMap, takeUntil, tap} from "rxjs/operators";
+import {filter, first, map, switchMap, tap} from "rxjs/operators";
 import {InvitePlayersDialogComponent} from "../../components/invite-players-dialog/invite-players-dialog.component";
 import {calculateAgreement, isVoteNumerical} from "./agreement";
 import {TranslatePipe} from "@ngx-translate/core";
@@ -21,6 +21,7 @@ import {ThemeSwitcherComponent} from "../../components/theme-switcher/theme-swit
 import {NavigationComponent} from "../../components/navigation/navigation.component";
 import {ParticipantFilterPipe} from "./participant-filter.pipe";
 import {MatTooltip} from "@angular/material/tooltip";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 export interface GameModel {
   name: string;
@@ -67,6 +68,7 @@ export class GameComponent implements OnDestroy {
   private dialog = inject(MatDialog);
   private wsApi = inject(WebsocketApi);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   public slug?: string;
   public game = signal<GameModel>(undefined as any);
@@ -74,7 +76,6 @@ export class GameComponent implements OnDestroy {
   public nextPhaseButtonDisabled = signal(false);
 
   public currentUser$ = this.store.select(UserState.currentUser);
-  private destroy$ = new Subject<void>();
 
   constructor() {
     this.route.paramMap.pipe(
@@ -88,7 +89,7 @@ export class GameComponent implements OnDestroy {
         this.api.getGame(slug),
         this.currentUser$
       ])),
-      takeUntil(this.destroy$)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: ([game, currentUser]) => {
         if (!currentUser) {
@@ -113,7 +114,7 @@ export class GameComponent implements OnDestroy {
       this.wsApi.gameState(initialGame.slug),
       this.api.joinGame(initialGame.slug, currentUser)
     ).pipe(
-      takeUntil(this.destroy$)
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe(g => {
       this.game.set(this.toGameModel(g, currentUser));
       this.setNextPhaseButtonDisabledState(g.gameState);
@@ -121,13 +122,7 @@ export class GameComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
     this.gameStateSubscription?.unsubscribe();
-  }
-
-  private initGame(slug: string | null) {
-    // Deprecated, logic moved to constructor
   }
 
   private setNextPhaseButtonDisabledState(gameState: GameState) {
@@ -222,7 +217,7 @@ export class GameComponent implements OnDestroy {
   }
 
   public selectOption(option: VoteOption) {
-    if (this.game()?.self?.vote.vote == option) {
+    if (this.game()?.self?.vote?.vote == option) {
       this.api.vote(this.game()!.slug, undefined).subscribe()
     } else {
       this.api.vote(this.game()!.slug, option).subscribe()

@@ -1,6 +1,6 @@
 import {MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Participant} from "../../game/model";
-import { Component, inject } from "@angular/core";
+import {Component, inject, signal, WritableSignal} from "@angular/core";
 import {Api} from "../../game/api/api.service";
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
@@ -29,26 +29,30 @@ export class CreateUserDialogComponent {
   private data = inject<Participant>(MAT_DIALOG_DATA);
 
 
-  public participant: { name: string, id?: string } = {name: ""};
+  public participant: WritableSignal<{ name: string, id?: string }> = signal({name: ""});
 
   constructor() {
     const data = this.data;
 
     if (data) {
-      this.participant = {
+      this.participant.set({
         name: data.name,
         id: data.id
-      };
+      });
     }
   }
 
   public save() {
-    if (this.participant.id == undefined) {
-      this.api.createUser(this.participant.name).subscribe(participant => {
+    if (!this.participant()) {
+      return;
+    }
+
+    if (this.participant().id == undefined) {
+      this.api.createUser(this.participant().name).subscribe(participant => {
         this.dialogRef.close(participant);
       });
     } else {
-      this.dialogRef.close({name: this.participant.name, id: this.participant.id});
+      this.dialogRef.close({name: this.participant().name, id: this.participant().id!});
     }
   }
 

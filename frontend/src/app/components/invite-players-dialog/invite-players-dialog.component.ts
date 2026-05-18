@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, viewChild, ViewEncapsulation} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, signal, viewChild, ViewEncapsulation} from "@angular/core";
 import {MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {Store} from "@ngxs/store";
@@ -33,16 +33,12 @@ export class InvitePlayersDialogComponent implements AfterViewInit {
   private store = inject(Store);
 
 
-  public gameUrl: string;
-  qrCodeVisible = this.store.selectSignal(SettingsState.isInviteQrCodeVisible);
+  readonly gameUrl = signal(window.location.toString());
+  readonly qrCodeVisible = this.store.selectSignal(SettingsState.isInviteQrCodeVisible);
   readonly input = viewChild<ElementRef<HTMLInputElement>>('input');
 
-  constructor() {
-    this.gameUrl = window.location.toString();
-  }
-
   public copyUrl() {
-    this.clipboard.copy(this.gameUrl);
+    this.clipboard.copy(this.gameUrl());
     this.dialogRef.close();
   }
 

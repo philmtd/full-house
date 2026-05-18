@@ -1,6 +1,10 @@
-import {Component, input} from "@angular/core";
+import {Component, computed, input} from "@angular/core";
 import {Participant, Vote, VotingScheme} from "../model";
 import {FractionFilterPipe} from "../game/fraction-filter.pipe";
+
+interface VoteModel extends Vote {
+  label?: string;
+}
 
 @Component({
   selector: 'participant',
@@ -15,10 +19,21 @@ export class ParticipantComponent {
   readonly vote = input<Vote | undefined>(undefined);
   readonly votingScheme = input<VotingScheme>(undefined);
 
-  public labelForVote(vote: number | undefined): string | undefined {
-    const votingScheme = this.votingScheme();
-    if (vote == undefined || !votingScheme?.labels) return undefined;
-    const index = votingScheme.scheme.indexOf(vote);
-    return index >= 0 ? votingScheme.labels[index] : undefined;
-  }
+  readonly voteModel = computed<VoteModel>(() => {
+    let vote = this.vote();
+    let label;
+    if (vote) {
+      const votingScheme = this.votingScheme();
+      if (!votingScheme?.labels) {
+        return vote;
+      } else if (Number.isFinite(vote.vote)) {
+        const index = votingScheme.scheme.indexOf(vote.vote as number)
+        label = index >= 0 ? votingScheme.labels[index] : undefined;
+      }
+      return {
+        ...vote,
+        label: label
+      }
+    }
+  })
 }

@@ -4,7 +4,7 @@
     <form #userForm="ngForm" (submit)="save()" class="fx-layout-column fx-gap--2em">
       <mat-form-field appearance="fill">
         <mat-label>{{ 'components.createUserDialog.nameLabel' | translate }}</mat-label>
-        <input matInput required pattern="^\S.*" name="participantName" [(ngModel)]="participant.name" />
+        <input matInput required pattern="^\S.*" name="participantName" [(ngModel)]="participant().name" />
       </mat-form-field>
       <button [disabled]="userForm.invalid" mat-flat-button color="primary" type="submit">{{ 'components.createUserDialog.submitButton' | translate }}</button>
     </form>

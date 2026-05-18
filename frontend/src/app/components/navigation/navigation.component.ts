@@ -3,6 +3,8 @@ import {Api} from "../../game/api/api.service";
 import {MatTooltip} from "@angular/material/tooltip";
 import {TranslatePipe} from "@ngx-translate/core";
 import {RouterLink} from "@angular/router";
+import {toSignal} from "@angular/core/rxjs-interop";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'navigation',
@@ -19,9 +21,6 @@ export class NavigationComponent {
   private api = inject(Api);
 
   readonly navTitle = input<string>('');
-  version = signal('');
+  readonly version = toSignal(this.api.appInfo().pipe(map(info => info.version)));
 
-  constructor() {
-    this.api.appInfo().subscribe(info => this.version.set(info.version));
-  }
 }

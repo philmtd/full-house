@@ -3,7 +3,7 @@
   <div mat-dialog-content>
     <div class="fx-layout-column fx-align--x-center fx-align--center-x qr">
       @if (qrCodeVisible()) {
-        <qrcode [qrdata]="gameUrl"
+        <qrcode [qrdata]="gameUrl()"
           elementType="svg"
           [colorLight]="'00000000'"
           cssClass="full-house-qr"
@@ -13,7 +13,7 @@
     </div>
     <mat-form-field appearance="fill">
       <mat-label>{{ 'components.invitePlayersDialog.urlLabel' | translate }}</mat-label>
-      <input matInput #input autofocus readonly name="gameurl" [value]="gameUrl"/>
+      <input matInput #input autofocus readonly name="gameurl" [value]="gameUrl()"/>
     </mat-form-field>
     <button mat-flat-button color="primary" (click)="copyUrl()">
       <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">

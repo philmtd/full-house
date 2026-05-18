@@ -2,7 +2,7 @@
   <mat-icon [svgIcon]="currentModeIcon()" />
 </button>
 <mat-menu #modeMenu class="theme-switcher-menu">
-  @for (mode of modes; track mode) {
+  @for (mode of modes(); track mode) {
     <button mat-menu-item (click)="setMode(mode.mode)" [class.active]="themingMode() === mode.mode">
       <mat-icon [svgIcon]="mode.icon" />
       <span>{{mode.label | async}}</span>
