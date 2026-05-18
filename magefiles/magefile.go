@@ -5,11 +5,12 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/magefile/mage/mg"
-	"github.com/magefile/mage/sh"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
 )
 
 const (
@@ -63,7 +64,7 @@ func lint(writeToFile bool) error {
 }
 
 func Build() error {
-	return build(make(map[string]string))
+	return build(make(map[string]string), commandName)
 }
 
 func BuildForDocker() error {
@@ -71,7 +72,23 @@ func BuildForDocker() error {
 		"CGO_ENABLED": "0",
 		"GOOS":        "linux",
 	}
-	return build(env)
+	return build(env, commandName)
+}
+
+// BuildForDockerMultiplatform builds linux binaries for both amd64 and arm64.
+// The resulting binaries are named <commandName>-amd64 and <commandName>-arm64.
+func BuildForDockerMultiplatform() error {
+	for _, arch := range []string{"amd64", "arm64"} {
+		env := map[string]string{
+			"CGO_ENABLED": "0",
+			"GOOS":        "linux",
+			"GOARCH":      arch,
+		}
+		if err := build(env, commandName+"-"+arch); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func Docker() error {
@@ -80,8 +97,8 @@ func Docker() error {
 	return sh.RunV("docker", "build", "-t", "philmtd/full-house", ".")
 }
 
-func build(env map[string]string) error {
-	fmt.Println("Building project")
+func build(env map[string]string, outputName string) error {
+	fmt.Println("Building project as", outputName)
 	buildflags := []string{
 		"-installsuffix", "cgo", "--tags", "release",
 	}
@@ -89,7 +106,7 @@ func build(env map[string]string) error {
 	arguments := []string{
 		"build",
 		"-o",
-		commandName,
+		outputName,
 		"-a",
 	}
 	arguments = append(arguments, buildflags...)
@@ -147,6 +164,8 @@ func Clean() error {
 	fmt.Println("Cleaning...")
 	filesToRemove := []string{
 		commandName,
+		commandName + "-amd64",
+		commandName + "-arm64",
 		"cover.out",
 		"linter_results.xml",
 		"test_results.xml",

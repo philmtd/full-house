@@ -40,15 +40,22 @@ jobs:
         with:
           name: backend
       - name: Fix permissions
-        run: chmod +x full-house
-      - name: Build image
-        run: docker build -t philmtd/full-house:${{ inputs.tag }} .
-      - name: Push image
-        if: ${{ inputs.push }}
-        run: docker push philmtd/full-house:${{ inputs.tag }}
-      - name: Tag latest
-        if: ${{ inputs.latest }}
-        run: docker tag philmtd/full-house:${{ inputs.tag }} philmtd/full-house:latest
-      - name: Push latest
-        if: ${{ inputs.latest && inputs.push }}
-        run: docker push philmtd/full-house:latest
+        run: |
+          chmod +x full-house-amd64
+          chmod +x full-house-arm64
+      - name: Compute image tags
+        id: tags
+        run: |
+          tags="philmtd/full-house:${{ inputs.tag }}"
+          if [ "${{ inputs.latest }}" = "true" ]; then
+            tags="$tags,philmtd/full-house:latest"
+          fi
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+      - name: Build and push multiplatform image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: ${{ inputs.push }}
+          tags: ${{ steps.tags.outputs.tags }}

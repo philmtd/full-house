@@ -5,11 +5,13 @@ RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates
 
 FROM scratch
 
+ARG TARGETARCH
+
 # Import from builder.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 ADD /config/fullhouse-default.yaml /app/config/
-ADD /full-house /app/
+ADD /full-house-${TARGETARCH} /app/full-house
 ADD /frontend/dist/browser /app/frontend
 
 WORKDIR /app

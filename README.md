@@ -193,13 +193,22 @@ Given this structure, you can run Full House:
 
 ### Build for Docker
 
-Build the frontend as described above. Then run:
+Build the frontend as described above.
+
+To produce Linux binaries for both `amd64` and `arm64` (as used by the multi-platform image
+published by the CI pipeline), run:
 
 ```bash
-mage buildForDocker
+mage buildForDockerMultiplatform
 ```
 
-This will compile the project and build the Docker image `philmtd/full-house`.
+This produces two binaries, `full-house-amd64` and `full-house-arm64`, which the
+[Dockerfile](./Dockerfile) selects from via the `TARGETARCH` build argument. The image can then
+be built with `docker buildx` for multiple platforms, e.g.:
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t philmtd/full-house .
+```
 
 ### Running for development
 

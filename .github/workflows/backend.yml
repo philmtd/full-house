@@ -7,7 +7,7 @@ jobs:
     name: Backend
     runs-on: ubuntu-latest
     container:
-      image: registry.hub.docker.com/philmtd/golang-builder:1.5.0
+      image: registry.hub.docker.com/philmtd/golang-builder:1.6.0
       options: --user 1001
     steps:
       - uses: actions/checkout@v4
@@ -47,9 +47,11 @@ jobs:
           report_paths: "linter_results.xml"
           detailed_summary: true
       - name: Build
-        run: mage buildfordocker
+        run: mage buildfordockermultiplatform
       - name: Store application
         uses: actions/upload-artifact@v4
         with:
           name: backend
-          path: full-house
+          path: |
+            full-house-amd64
+            full-house-arm64
