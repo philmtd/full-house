@@ -18,7 +18,7 @@
           @if (game().otherParticipants.length == 0) {
             <div class="invite-hint fx-layout-column fx-align--center-x fx-align--x-center">
               <p>{{ 'game.inviteOthersShorttext' | translate }}</p>
-              <button mat-raised-button (click)="openInviteDialog()">
+              <button matButton="tonal" (click)="openInviteDialog()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="group-add" />
                   <span>{{ 'game.inviteOthers' | translate }}</span>
@@ -77,7 +77,7 @@
         </div>
       </div>
     }
-    @if (isError) {
+    @if (isError()) {
       <div class="fx-layout-column fx-align--center-x fx-align--x-center">
         <span>{{ 'game.gameNotFoundText' | translate }}</span>
         <a mat-button [routerLink]="'/'">{{ 'game.createNewGameButton' | translate }}</a>

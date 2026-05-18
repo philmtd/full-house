@@ -70,7 +70,7 @@ export class GameComponent implements OnDestroy {
 
   public slug?: string;
   public game = signal<GameModel>(undefined as any);
-  public isError = false;
+  public isError = signal(false);
   public nextPhaseButtonDisabled = signal(false);
 
   public currentUser$ = this.store.select(UserState.currentUser);
@@ -80,7 +80,7 @@ export class GameComponent implements OnDestroy {
     this.route.paramMap.pipe(
       map(params => params.get("slug")),
       tap(slug => {
-        if (!slug) this.isError = true;
+        if (!slug) this.isError.set(true);
         this.slug = slug ?? undefined;
       }),
       filter((slug): slug is string => !!slug),
@@ -89,12 +89,15 @@ export class GameComponent implements OnDestroy {
         this.currentUser$
       ])),
       takeUntil(this.destroy$)
-    ).subscribe(([game, currentUser]) => {
-      if (!currentUser) {
-        this.createUser();
-      } else if (game) {
-        this.startGameStateSubscription(game, currentUser);
-      }
+    ).subscribe({
+      next: ([game, currentUser]) => {
+        if (!currentUser) {
+          this.createUser();
+        } else if (game) {
+          this.startGameStateSubscription(game, currentUser);
+        }
+      },
+      error: () => this.isError.set(true)
     });
   }
 
@@ -154,7 +157,7 @@ export class GameComponent implements OnDestroy {
             },
             error: err => {
               // If join fails, show error and do not reconnect
-              this.isError = true;
+              this.isError.set(true);
             }
           });
         } else {

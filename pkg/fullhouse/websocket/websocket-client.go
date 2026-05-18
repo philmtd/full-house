@@ -2,15 +2,17 @@ package websocket
 
 import (
 	"bytes"
-	"github.com/gorilla/websocket"
 	"log"
 	"log/slog"
+	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 const (
 	// Time allowed to write a message to the peer.
-	writeWait = 10 * time.Second
+	writeWait = 4 * time.Second
 
 	// Time allowed to read the next pong message from the peer.
 	pongWait = 60 * time.Second
@@ -37,6 +39,47 @@ type WebsocketClient struct {
 	send      chan []byte
 	sessionId string
 	log       *slog.Logger
+
+	// sendMutex guards send/close of the send channel so concurrent
+	// senders/closers cannot panic. closed is set to true after the channel
+	// has been closed.
+	sendMutex sync.Mutex
+	closed    bool
+}
+
+// trySend attempts a non-blocking send on the client's send channel. It
+// returns:
+//   - sent == true if the message was enqueued.
+//   - dropped == true if the buffer was full (caller should consider the
+//     client slow/dead and unregister it).
+//   - both false if the channel has already been closed.
+//
+// trySend never panics on send-on-closed channel.
+func (c *WebsocketClient) trySend(msg []byte) (sent bool, dropped bool) {
+	c.sendMutex.Lock()
+	defer c.sendMutex.Unlock()
+	if c.closed {
+		return false, false
+	}
+	select {
+	case c.send <- msg:
+		return true, false
+	default:
+		return false, true
+	}
+}
+
+// closeSend closes the send channel exactly once and reports whether this
+// call performed the close.
+func (c *WebsocketClient) closeSend() bool {
+	c.sendMutex.Lock()
+	defer c.sendMutex.Unlock()
+	if c.closed {
+		return false
+	}
+	c.closed = true
+	close(c.send)
+	return true
 }
 
 func (c *WebsocketClient) readPump() {
@@ -55,7 +98,7 @@ func (c *WebsocketClient) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		message = bytes.TrimSpace(bytes.ReplaceAll(message, newline, space))
 		c.hub.broadcast <- message
 	}
 }
@@ -70,6 +113,14 @@ func (c *WebsocketClient) writePump() {
 	defer func() {
 		ticker.Stop()
 		_ = c.conn.Close()
+		// Make sure the hub eventually drops this client even if only the
+		// write side is broken. Use a non-blocking send-with-fallback so
+		// writePump cannot deadlock the hub.
+		select {
+		case c.hub.unregister <- c:
+		default:
+			go func() { c.hub.unregister <- c }()
+		}
 	}()
 	for {
 		select {

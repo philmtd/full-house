@@ -15,26 +15,32 @@ export class WebsocketService {
     this.connect();
   }
 
-  public get state(): WsState | null {
-    return this.ws ? this.ws.readyState : null;
-  }
-
   public stream(): Observable<MessageEvent> {
     return this.stream$.asObservable();
   }
 
   public connect() {
-    if (this.state != null) {
+    if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
       return;
     }
 
+    if (this.retryConnectionId !== -1) {
+      clearTimeout(this.retryConnectionId);
+      this.retryConnectionId = -1;
+    }
+
     const reconnection = (event: CloseEvent) => {
+      this.ws = undefined;
+
       if (event.code === 1000) {
         return;
       }
 
-      // reconnection
+      if (this.retryConnectionId !== -1) {
+        clearTimeout(this.retryConnectionId);
+      }
       this.retryConnectionId = window.setTimeout(() => {
+        this.retryConnectionId = -1;
         this.ws = this.createWebsocket((e) => reconnection(e));
       }, 2000);
     };
