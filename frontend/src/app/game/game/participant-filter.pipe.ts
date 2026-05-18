@@ -4,7 +4,8 @@ import {ParticipantModel} from "./game.component";
 type PARTICIPANT_ROW = 'top' | 'left' | 'bottom_left' | 'bottom_right' | 'right';
 
 @Pipe({
-  name: 'participantRow'
+    name: 'participantRow',
+    standalone: true
 })
 export class ParticipantFilterPipe implements PipeTransform {
 

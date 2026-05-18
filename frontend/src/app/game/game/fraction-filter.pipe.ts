@@ -17,11 +17,11 @@ export function transformToFraction(v: number | undefined): string | undefined {
     return '⅔';
   } else if (v == 0.75) {
     return '¾';
-  } else if (v > 1 && v%1 > 0) {
-    let fraction = transformToFraction(v%1) || ''
+  } else if (v > 1 && v % 1 > 0) {
+    let fraction = transformToFraction(v % 1) || ''
     let utf8Fractions = ['⅛', '¼', '⅓', '½', '⅔', '¾']
     let isUtf8Fraction = utf8Fractions.includes(fraction)
-    return `${Math.trunc(v)}${isUtf8Fraction ? '' : '.'}${isUtf8Fraction ? fraction : Math.trunc(v%1*10)}`
+    return `${Math.trunc(v)}${isUtf8Fraction ? '' : '.'}${isUtf8Fraction ? fraction : Math.trunc(v % 1 * 10)}`
   } else {
     return `${v}`
   }
@@ -29,7 +29,8 @@ export function transformToFraction(v: number | undefined): string | undefined {
 
 @Pipe({
   name: 'fraction',
-  pure: true
+  pure: true,
+  standalone: true
 })
 export class FractionFilterPipe implements PipeTransform {
 

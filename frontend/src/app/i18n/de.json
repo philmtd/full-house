@@ -1,0 +1,43 @@
+{
+  "components": {
+    "createUserDialog": {
+      "title": "Wähle deinen Anzeigenamen",
+      "nameLabel": "Dein Name",
+      "submitButton": "Weiter zum Spiel"
+    },
+    "invitePlayersDialog": {
+      "title": "Spieler einladen",
+      "urlLabel": "URL",
+      "copyButton": "Link zum Spiel kopieren",
+      "showQrButton": "QR Code {visible, select, true{verstecken} other{anzeigen}}"
+    },
+    "themeSwitcher": {
+      "auto": "Auto",
+      "dark": "Dunkel",
+      "light": "Hell"
+    },
+    "navigation": {
+      "appInfo": "Full House Version: {version}"
+    }
+  },
+  "game": {
+    "inviteOthers": "Mehr Spieler einladen",
+    "inviteOthersShorttext": "Zusammen macht es mehr Spaß. ☀️",
+    "tableNoVotesText": "Auf die Plätze, fertig, los!",
+    "revealButton": "Karten aufdecken",
+    "newVotingButton": "Neue Abstimmung starten",
+    "gameNotFoundText": "Dieses Spiel existiert nicht.",
+    "createNewGameButton": "Neues Spiel erstellen",
+    "average": "Durchschnitt",
+    "votes": "Stimmen",
+    "agreement": "Übereinstimmung"
+  },
+  "newGame": {
+    "createNewGame": "Neues Spiel erstellen",
+    "chooseNameText": "Wähle einen Namen für deinen Pokertisch.",
+    "tableNameLabel": "Tischname",
+    "votingSystemLabel": "Abstimmungssystem",
+    "createGame": "Spiel erstellen",
+    "failedToCreateGame": "Fehler beim Erstellen eines Spiels."
+  }
+}

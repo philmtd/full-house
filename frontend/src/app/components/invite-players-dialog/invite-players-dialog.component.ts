@@ -1,35 +1,49 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild} from "@angular/core";
-import {MatDialogRef} from "@angular/material/dialog";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, signal, viewChild, ViewEncapsulation} from "@angular/core";
+import {MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
-import {Select, Store} from "@ngxs/store";
-import {Observable} from "rxjs";
+import {Store} from "@ngxs/store";
 import {SettingsState, ToggleQrCodeVisibility} from "../../store/settings/settings.state";
+import {TranslatePipe} from "@ngx-translate/core";
+import {QRCodeComponent} from "angularx-qrcode";
+import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
+import {MatIcon} from "@angular/material/icon";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'invite-players-dialog-component',
   templateUrl: 'invite-players-dialog.component.html',
   styleUrls: ['./invite-players-dialog.component.scss'],
+  imports: [
+    TranslatePipe,
+    QRCodeComponent,
+    MatDialogContent,
+    MatDialogTitle,
+    MatFormField,
+    MatLabel,
+    MatIcon,
+    MatButton,
+    MatInput
+  ],
+  standalone: true,
 })
 export class InvitePlayersDialogComponent implements AfterViewInit {
+  private dialogRef = inject<MatDialogRef<InvitePlayersDialogComponent>>(MatDialogRef);
+  private clipboard = inject(Clipboard);
+  private cd = inject(ChangeDetectorRef);
+  private store = inject(Store);
 
-  public gameUrl: string;
-  @Select(SettingsState.isInviteQrCodeVisible) qrCodeVisible$: Observable<boolean>;
-  @ViewChild('input') input: ElementRef<HTMLInputElement>;
 
-  constructor(private dialogRef: MatDialogRef<InvitePlayersDialogComponent>,
-              private clipboard: Clipboard,
-              private cd: ChangeDetectorRef,
-              private store: Store) {
-    this.gameUrl = window.location.toString();
-  }
+  readonly gameUrl = signal(window.location.toString());
+  readonly qrCodeVisible = this.store.selectSignal(SettingsState.isInviteQrCodeVisible);
+  readonly input = viewChild<ElementRef<HTMLInputElement>>('input');
 
   public copyUrl() {
-    this.clipboard.copy(this.gameUrl);
+    this.clipboard.copy(this.gameUrl());
     this.dialogRef.close();
   }
 
   ngAfterViewInit(): void {
-    this.input.nativeElement.select();
+    this.input()?.nativeElement.select();
     this.cd.detectChanges();
   }
 

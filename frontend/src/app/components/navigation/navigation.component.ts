@@ -1,26 +1,26 @@
-import {Component, Input} from "@angular/core";
-import {Select, Store} from "@ngxs/store";
-import {ThemingState} from "../../store/theming/theming.state";
-import {Observable} from "rxjs";
+import {Component, inject, input, signal} from "@angular/core";
 import {Api} from "../../game/api/api.service";
+import {MatTooltip} from "@angular/material/tooltip";
+import {TranslatePipe} from "@ngx-translate/core";
+import {RouterLink} from "@angular/router";
+import {toSignal} from "@angular/core/rxjs-interop";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'navigation',
   templateUrl: './navigation.component.html',
-  styleUrls: ['./navigation.component.scss']
+  styleUrls: ['./navigation.component.scss'],
+  imports: [
+    MatTooltip,
+    TranslatePipe,
+    RouterLink
+  ],
+  standalone: true
 })
 export class NavigationComponent {
-  @Input() navTitle?: string;
+  private api = inject(Api);
 
-  @Select(ThemingState.isDarkMode) isDarkMode$: Observable<boolean>;
+  readonly navTitle = input<string>('');
+  readonly version = toSignal(this.api.appInfo().pipe(map(info => info.version)));
 
-  logoSrc: string = '/assets/pplogo.svg';
-  version: string = '';
-  constructor(private store: Store,
-              private api: Api) {
-    //this.isDarkMode$.subscribe(isDarkMode => {
-    //  this.logoSrc = `/assets/pplogo-${isDarkMode ? 'dark' : 'light'}.svg`;
-    //});
-    this.api.appInfo().subscribe(info => this.version = info.version);
-  }
 }

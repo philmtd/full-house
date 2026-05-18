@@ -37,8 +37,8 @@ func (m *SynchronizedMap[K, V]) Delete(key K) {
 }
 
 func (m *SynchronizedMap[K, V]) Range(f func(key K, value V) bool) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
 
 	for v, k := range m.values {
 		if !f(v, k) {

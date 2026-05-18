@@ -1,5 +1,5 @@
 <navigation>
-  <pp-theme-switcher></pp-theme-switcher>
+  <pp-theme-switcher />
 </navigation>
 <div class="container fx-layout-column fx-align--center-x fx-align--x-center">
   <div class="fx-layout-column fx-align--center-x fx-align--x-center">
@@ -13,12 +13,12 @@
       <mat-form-field appearance="fill">
         <mat-label>{{ 'newGame.votingSystemLabel' | translate }}</mat-label>
         <mat-select [(value)]="selectedScheme">
-          @for (scheme of votingSchemes; track scheme) {
+          @for (scheme of votingSchemes(); track scheme) {
             <mat-option [value]="scheme.id">{{ scheme.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
-      <button [disabled]="form.form.invalid" mat-flat-button color="primary" type="submit">{{ 'newGame.createGame' | translate }}</button>
+      <button [disabled]="form.form.invalid" matButton="filled" type="submit">{{ 'newGame.createGame' | translate }}</button>
     </form>
   </div>
 </div>

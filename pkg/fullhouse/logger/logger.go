@@ -2,10 +2,11 @@ package logger
 
 import (
 	"fullhouse/pkg/fullhouse/config"
-	"github.com/lmittmann/tint"
-	"github.com/mattn/go-isatty"
 	"log/slog"
 	"os"
+
+	"github.com/lmittmann/tint"
+	"github.com/mattn/go-isatty"
 )
 
 var rootLogger *slog.Logger
@@ -17,19 +18,20 @@ func init() {
 	var (
 		handler slog.Handler
 	)
-	if mode == config.DEVELOPMENT {
+	switch mode {
+	case config.DEVELOPMENT:
 		handler = tint.NewHandler(os.Stdout, &tint.Options{
 			AddSource:   true,
 			Level:       slog.LevelDebug,
 			ReplaceAttr: nil,
 			NoColor:     !isatty.IsTerminal(os.Stderr.Fd()),
 		})
-	} else if mode == config.PRODUCTION {
+	case config.PRODUCTION:
 		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 			AddSource: true,
 			Level:     slog.LevelDebug,
 		})
-	} else {
+	default:
 		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 			AddSource: true,
 			Level:     slog.LevelError,

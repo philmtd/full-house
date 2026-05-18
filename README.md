@@ -38,7 +38,7 @@ Full House runs perfectly fine with the default configuration.
 
 ### Customising voting schemes
 It is possible to adjust the available voting schemes from which the users can choose when creating a new game.
-Per default, there are the following two schemes available:
+Per default, there are the following three schemes available:
 
 ```yaml
 fullHouse:
@@ -49,6 +49,10 @@ fullHouse:
     - name: Extended Fibonacci
       scheme: [0, 0.25, 0.5, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
       includesQuestionmark: true
+    - name: T-Shirt Sizes
+      scheme: [1, 2, 3, 4, 5, 6]
+      labels: [XS, S, M, L, XL, XXL]
+      includesQuestionmark: true
 ```
 
 If you want your own custom voting schemes you need to place your configuration in a `fullhouse.yaml` in the `config` sub-directory
@@ -57,6 +61,8 @@ of the Full House installation directory.
 Each scheme needs a name, the numbers available to vote (need to be 0 or greater, can be floating point numbers) and you can define whether
 to include a questionmark `?` voting card or not. If you use a custom config, the defaults will be overwritten, so if you want to include the default
  schemes, just copy them into your configuration.
+
+You can further adjust the schemes by giving the numbers custom labels (like in the T-Shirt Sizes scheme) or tooltips (see the next section).
 
 
 ### Customising voting card tooltips
@@ -187,13 +193,22 @@ Given this structure, you can run Full House:
 
 ### Build for Docker
 
-Build the frontend as described above. Then run:
+Build the frontend as described above.
+
+To produce Linux binaries for both `amd64` and `arm64` (as used by the multi-platform image
+published by the CI pipeline), run:
 
 ```bash
-mage buildForDocker
+mage buildForDockerMultiplatform
 ```
 
-This will compile the project and build the Docker image `philmtd/full-house`.
+This produces two binaries, `full-house-amd64` and `full-house-arm64`, which the
+[Dockerfile](./Dockerfile) selects from via the `TARGETARCH` build argument. The image can then
+be built with `docker buildx` for multiple platforms, e.g.:
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t philmtd/full-house .
+```
 
 ### Running for development
 

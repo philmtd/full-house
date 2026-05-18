@@ -1,23 +1,34 @@
-import {Component} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import {Component, DestroyRef, inject, OnDestroy, signal} from "@angular/core";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {Api} from "../api/api.service";
 import {Game, GamePhase, GameState, Participant, Vote, VoteOption, VotingScheme} from "../model";
-import {Select, Store} from "@ngxs/store";
+import {Store} from "@ngxs/store";
 import {SetCurrentUser, UserState} from "../../store/user/user.state";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {combineLatest, merge, Subscription} from "rxjs";
 import {MatDialog} from "@angular/material/dialog";
 import {CreateUserDialogComponent} from "../../components/create-user-dialog/create-user-dialog.component";
 import {WebsocketApi} from "../api/websocket-api.service";
-import {first, map, tap} from "rxjs/operators";
+import {filter, first, map, switchMap, tap} from "rxjs/operators";
 import {InvitePlayersDialogComponent} from "../../components/invite-players-dialog/invite-players-dialog.component";
 import {calculateAgreement, isVoteNumerical} from "./agreement";
+import {TranslatePipe} from "@ngx-translate/core";
+import {FractionFilterPipe} from "./fraction-filter.pipe";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MatButton, MatIconButton} from "@angular/material/button";
+import {ParticipantComponent} from "../participant/participant.component";
+import {MatIcon} from "@angular/material/icon";
+import {ThemeSwitcherComponent} from "../../components/theme-switcher/theme-switcher.component";
+import {NavigationComponent} from "../../components/navigation/navigation.component";
+import {ParticipantFilterPipe} from "./participant-filter.pipe";
+import {MatTooltip} from "@angular/material/tooltip";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 export interface GameModel {
   name: string;
   slug: string;
   phase: GamePhase;
   otherParticipants: Array<ParticipantModel>;
-  self?: ParticipantModel;
+  self: ParticipantModel;
   voteCount: number;
   voteAverage: number;
   agreement: number | null;
@@ -34,76 +45,96 @@ export interface ParticipantModel {
 @Component({
   selector: 'game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
+  imports: [
+    TranslatePipe,
+    FractionFilterPipe,
+    MatProgressSpinner,
+    RouterLink,
+    MatButton,
+    ParticipantComponent,
+    MatIcon,
+    ThemeSwitcherComponent,
+    MatIconButton,
+    NavigationComponent,
+    ParticipantFilterPipe,
+    MatTooltip
+  ],
+  standalone: true
 })
-export class GameComponent {
+export class GameComponent implements OnDestroy {
+  private api = inject(Api);
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+  private wsApi = inject(WebsocketApi);
+  private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+
   public slug?: string;
-  public game?: GameModel;
-  public isError = false;
-  public nextPhaseButtonDisabled: Observable<boolean>;
+  public game = signal<GameModel>(undefined as any);
+  public isError = signal(false);
+  public nextPhaseButtonDisabled = signal(false);
 
-  @Select(UserState.currentUser)
-  public currentUser$: Observable<Participant>;
+  public currentUser$ = this.store.select(UserState.currentUser);
 
-  constructor(route: ActivatedRoute,
-              private api: Api,
-              private store: Store,
-              private dialog: MatDialog,
-              private wsApi: WebsocketApi) {
-    route.paramMap.subscribe(params => this.initGame(params.get("slug")));
-    this.nextPhaseButtonDisabled = new BehaviorSubject(false);
+  constructor() {
+    this.route.paramMap.pipe(
+      map(params => params.get("slug")),
+      tap(slug => {
+        if (!slug) this.isError.set(true);
+        this.slug = slug ?? undefined;
+      }),
+      filter((slug): slug is string => !!slug),
+      switchMap(slug => combineLatest([
+        this.api.getGame(slug),
+        this.currentUser$
+      ])),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: ([game, currentUser]) => {
+        if (!currentUser) {
+          this.createUser();
+        } else if (game) {
+          this.startGameStateSubscription(game, currentUser);
+        }
+      },
+      error: () => this.isError.set(true)
+    });
   }
 
-  private initGame(slug: string | null) {
-    if (!slug) {
-      this.isError = true;
-      return;
-    }
-    this.slug = slug;
-    this.api.getGame(slug).subscribe({
-      next: g => {
-        this.currentUser$.subscribe(currentUser => {
-          if (!currentUser) {
-            this.createUser();
-          } else if (g) {
-            this.game = this.toGameModel(g, currentUser);
-            this.setNextPhaseButtonDisabledState(g.gameState);
-            this.wsApi.gameState(this.game.slug)
-              .pipe(
-                tap(g2 => this.setNextPhaseButtonDisabledState(g2.gameState)),
-                map(g2 => this.toGameModel(g2, currentUser))
-              )
-              .subscribe(g2 => {
-                this.game = g2;
-              });
-            this.api.joinGame(this.game.slug, currentUser)
-              .pipe(
-                tap(g2 => this.setNextPhaseButtonDisabledState(g2.gameState)),
-                map(g2 => this.toGameModel(g2, currentUser))
-              )
-              .subscribe(g2 => {
-                this.game = g2;
-              });
-          }
-        });
-      },
-      error: err => {
-        // If getGame fails (404), show error or optionally create the game here
-        this.isError = true;
-      }
+  private gameStateSubscription?: Subscription;
+
+  private startGameStateSubscription(initialGame: Game, currentUser: Participant) {
+    this.gameStateSubscription?.unsubscribe();
+
+    this.game.set(this.toGameModel(initialGame, currentUser));
+    this.setNextPhaseButtonDisabledState(initialGame.gameState);
+
+    this.gameStateSubscription = merge(
+      this.wsApi.gameState(initialGame.slug),
+      this.api.joinGame(initialGame.slug, currentUser)
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(g => {
+      this.game.set(this.toGameModel(g, currentUser));
+      this.setNextPhaseButtonDisabledState(g.gameState);
     });
+  }
+
+  ngOnDestroy() {
+    this.gameStateSubscription?.unsubscribe();
   }
 
   private setNextPhaseButtonDisabledState(gameState: GameState) {
     const nextButtonActiveTime = Date.parse(gameState.lastTransition) + 3000;
     let timeToActive = nextButtonActiveTime - Date.now();
     if (timeToActive > 0) {
-      (this.nextPhaseButtonDisabled as Subject<boolean>).next(true);
+      this.nextPhaseButtonDisabled.set(true);
       setTimeout(() => {
-        (this.nextPhaseButtonDisabled as Subject<boolean>).next(false);
+        this.nextPhaseButtonDisabled.set(false);
       }, timeToActive)
     } else {
-      (this.nextPhaseButtonDisabled as Subject<boolean>).next(false);
+      this.nextPhaseButtonDisabled.set(false);
     }
   }
 
@@ -121,7 +152,7 @@ export class GameComponent {
             },
             error: err => {
               // If join fails, show error and do not reconnect
-              this.isError = true;
+              this.isError.set(true);
             }
           });
         } else {
@@ -186,10 +217,10 @@ export class GameComponent {
   }
 
   public selectOption(option: VoteOption) {
-    if (this.game?.self?.vote.vote == option) {
-      this.api.vote(this.game!.slug, undefined).subscribe()
+    if (this.game()?.self?.vote?.vote == option) {
+      this.api.vote(this.game()!.slug, undefined).subscribe()
     } else {
-      this.api.vote(this.game!.slug, option).subscribe()
+      this.api.vote(this.game()!.slug, option).subscribe()
     }
   }
 
@@ -203,7 +234,7 @@ export class GameComponent {
   }
 
   nextPhase() {
-    this.api.progressGame(this.game!.slug).subscribe();
+    this.api.progressGame(this.game()!.slug).subscribe();
   }
 
   openUserDialog() {
@@ -221,7 +252,7 @@ export class GameComponent {
   }
 
   getSchemeTooltip(option: number): string {
-    const scheme = this.game?.votingScheme;
+    const scheme = this.game()?.votingScheme;
     if (scheme?.schemeTooltipMapping) {
       for (const op of scheme.schemeTooltipMapping) {
         if (op.value === option) {

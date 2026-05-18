@@ -17,6 +17,8 @@
 *.iml
 
 full-house
+full-house-amd64
+full-house-arm64
 !*/fullhouse/
 
 linter_results.xml
