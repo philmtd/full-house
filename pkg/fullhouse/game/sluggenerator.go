@@ -162,6 +162,7 @@ var (
 		"Mosquito",
 		"Mouse",
 		"Octopus",
+		"Otter",
 		"Panda",
 		"Penguin",
 		"Pig",
