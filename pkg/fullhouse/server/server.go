@@ -81,6 +81,7 @@ func (s *Server) Start(c config.Config) {
 	gameApi.POST("/:slug/join", s.joinGame)
 	gameApi.POST("/:slug/vote", s.vote)
 	gameApi.POST("/:slug/progress", s.progressToNextPhase)
+	gameApi.POST("/:slug/admin-settings", s.updateAdminSettings)
 	gameApi.GET("/:slug", s.getGame)
 
 	var servers []*http.Server
@@ -200,6 +201,19 @@ func (s *Server) vote(ctx *gin.Context) {
 func (s *Server) progressToNextPhase(ctx *gin.Context) {
 	slug := ctx.Param("slug")
 	if err := s.manager.ProgressGameToNextState(slug); err != nil {
+		ctx.Status(http.StatusNotFound)
+	} else {
+		ctx.Status(http.StatusOK)
+	}
+}
+
+func (s *Server) updateAdminSettings(ctx *gin.Context) {
+	dto := &models.AdminSettings{}
+	if ctx.BindJSON(dto) != nil {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	if err := s.manager.UpdateAdminSettings(ctx.Param("slug"), *dto); err != nil {
 		ctx.Status(http.StatusNotFound)
 	} else {
 		ctx.Status(http.StatusOK)

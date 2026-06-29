@@ -18,6 +18,11 @@
     },
     "navigation": {
       "appInfo": "Full House Version: {version}"
+    },
+    "adminSettingsDialog": {
+      "title": "Room settings",
+      "allowOthersToReveal": "Allow others to reveal cards",
+      "allowOthersToRestart": "Allow others to start new voting"
     }
   },
   "game": {

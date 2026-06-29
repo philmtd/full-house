@@ -1,9 +1,15 @@
+export interface AdminSettings {
+  allowOthersToReveal: boolean;
+  allowOthersToRestart: boolean;
+}
+
 export interface Game {
   name: string;
   slug: string;
   participants: Array<Participant>;
   gameState: GameState;
   votingScheme: VotingScheme;
+  adminSettings: AdminSettings;
 }
 
 export interface Participant {

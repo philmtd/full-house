@@ -183,6 +183,18 @@ func (g *GameManager) Vote(slug string, vote *models.VoteDTO, participantId stri
 	return nil
 }
 
+func (g *GameManager) UpdateAdminSettings(slug string, settings models.AdminSettings) error {
+	gameBySlug, err := g.findGame(slug)
+	if err != nil {
+		return fmt.Errorf("game not found")
+	}
+	gameBySlug.Lock.Lock()
+	gameBySlug.AdminSettings = settings
+	gameBySlug.Lock.Unlock()
+	g.broadcastGameState(slug)
+	return nil
+}
+
 func (g *GameManager) ProgressGameToNextState(slug string) error {
 	unlock := progressGamesLock.Lock(slug)
 	defer unlock()

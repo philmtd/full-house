@@ -7,6 +7,16 @@ import (
 	"time"
 )
 
+type AdminSettings struct {
+	AllowOthersToReveal  bool `json:"allowOthersToReveal"`
+	AllowOthersToRestart bool `json:"allowOthersToRestart"`
+}
+
+var DefaultAdminSettings = AdminSettings{
+	AllowOthersToReveal:  true,
+	AllowOthersToRestart: true,
+}
+
 type Game struct {
 	Name            string
 	Slug            string
@@ -14,6 +24,7 @@ type Game struct {
 	LastInteraction time.Time
 	GameState       GameState
 	VotingScheme    VotingScheme
+	AdminSettings   AdminSettings
 	Lock            sync.RWMutex
 }
 
@@ -52,11 +63,12 @@ func VotingSchemeFromConfig(scheme config.VotingScheme) VotingScheme {
 }
 
 type GameDTO struct {
-	Name         string            `json:"name"`
-	Slug         string            `json:"slug"`
-	Participants []*ParticipantDTO `json:"participants"`
-	GameState    GameStateDTO      `json:"gameState"`
-	VotingScheme VotingScheme      `json:"votingScheme"`
+	Name          string            `json:"name"`
+	Slug          string            `json:"slug"`
+	Participants  []*ParticipantDTO `json:"participants"`
+	GameState     GameStateDTO      `json:"gameState"`
+	VotingScheme  VotingScheme      `json:"votingScheme"`
+	AdminSettings AdminSettings     `json:"adminSettings"`
 }
 
 func NewGame(name, slug string, votingScheme VotingScheme) *Game {
@@ -69,8 +81,9 @@ func NewGame(name, slug string, votingScheme VotingScheme) *Game {
 			Phase:                VOTING,
 			VotesByParticipantId: make(map[string]any),
 		},
-		VotingScheme: votingScheme,
-		Lock:         sync.RWMutex{},
+		VotingScheme:  votingScheme,
+		AdminSettings: DefaultAdminSettings,
+		Lock:          sync.RWMutex{},
 	}
 }
 
@@ -85,11 +98,12 @@ func ToGameDto(game *Game) *GameDTO {
 		})
 	}
 	return &GameDTO{
-		Name:         game.Name,
-		Slug:         game.Slug,
-		Participants: participants,
-		GameState:    ToGameStateDTO(game.GameState, game.Participants),
-		VotingScheme: game.VotingScheme,
+		Name:          game.Name,
+		Slug:          game.Slug,
+		Participants:  participants,
+		GameState:     ToGameStateDTO(game.GameState, game.Participants),
+		VotingScheme:  game.VotingScheme,
+		AdminSettings: game.AdminSettings,
 	}
 }
 

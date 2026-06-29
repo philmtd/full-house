@@ -5,6 +5,11 @@
       <span>{{ 'game.inviteOthers' | translate }}</span>
     </div>
   </button>
+  @if (isCreator()) {
+    <button mat-icon-button (click)="openAdminSettingsDialog()">
+      <mat-icon svgIcon="settings" />
+    </button>
+  }
   <button mat-icon-button (click)="openUserDialog()">
     <mat-icon svgIcon="account-circle" />
   </button>
@@ -43,7 +48,7 @@
                 </div>
               </div>
             }
-            @if (game().phase == 'VOTING' && game().voteCount > 0) {
+            @if (game().phase == 'VOTING' && game().voteCount > 0 && canReveal()) {
               <button [disabled]="nextPhaseButtonDisabled()" mat-raised-button (click)="nextPhase()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="visibility" />
@@ -51,7 +56,7 @@
                 </div>
               </button>
             }
-            @if (game().phase == 'REVEALED') {
+            @if (game().phase == 'REVEALED' && canRestart()) {
               <button [disabled]="nextPhaseButtonDisabled()" mat-raised-button (click)="nextPhase()">
                 <div class="fx-layout-row fx-align--center-x fx-align--x-center fx-gap--8px">
                   <mat-icon svgIcon="loop" />

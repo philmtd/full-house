@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import {Observable} from "rxjs";
-import {AppInfo, Game, Participant, VoteOption, VotingScheme} from "../model";
+import {AdminSettings, AppInfo, Game, Participant, VoteOption, VotingScheme} from "../model";
 
 @Injectable()
 export class Api {
@@ -46,5 +46,9 @@ export class Api {
 
   public progressGame(slug: string): Observable<any> {
     return this.client.post(`/api/game/${slug}/progress`, {});
+  }
+
+  public updateAdminSettings(slug: string, settings: AdminSettings): Observable<any> {
+    return this.client.post(`/api/game/${slug}/admin-settings`, settings);
   }
 }
