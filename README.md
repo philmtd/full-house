@@ -8,6 +8,8 @@ mostly used in agile software development.
 
 Players can join a game while e.g. being in a refinement meeting and use this game to estimate the issues discussed in the meeting.
 
+The room creator can configure admin settings to control whether other participants are allowed to reveal cards or start new voting rounds.
+
 ## Run with Docker
 
 Full House can be easily run with Docker:

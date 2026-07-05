@@ -1,5 +1,5 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, signal, viewChild, ViewEncapsulation} from "@angular/core";
-import {MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, signal, viewChild} from "@angular/core";
+import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {Store} from "@ngxs/store";
 import {SettingsState, ToggleQrCodeVisibility} from "../../store/settings/settings.state";
@@ -22,7 +22,9 @@ import {MatButton} from "@angular/material/button";
     MatLabel,
     MatIcon,
     MatButton,
-    MatInput
+    MatInput,
+    MatDialogActions,
+    MatDialogClose
   ],
   standalone: true,
 })

@@ -1,7 +1,7 @@
 import {Component, DestroyRef, inject, OnDestroy, signal} from "@angular/core";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {Api} from "../api/api.service";
-import {Game, GamePhase, GameState, Participant, Vote, VoteOption, VotingScheme} from "../model";
+import {AdminSettings, Game, GamePhase, GameState, Participant, Vote, VoteOption, VotingScheme} from "../model";
 import {Store} from "@ngxs/store";
 import {SetCurrentUser, UserState} from "../../store/user/user.state";
 import {combineLatest, merge, Subscription} from "rxjs";
@@ -22,6 +22,7 @@ import {NavigationComponent} from "../../components/navigation/navigation.compon
 import {ParticipantFilterPipe} from "./participant-filter.pipe";
 import {MatTooltip} from "@angular/material/tooltip";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {AdminSettingsDialogComponent} from "../../components/admin-settings-dialog/admin-settings-dialog.component";
 
 export interface GameModel {
   name: string;
@@ -34,6 +35,8 @@ export interface GameModel {
   agreement: number | null;
   agreementEmoji: string;
   votingScheme: VotingScheme;
+  adminSettings: AdminSettings;
+  isCreator: boolean;
 }
 
 export interface ParticipantModel {
@@ -100,6 +103,7 @@ export class GameComponent implements OnDestroy {
       },
       error: () => this.isError.set(true)
     });
+
   }
 
   private gameStateSubscription?: Subscription;
@@ -187,7 +191,9 @@ export class GameComponent implements OnDestroy {
       voteAverage: voteAverage,
       agreement: agreement,
       agreementEmoji: this.getAgreementEmoji(agreement),
-      votingScheme: game.votingScheme
+      votingScheme: game.votingScheme,
+      adminSettings: game.adminSettings ?? { allowOthersToReveal: true, allowOthersToRestart: true },
+      isCreator: game.creatorParticipantId === currentUser.id,
     }
   }
 
@@ -249,6 +255,24 @@ export class GameComponent implements OnDestroy {
         this.store.dispatch(new SetCurrentUser(participant));
       });
     });
+  }
+
+  openAdminSettingsDialog() {
+    this.dialog.open(AdminSettingsDialogComponent, {
+      width: '60%',
+      data: {
+        slug: this.slug,
+        settings: this.game()?.adminSettings ?? { allowOthersToReveal: true, allowOthersToRestart: true },
+      }
+    });
+  }
+
+  canReveal(): boolean {
+    return this.game()?.isCreator || (this.game()?.adminSettings?.allowOthersToReveal ?? true);
+  }
+
+  canRestart(): boolean {
+    return this.game()?.isCreator || (this.game()?.adminSettings?.allowOthersToRestart ?? true);
   }
 
   getSchemeTooltip(option: number): string {

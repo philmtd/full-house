@@ -7,14 +7,26 @@ import (
 	"time"
 )
 
+type AdminSettings struct {
+	AllowOthersToReveal  bool `json:"allowOthersToReveal"`
+	AllowOthersToRestart bool `json:"allowOthersToRestart"`
+}
+
+var DefaultAdminSettings = AdminSettings{
+	AllowOthersToReveal:  true,
+	AllowOthersToRestart: true,
+}
+
 type Game struct {
-	Name            string
-	Slug            string
-	Participants    []*Participant
-	LastInteraction time.Time
-	GameState       GameState
-	VotingScheme    VotingScheme
-	Lock            sync.RWMutex
+	Name             string
+	Slug             string
+	CreatorSessionId string
+	Participants     []*Participant
+	LastInteraction  time.Time
+	GameState        GameState
+	VotingScheme     VotingScheme
+	AdminSettings    AdminSettings
+	Lock             sync.RWMutex
 }
 
 type SchemeTooltipMapping struct {
@@ -52,25 +64,29 @@ func VotingSchemeFromConfig(scheme config.VotingScheme) VotingScheme {
 }
 
 type GameDTO struct {
-	Name         string            `json:"name"`
-	Slug         string            `json:"slug"`
-	Participants []*ParticipantDTO `json:"participants"`
-	GameState    GameStateDTO      `json:"gameState"`
-	VotingScheme VotingScheme      `json:"votingScheme"`
+	Name                 string            `json:"name"`
+	Slug                 string            `json:"slug"`
+	CreatorParticipantId string            `json:"creatorParticipantId"`
+	Participants         []*ParticipantDTO `json:"participants"`
+	GameState            GameStateDTO      `json:"gameState"`
+	VotingScheme         VotingScheme      `json:"votingScheme"`
+	AdminSettings        AdminSettings     `json:"adminSettings"`
 }
 
-func NewGame(name, slug string, votingScheme VotingScheme) *Game {
+func NewGame(name, slug, creatorSessionId string, votingScheme VotingScheme) *Game {
 	return &Game{
-		Name:            name,
-		Slug:            slug,
-		Participants:    []*Participant{},
-		LastInteraction: time.Now(),
+		Name:             name,
+		Slug:             slug,
+		CreatorSessionId: creatorSessionId,
+		Participants:     []*Participant{},
+		LastInteraction:  time.Now(),
 		GameState: GameState{
 			Phase:                VOTING,
 			VotesByParticipantId: make(map[string]any),
 		},
-		VotingScheme: votingScheme,
-		Lock:         sync.RWMutex{},
+		VotingScheme:  votingScheme,
+		AdminSettings: DefaultAdminSettings,
+		Lock:          sync.RWMutex{},
 	}
 }
 
@@ -84,13 +100,34 @@ func ToGameDto(game *Game) *GameDTO {
 			Id:   participant.Id,
 		})
 	}
-	return &GameDTO{
-		Name:         game.Name,
-		Slug:         game.Slug,
-		Participants: participants,
-		GameState:    ToGameStateDTO(game.GameState, game.Participants),
-		VotingScheme: game.VotingScheme,
+	var creatorParticipantId string
+	for _, p := range game.Participants {
+		if strings.EqualFold(p.SessionId, game.CreatorSessionId) {
+			creatorParticipantId = p.Id
+			break
+		}
 	}
+
+	return &GameDTO{
+		Name:                 game.Name,
+		Slug:                 game.Slug,
+		CreatorParticipantId: creatorParticipantId,
+		Participants:         participants,
+		GameState:            ToGameStateDTO(game.GameState, game.Participants),
+		VotingScheme:         game.VotingScheme,
+		AdminSettings:        game.AdminSettings,
+	}
+}
+
+func (g *Game) FindParticipantIdBySessionId(sessionId string) string {
+	g.Lock.RLock()
+	defer g.Lock.RUnlock()
+	for _, p := range g.Participants {
+		if strings.EqualFold(p.SessionId, sessionId) {
+			return p.Id
+		}
+	}
+	return ""
 }
 
 func (g *Game) CountParticipantsBySessionId(id string) int {

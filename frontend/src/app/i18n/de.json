@@ -18,6 +18,11 @@
     },
     "navigation": {
       "appInfo": "Full House Version: {version}"
+    },
+    "adminSettingsDialog": {
+      "title": "Raumeinstellungen",
+      "allowOthersToReveal": "Anderen erlauben, Karten aufzudecken",
+      "allowOthersToRestart": "Anderen erlauben, eine neue Abstimmung zu starten"
     }
   },
   "game": {
@@ -39,5 +44,8 @@
     "votingSystemLabel": "Abstimmungssystem",
     "createGame": "Spiel erstellen",
     "failedToCreateGame": "Fehler beim Erstellen eines Spiels."
+  },
+  "general": {
+    "close": "Schließen"
   }
 }
