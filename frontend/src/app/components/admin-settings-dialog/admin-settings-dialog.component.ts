@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
 import {AdminSettings} from '../../game/model';
 import {Api} from '../../game/api/api.service';
@@ -26,6 +26,7 @@ export interface AdminSettingsDialogData {
     MatButton,
     MatDialogClose,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class AdminSettingsDialogComponent {

@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, signal, viewChild} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, inject, signal, viewChild, ChangeDetectionStrategy} from "@angular/core";
 import {MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {Store} from "@ngxs/store";
@@ -26,6 +26,7 @@ import {MatButton} from "@angular/material/button";
     MatDialogActions,
     MatDialogClose
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class InvitePlayersDialogComponent implements AfterViewInit {

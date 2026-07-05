@@ -1,4 +1,4 @@
-import { Component, DOCUMENT, inject, viewChild, ViewContainerRef, effect } from '@angular/core';
+import { Component, DOCUMENT, inject, viewChild, ViewContainerRef, effect, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from "@ngxs/store";
 import { ThemingState } from "./store/theming/theming.state";
 import {RouterOutlet} from "@angular/router";
@@ -10,6 +10,7 @@ import {RouterOutlet} from "@angular/router";
   imports: [
     RouterOutlet
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true
 })
 export class AppComponent {

@@ -9,7 +9,6 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "baseUrl": "src",
     "outDir": "../.tmp",
     "sourceMap": true,
     "noImplicitAny": false,

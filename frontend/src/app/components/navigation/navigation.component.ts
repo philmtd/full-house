@@ -1,4 +1,4 @@
-import {Component, inject, input, signal} from "@angular/core";
+import {Component, inject, input, signal, ChangeDetectionStrategy} from "@angular/core";
 import {Api} from "../../game/api/api.service";
 import {MatTooltip} from "@angular/material/tooltip";
 import {TranslatePipe} from "@ngx-translate/core";
@@ -15,6 +15,7 @@ import {map} from "rxjs/operators";
     TranslatePipe,
     RouterLink
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true
 })
 export class NavigationComponent {
