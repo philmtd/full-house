@@ -1,4 +1,4 @@
-import {Component, computed, input} from "@angular/core";
+import {Component, computed, input, ChangeDetectionStrategy} from "@angular/core";
 import {Participant, Vote, VotingScheme} from "../model";
 import {FractionFilterPipe} from "../game/fraction-filter.pipe";
 
@@ -11,6 +11,7 @@ interface VoteModel extends Vote {
   templateUrl: 'participant.component.html',
   styleUrls: ['./participant.component.scss'],
   imports: [FractionFilterPipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class ParticipantComponent {

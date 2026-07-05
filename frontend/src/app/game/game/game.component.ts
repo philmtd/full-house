@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnDestroy, signal} from "@angular/core";
+import {Component, DestroyRef, inject, OnDestroy, signal, ChangeDetectionStrategy} from "@angular/core";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {Api} from "../api/api.service";
 import {AdminSettings, Game, GamePhase, GameState, Participant, Vote, VoteOption, VotingScheme} from "../model";
@@ -63,6 +63,7 @@ export interface ParticipantModel {
     ParticipantFilterPipe,
     MatTooltip
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true
 })
 export class GameComponent implements OnDestroy {

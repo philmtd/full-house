@@ -1,4 +1,5 @@
 import {Pipe, PipeTransform} from "@angular/core";
+import {VoteOption} from "../model";
 
 export function transformToFraction(v: number | undefined): string | undefined {
   if (v == undefined) {
@@ -34,8 +35,11 @@ export function transformToFraction(v: number | undefined): string | undefined {
 })
 export class FractionFilterPipe implements PipeTransform {
 
-  transform(v: number | undefined): string | undefined {
-    return transformToFraction(v);
+  transform(v: VoteOption): string | undefined {
+    if (v !== '?') {
+      return transformToFraction(v);
+    }
+    return undefined
   }
 
 }

@@ -1,4 +1,4 @@
-import {Component, computed, inject, linkedSignal, signal} from "@angular/core";
+import {Component, computed, inject, linkedSignal, signal, ChangeDetectionStrategy} from "@angular/core";
 import {Router} from "@angular/router";
 import {Api} from "../api/api.service";
 import {VotingScheme} from "../model";
@@ -36,6 +36,7 @@ interface VotingSchemeModel {
     NavigationComponent,
     MatInput
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true
 })
 export class NewGameComponent {

@@ -7,7 +7,7 @@ import {WebsocketService} from './app/game/api/websocket.service';
 import {WebsocketApi} from './app/game/api/websocket-api.service';
 import {AnimationDriver} from '@angular/animations/browser';
 import {configureSvgIcons, configureTranslations, provideAnimationDriverBasedOnUserPreferences} from './app/configuration/configuration';
-import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {provideHttpClient, withInterceptorsFromDi, withXhr} from '@angular/common/http';
 import {bootstrapApplication, DomSanitizer} from '@angular/platform-browser';
 import {AppRoutingModule} from './app/app-routing.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -21,7 +21,7 @@ import {provideStore} from '@ngxs/store';
 import {appStates} from './app/store';
 import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
-import {provideTranslateCompiler, provideTranslateService, TranslateModule, TranslateService} from '@ngx-translate/core';
+import {provideTranslateCompiler, provideTranslateService, TranslateService} from '@ngx-translate/core';
 import {TranslateMessageFormatCompiler} from 'ngx-translate-messageformat-compiler';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {AppComponent} from './app/app.component';
@@ -33,7 +33,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(AppRoutingModule, BrowserAnimationsModule, MatDialogModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, FormsModule, MatIconModule, MatMenuModule, MatTooltipModule), MatProgressSpinnerModule, TranslateModule,
+    importProvidersFrom(AppRoutingModule, BrowserAnimationsModule, MatDialogModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, FormsModule, MatIconModule, MatMenuModule, MatTooltipModule), MatProgressSpinnerModule,
     provideStore(appStates, {developmentMode: !environment.production, ...withNgxsStoragePlugin({
         keys: '*'
       })}),
@@ -51,7 +51,7 @@ bootstrapApplication(AppComponent, {
       provide: AnimationDriver,
       useFactory: () => provideAnimationDriverBasedOnUserPreferences()
     },
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideTranslateService({
       compiler: provideTranslateCompiler(TranslateMessageFormatCompiler)
     }),
