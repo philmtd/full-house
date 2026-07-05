@@ -1,6 +1,6 @@
 import {MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {Participant} from "../../game/model";
-import {Component, inject, signal, WritableSignal} from "@angular/core";
+import {Component, inject, signal, WritableSignal, ChangeDetectionStrategy} from "@angular/core";
 import {Api} from "../../game/api/api.service";
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
@@ -21,6 +21,7 @@ import {MatButton} from "@angular/material/button";
     MatInput,
     MatButton
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true
 })
 export class CreateUserDialogComponent {
