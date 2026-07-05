@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"fullhouse/pkg/fullhouse/config"
 	"fullhouse/pkg/fullhouse/game"
@@ -19,6 +20,7 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	sloggin "github.com/samber/slog-gin"
 )
 
@@ -81,6 +83,7 @@ func (s *Server) Start(c config.Config) {
 	gameApi.POST("/:slug/join", s.joinGame)
 	gameApi.POST("/:slug/vote", s.vote)
 	gameApi.POST("/:slug/progress", s.progressToNextPhase)
+	gameApi.POST("/:slug/admin-settings", s.updateAdminSettings)
 	gameApi.GET("/:slug", s.getGame)
 
 	var servers []*http.Server
@@ -154,7 +157,8 @@ func (s *Server) newGame(ctx *gin.Context) {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	createdGame, err := s.manager.CreateGame(dto)
+	sessionId := ensureSessionIdCookie(ctx)
+	createdGame, err := s.manager.CreateGame(dto, sessionId)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -168,13 +172,12 @@ func (s *Server) joinGame(ctx *gin.Context) {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	cookie, _ := getSessionIdCookie(ctx)
-	game, err := s.manager.JoinGame(ctx.Param("slug"), dto, cookie)
+	sessionId := ensureSessionIdCookie(ctx)
+	game, err := s.manager.JoinGame(ctx.Param("slug"), dto, sessionId)
 	if err != nil {
 		ctx.Status(http.StatusNotFound)
 		return
 	}
-	setSessionIdCookie(ctx, dto.Id)
 	ctx.JSON(http.StatusOK, game)
 }
 
@@ -206,6 +209,28 @@ func (s *Server) progressToNextPhase(ctx *gin.Context) {
 	}
 }
 
+func (s *Server) updateAdminSettings(ctx *gin.Context) {
+	dto := &models.AdminSettings{}
+	if ctx.BindJSON(dto) != nil {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	cookie, err := getSessionIdCookie(ctx)
+	if err != nil {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	if err := s.manager.UpdateAdminSettings(ctx.Param("slug"), cookie, *dto); err != nil {
+		if errors.Is(err, game.ErrForbidden) {
+			ctx.Status(http.StatusForbidden)
+		} else {
+			ctx.Status(http.StatusNotFound)
+		}
+	} else {
+		ctx.Status(http.StatusOK)
+	}
+}
+
 func (s *Server) newParticipant(ctx *gin.Context) {
 	dto := &models.ParticipantDTO{}
 	if ctx.BindJSON(dto) != nil {
@@ -213,12 +238,21 @@ func (s *Server) newParticipant(ctx *gin.Context) {
 		return
 	}
 	participant := s.manager.CreateParticipant(dto.Name)
-	setSessionIdCookie(ctx, participant.Id)
+	ensureSessionIdCookie(ctx)
 	ctx.JSON(http.StatusOK, participant)
 }
 
+func ensureSessionIdCookie(ctx *gin.Context) string {
+	if id, err := getSessionIdCookie(ctx); err == nil && id != "" {
+		return id
+	}
+	id := uuid.New().String()
+	setSessionIdCookie(ctx, id)
+	return id
+}
+
 func setSessionIdCookie(ctx *gin.Context, id string) {
-	ctx.SetCookie("SESSION_ID", id, 60*60*24*365, "/", ctx.Request.Host, false, false)
+	ctx.SetCookie("SESSION_ID", id, 60*60*24*365, "/", "", false, false)
 }
 
 func getSessionIdCookie(ctx *gin.Context) (string, error) {
