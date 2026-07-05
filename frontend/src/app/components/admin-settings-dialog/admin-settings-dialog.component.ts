@@ -1,15 +1,15 @@
 import {Component, inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
-import {Store} from '@ngxs/store';
-import {RoomAdminSettings, UpdateRoomAdminSettings} from '../../store/room-admin/room-admin.state';
+import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
+import {AdminSettings} from '../../game/model';
 import {Api} from '../../game/api/api.service';
 import {TranslatePipe} from '@ngx-translate/core';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {FormsModule} from '@angular/forms';
+import {MatButton} from "@angular/material/button";
 
 export interface AdminSettingsDialogData {
   slug: string;
-  settings: RoomAdminSettings;
+  settings: AdminSettings;
 }
 
 @Component({
@@ -22,11 +22,13 @@ export interface AdminSettingsDialogData {
     MatDialogContent,
     MatSlideToggle,
     FormsModule,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
   ],
   standalone: true,
 })
 export class AdminSettingsDialogComponent {
-  private store = inject(Store);
   private api = inject(Api);
   readonly data = inject<AdminSettingsDialogData>(MAT_DIALOG_DATA);
 
@@ -44,13 +46,10 @@ export class AdminSettingsDialogComponent {
   }
 
   private persist() {
-    const settings: RoomAdminSettings = {
+    const settings: AdminSettings = {
       allowOthersToReveal: this.allowOthersToReveal,
       allowOthersToRestart: this.allowOthersToRestart,
     };
-    // Persist to local NGXS store (survives page refresh for the admin)
-    this.store.dispatch(new UpdateRoomAdminSettings(this.data.slug, settings));
-    // Broadcast to all other clients via the server → WebSocket push
     this.api.updateAdminSettings(this.data.slug, settings).subscribe();
   }
 }

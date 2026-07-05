@@ -1,14 +1,14 @@
 <h2 mat-dialog-title>{{ 'components.adminSettingsDialog.title' | translate }}</h2>
-<mat-dialog-content>
-  <div class="settings-list">
-    <div class="setting-row">
+<div mat-dialog-content>
+  <div class="settings-list fx-layout-column fx-gap--1em">
+    <div class="setting-row fx-layout-row fx-align--space-between-x fx-align--x-center fx-gap--1em">
       <span>{{ 'components.adminSettingsDialog.allowOthersToReveal' | translate }}</span>
       <mat-slide-toggle
         [ngModel]="allowOthersToReveal"
         (ngModelChange)="onRevealChange($event)"
       />
     </div>
-    <div class="setting-row">
+    <div class="setting-row fx-layout-row fx-align--space-between-x fx-align--x-center fx-gap--1em">
       <span>{{ 'components.adminSettingsDialog.allowOthersToRestart' | translate }}</span>
       <mat-slide-toggle
         [ngModel]="allowOthersToRestart"
@@ -16,4 +16,7 @@
       />
     </div>
   </div>
-</mat-dialog-content>
+</div>
+<div mat-dialog-actions>
+  <button matButton mat-dialog-close>{{ 'general.close' | translate }}</button>
+</div>

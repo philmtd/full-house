@@ -44,5 +44,8 @@
     "votingSystemLabel": "Voting System",
     "createGame": "Create game",
     "failedToCreateGame": "Failed to create game."
+  },
+  "general": {
+    "close": "Close"
   }
 }

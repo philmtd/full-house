@@ -78,7 +78,7 @@ func (g *GameManager) GetGameBySlug(slug string) (*models.GameDTO, error) {
 	return models.ToGameDto(game), nil
 }
 
-func (g *GameManager) CreateGame(game *models.GameDTO) (*models.GameDTO, error) {
+func (g *GameManager) CreateGame(game *models.GameDTO, creatorSessionId string) (*models.GameDTO, error) {
 	slugExists := func(s string) bool {
 		for _, pg := range config.Configuration.FullHouse.PersistentGames {
 			if pg.Slug == s {
@@ -95,7 +95,7 @@ func (g *GameManager) CreateGame(game *models.GameDTO) (*models.GameDTO, error) 
 	var slug string
 
 	if len(g.games) >= maximumNumberOfSlugs() {
-		return nil, fmt.Errorf("maxium number of games reached")
+		return nil, fmt.Errorf("maximum number of games reached")
 	}
 
 	for {
@@ -105,13 +105,13 @@ func (g *GameManager) CreateGame(game *models.GameDTO) (*models.GameDTO, error) 
 		}
 	}
 
-	createdGame := g.createGameLocked(game.Name, slug, game.VotingScheme)
+	createdGame := g.createGameLocked(game.Name, slug, creatorSessionId, game.VotingScheme)
 	return models.ToGameDto(createdGame), nil
 }
 
-func (g *GameManager) createGameLocked(name, slug string, votingScheme models.VotingScheme) *models.Game {
+func (g *GameManager) createGameLocked(name, slug, creatorSessionId string, votingScheme models.VotingScheme) *models.Game {
 	gamesLock.Lock()
-	createdGame := models.NewGame(name, slug, votingScheme)
+	createdGame := models.NewGame(name, slug, creatorSessionId, votingScheme)
 	g.games = append(g.games, createdGame)
 	gamesLock.Unlock()
 	g.log.Info("created new game", slog.String("name", createdGame.Name), slog.String("slug", createdGame.Slug))
@@ -160,7 +160,7 @@ func (g *GameManager) JoinGame(slug string, dto *models.ParticipantDTO, sessionI
 	return models.ToGameDto(game), nil
 }
 
-func (g *GameManager) Vote(slug string, vote *models.VoteDTO, participantId string) error {
+func (g *GameManager) Vote(slug string, vote *models.VoteDTO, sessionId string) error {
 	gameBySlug, err := g.findGame(slug)
 	if err != nil {
 		return err
@@ -169,6 +169,11 @@ func (g *GameManager) Vote(slug string, vote *models.VoteDTO, participantId stri
 	if gameBySlug.GameState.Phase == models.REVEALED {
 		g.updateInteractionTimestamp(slug)
 		return nil
+	}
+
+	participantId := gameBySlug.FindParticipantIdBySessionId(sessionId)
+	if participantId == "" {
+		return fmt.Errorf("participant not found for session")
 	}
 
 	gameBySlug.Lock.Lock()
@@ -183,15 +188,22 @@ func (g *GameManager) Vote(slug string, vote *models.VoteDTO, participantId stri
 	return nil
 }
 
-func (g *GameManager) UpdateAdminSettings(slug string, settings models.AdminSettings) error {
+var ErrForbidden = fmt.Errorf("forbidden")
+
+func (g *GameManager) UpdateAdminSettings(slug, sessionId string, settings models.AdminSettings) error {
+	unlock := progressGamesLock.Lock(slug)
+	defer unlock()
+
 	gameBySlug, err := g.findGame(slug)
 	if err != nil {
 		return fmt.Errorf("game not found")
 	}
-	gameBySlug.Lock.Lock()
+	if !strings.EqualFold(gameBySlug.CreatorSessionId, sessionId) {
+		return ErrForbidden
+	}
+
 	gameBySlug.AdminSettings = settings
-	gameBySlug.Lock.Unlock()
-	g.broadcastGameState(slug)
+	defer g.broadcastGameState(slug)
 	return nil
 }
 
@@ -270,7 +282,7 @@ func (g *GameManager) createPersistentGameIfConfigured(slug string) (*models.Gam
 			if err != nil {
 				return nil, err
 			}
-			createdGame := g.createGameLocked(pg.Name, pg.Slug, scheme)
+			createdGame := g.createGameLocked(pg.Name, pg.Slug, "", scheme)
 			g.log.Info("created persistent game", slog.String("slug", slug))
 			return createdGame, nil
 		}

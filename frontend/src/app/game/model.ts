@@ -6,6 +6,7 @@ export interface AdminSettings {
 export interface Game {
   name: string;
   slug: string;
+  creatorParticipantId: string;
   participants: Array<Participant>;
   gameState: GameState;
   votingScheme: VotingScheme;

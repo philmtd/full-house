@@ -13,8 +13,6 @@ import {ThemeSwitcherComponent} from "../../components/theme-switcher/theme-swit
 import {NavigationComponent} from "../../components/navigation/navigation.component";
 import {toSignal} from "@angular/core/rxjs-interop";
 import {map} from "rxjs/operators";
-import {Store} from "@ngxs/store";
-import {RegisterCreatedRoom} from "../../store/room-admin/room-admin.state";
 
 interface VotingSchemeModel {
   scheme: VotingScheme;
@@ -45,7 +43,6 @@ export class NewGameComponent {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly translate = inject(TranslateService);
-  private readonly store = inject(Store);
 
 
   readonly gameName = signal('');
@@ -67,7 +64,6 @@ export class NewGameComponent {
   createGame() {
     this.api.createNewGame(this.gameName(), this.getSchemeById(this.selectedScheme())).subscribe({
       next: game => {
-        this.store.dispatch(new RegisterCreatedRoom(game.slug));
         this.router.navigate([`/game/`, game.slug]);
       },
       error: err => {

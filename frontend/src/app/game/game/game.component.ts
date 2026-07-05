@@ -22,7 +22,6 @@ import {NavigationComponent} from "../../components/navigation/navigation.compon
 import {ParticipantFilterPipe} from "./participant-filter.pipe";
 import {MatTooltip} from "@angular/material/tooltip";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {RoomAdminState, RoomAdminSettings} from "../../store/room-admin/room-admin.state";
 import {AdminSettingsDialogComponent} from "../../components/admin-settings-dialog/admin-settings-dialog.component";
 
 export interface GameModel {
@@ -37,6 +36,7 @@ export interface GameModel {
   agreementEmoji: string;
   votingScheme: VotingScheme;
   adminSettings: AdminSettings;
+  isCreator: boolean;
 }
 
 export interface ParticipantModel {
@@ -80,15 +80,6 @@ export class GameComponent implements OnDestroy {
 
   public currentUser$ = this.store.select(UserState.currentUser);
 
-  /** True when the current browser created this room. */
-  public isCreator = signal(false);
-
-  /** Current admin settings for this room (only meaningful when isCreator). */
-  public adminSettings = signal<RoomAdminSettings>({
-    allowOthersToReveal: true,
-    allowOthersToRestart: true,
-  });
-
   constructor() {
     this.route.paramMap.pipe(
       map(params => params.get("slug")),
@@ -113,23 +104,6 @@ export class GameComponent implements OnDestroy {
       error: () => this.isError.set(true)
     });
 
-    // Keep isCreator and adminSettings in sync with the store
-    this.route.paramMap.pipe(
-      map(params => params.get("slug")),
-      filter((slug): slug is string => !!slug),
-      switchMap(slug =>
-        this.store.select(state => state.ppRoomAdmin as { rooms: Record<string, RoomAdminSettings> }).pipe(
-          map(roomAdminState => ({ slug, state: roomAdminState }))
-        )
-      ),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(({ slug, state }) => {
-      const isCreator = slug in (state?.rooms ?? {});
-      this.isCreator.set(isCreator);
-      if (isCreator) {
-        this.adminSettings.set(state.rooms[slug]);
-      }
-    });
   }
 
   private gameStateSubscription?: Subscription;
@@ -219,6 +193,7 @@ export class GameComponent implements OnDestroy {
       agreementEmoji: this.getAgreementEmoji(agreement),
       votingScheme: game.votingScheme,
       adminSettings: game.adminSettings ?? { allowOthersToReveal: true, allowOthersToRestart: true },
+      isCreator: game.creatorParticipantId === currentUser.id,
     }
   }
 
@@ -284,22 +259,20 @@ export class GameComponent implements OnDestroy {
 
   openAdminSettingsDialog() {
     this.dialog.open(AdminSettingsDialogComponent, {
-      width: '400px',
+      width: '60%',
       data: {
         slug: this.slug,
-        settings: this.adminSettings(),
+        settings: this.game()?.adminSettings ?? { allowOthersToReveal: true, allowOthersToRestart: true },
       }
     });
   }
 
-  /** Whether the current user may click "Reveal cards". */
   canReveal(): boolean {
-    return this.isCreator() || (this.game()?.adminSettings?.allowOthersToReveal ?? true);
+    return this.game()?.isCreator || (this.game()?.adminSettings?.allowOthersToReveal ?? true);
   }
 
-  /** Whether the current user may click "Start new voting". */
   canRestart(): boolean {
-    return this.isCreator() || (this.game()?.adminSettings?.allowOthersToRestart ?? true);
+    return this.game()?.isCreator || (this.game()?.adminSettings?.allowOthersToRestart ?? true);
   }
 
   getSchemeTooltip(option: number): string {

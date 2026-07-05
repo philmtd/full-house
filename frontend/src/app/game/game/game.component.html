@@ -5,7 +5,7 @@
       <span>{{ 'game.inviteOthers' | translate }}</span>
     </div>
   </button>
-  @if (isCreator()) {
+  @if (game()?.isCreator) {
     <button mat-icon-button (click)="openAdminSettingsDialog()">
       <mat-icon svgIcon="settings" />
     </button>
@@ -31,12 +31,12 @@
               </button>
             </div>
           }
-          @for (p of game().otherParticipants | participantRow: 'top'; track p) {
+          @for (p of game().otherParticipants | participantRow: 'top'; track p.id) {
             <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
         </div>
         <div class="row middle-row fx-layout-row fx-align--center-x fx-align--x-center fx-gap--2em" [class.shift-left]="game().otherParticipants.length == 4">
-          @for (p of game().otherParticipants | participantRow: 'left'; track p) {
+          @for (p of game().otherParticipants | participantRow: 'left'; track p.id) {
             <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
           <div class="table fx-layout-column fx-align--center-x fx-align--x-center">
@@ -65,18 +65,18 @@
               </button>
             }
           </div>
-          @for (p of game().otherParticipants | participantRow: 'right'; track p) {
+          @for (p of game().otherParticipants | participantRow: 'right'; track p.id) {
             <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
         </div>
         <div class="row bottom-row fx-layout-row fx-align--center-x fx-align--x-start fx-gap--2em">
-          @for (p of game().otherParticipants | participantRow: 'bottom_left'; track p) {
+          @for (p of game().otherParticipants | participantRow: 'bottom_left'; track p.id) {
             <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
           @if (game().self) {
             <participant [participant]="game().self" [vote]="game().self.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
-          @for (p of game().otherParticipants | participantRow: 'bottom_right'; track p) {
+          @for (p of game().otherParticipants | participantRow: 'bottom_right'; track p.id) {
             <participant [participant]="p" [vote]="p.vote" [revealed]="game().phase == 'REVEALED'" [votingScheme]="game().votingScheme" />
           }
         </div>
