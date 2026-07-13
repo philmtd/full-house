@@ -45,7 +45,7 @@
     "@types/qrcode": "^1.5.6",
     "gzipper": "8.3.0",
     "jsdom": "29.1.1",
-    "typescript": "~6.0.3",
+    "typescript": "~7.0.2",
     "vitest": "^4.0.8"
   }
 }
