@@ -18,6 +18,7 @@ import {MatButton, MatIconButton} from "@angular/material/button";
 import {ParticipantComponent} from "../participant/participant.component";
 import {MatIcon} from "@angular/material/icon";
 import {ThemeSwitcherComponent} from "../../components/theme-switcher/theme-switcher.component";
+import {LanguageSwitcherComponent} from "../../components/language-switcher/language-switcher.component";
 import {NavigationComponent} from "../../components/navigation/navigation.component";
 import {ParticipantFilterPipe} from "./participant-filter.pipe";
 import {MatTooltip} from "@angular/material/tooltip";
@@ -58,6 +59,7 @@ export interface ParticipantModel {
     ParticipantComponent,
     MatIcon,
     ThemeSwitcherComponent,
+    LanguageSwitcherComponent,
     MatIconButton,
     NavigationComponent,
     ParticipantFilterPipe,

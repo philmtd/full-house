@@ -1,18 +1,29 @@
-import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
-import {Injectable} from '@angular/core';
-import {filter, first} from 'rxjs/operators';
+import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {inject, Injectable} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
+
+export type AppLanguage = 'de' | 'en';
 
 export interface SettingsStateModel {
   inviteQrCodeVisible: boolean;
+  language: AppLanguage | undefined;
 }
 
 const defaultState: SettingsStateModel = {
-  inviteQrCodeVisible: false
+  inviteQrCodeVisible: false,
+  language: undefined
 };
 
 export class ToggleQrCodeVisibility {
   static readonly type = '[Settings] Toggle QR code visibility';
 
+}
+
+export class SetLanguage {
+  static readonly type = '[Settings] Set Language';
+
+  constructor(public language: AppLanguage) {
+  }
 }
 
 @State({
@@ -21,10 +32,16 @@ export class ToggleQrCodeVisibility {
 })
 @Injectable()
 export class SettingsState {
+  private translate = inject(TranslateService);
 
   @Selector()
   static isInviteQrCodeVisible(state: SettingsStateModel): boolean {
     return state.inviteQrCodeVisible;
+  }
+
+  @Selector()
+  static language(state: SettingsStateModel): AppLanguage | undefined {
+    return state.language;
   }
 
   @Action(ToggleQrCodeVisibility)
@@ -32,6 +49,14 @@ export class SettingsState {
     ctx.patchState({
       inviteQrCodeVisible: !ctx.getState().inviteQrCodeVisible
     });
+  }
+
+  @Action(SetLanguage)
+  setLanguage(ctx: StateContext<SettingsStateModel>, action: SetLanguage) {
+    ctx.patchState({
+      language: action.language
+    });
+    this.translate.use(action.language);
   }
 
 }

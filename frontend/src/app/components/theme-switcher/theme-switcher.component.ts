@@ -1,15 +1,13 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from "@angular/core";
 import {SetThemeMode, ThemingMode, ThemingState} from "../../store/theming/theming.state";
 import {Store} from "@ngxs/store";
-import {TranslateService} from "@ngx-translate/core";
+import {TranslatePipe} from "@ngx-translate/core";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
-import {AsyncPipe} from "@angular/common";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {Observable} from "rxjs";
 
 interface ModeModel {
-  label: Observable<string>,
+  label: string,
   mode: ThemingMode,
   icon: string
 }
@@ -21,7 +19,7 @@ interface ModeModel {
   imports: [
     MatIconButton,
     MatIcon,
-    AsyncPipe,
+    TranslatePipe,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger
@@ -31,19 +29,18 @@ interface ModeModel {
 })
 export class ThemeSwitcherComponent {
   private store = inject(Store);
-  private translate = inject(TranslateService);
 
   readonly modes = signal<Array<ModeModel>>([
     {
-      label: this.translate.get('components.themeSwitcher.auto'),
+      label: 'components.themeSwitcher.auto',
       mode: 'auto',
       icon: 'settings-brightness'
     }, {
-      label: this.translate.get('components.themeSwitcher.light'),
+      label: 'components.themeSwitcher.light',
       mode: 'light',
       icon: 'light-mode'
     }, {
-      label: this.translate.get('components.themeSwitcher.dark'),
+      label: 'components.themeSwitcher.dark',
       mode: 'dark',
       icon: 'dark-mode'
     }

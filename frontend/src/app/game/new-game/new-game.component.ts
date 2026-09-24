@@ -10,6 +10,7 @@ import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {MatOption, MatSelect} from "@angular/material/select";
 import {MatButton} from "@angular/material/button";
 import {ThemeSwitcherComponent} from "../../components/theme-switcher/theme-switcher.component";
+import {LanguageSwitcherComponent} from "../../components/language-switcher/language-switcher.component";
 import {NavigationComponent} from "../../components/navigation/navigation.component";
 import {toSignal} from "@angular/core/rxjs-interop";
 import {map} from "rxjs/operators";
@@ -33,6 +34,7 @@ interface VotingSchemeModel {
     MatOption,
     MatButton,
     ThemeSwitcherComponent,
+    LanguageSwitcherComponent,
     NavigationComponent,
     MatInput
   ],
