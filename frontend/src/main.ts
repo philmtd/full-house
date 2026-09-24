@@ -17,7 +17,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatOptionModule} from '@angular/material/core';
 import {MatButtonModule} from '@angular/material/button';
 import {FormsModule} from '@angular/forms';
-import {provideStore} from '@ngxs/store';
+import {provideStore, Store} from '@ngxs/store';
 import {appStates} from './app/store';
 import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
@@ -60,6 +60,7 @@ bootstrapApplication(AppComponent, {
   const iconRegistry = app.injector.get(MatIconRegistry);
   const domSanitizer = app.injector.get(DomSanitizer);
   const translate = app.injector.get(TranslateService);
+  const store = app.injector.get(Store);
   configureSvgIcons(iconRegistry, domSanitizer);
-  configureTranslations(translate);
+  configureTranslations(translate, store);
 }).catch(err => console.error(err));
