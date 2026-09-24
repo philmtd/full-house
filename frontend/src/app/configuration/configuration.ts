@@ -29,10 +29,7 @@ export const configureTranslations = (translate: TranslateService, store: Store)
   translate.setTranslation('de', LAN_DE, false);
   translate.setTranslation('en', LAN_EN, false);
 
-  const storedLanguage = store.selectSnapshot(SettingsState.language);
-  const language: AppLanguage = storedLanguage ?? (translate.getBrowserLang() === 'de' ? 'de' : 'en');
-  if (!storedLanguage) {
-    store.dispatch(new SetLanguage(language));
-  }
-  translate.use(language);
+  const browserLang = translate.getBrowserLang()?.toLowerCase();
+  const language: AppLanguage = store.selectSnapshot(SettingsState.language) ?? (browserLang?.startsWith('de') ? 'de' : 'en');
+  store.dispatch(new SetLanguage(language));
 };

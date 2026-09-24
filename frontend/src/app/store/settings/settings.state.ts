@@ -1,6 +1,6 @@
-import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
-import {Injectable} from '@angular/core';
-import {filter, first} from 'rxjs/operators';
+import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {inject, Injectable} from '@angular/core';
+import {TranslateService} from '@ngx-translate/core';
 
 export type AppLanguage = 'de' | 'en';
 
@@ -32,6 +32,7 @@ export class SetLanguage {
 })
 @Injectable()
 export class SettingsState {
+  private translate = inject(TranslateService);
 
   @Selector()
   static isInviteQrCodeVisible(state: SettingsStateModel): boolean {
@@ -55,6 +56,7 @@ export class SettingsState {
     ctx.patchState({
       language: action.language
     });
+    this.translate.use(action.language);
   }
 
 }

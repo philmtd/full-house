@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from "@angular/core";
 import {Store} from "@ngxs/store";
-import {TranslateService} from "@ngx-translate/core";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
@@ -27,7 +26,6 @@ interface LanguageModel {
 })
 export class LanguageSwitcherComponent {
   private store = inject(Store);
-  private translate = inject(TranslateService);
 
   readonly languages = signal<Array<LanguageModel>>([
     {
@@ -43,6 +41,5 @@ export class LanguageSwitcherComponent {
 
   setLanguage(language: AppLanguage) {
     this.store.dispatch(new SetLanguage(language));
-    this.translate.use(language);
   }
 }
